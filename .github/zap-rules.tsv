@@ -1,0 +1,42 @@
+# OWASP ZAP Rule Configuration for Banking Platform
+# Format: rule_id	action	name
+# Actions: IGNORE, WARN, FAIL
+#
+# Banking-critical rules set to FAIL, informational ones set to WARN
+10003	WARN	Vulnerable JS Library
+10010	WARN	Cookie No HttpOnly Flag
+10011	FAIL	Cookie Without Secure Flag
+10015	WARN	Re-examine Cache-control Directives
+10017	WARN	Cross-Domain JavaScript Source File Inclusion
+10019	FAIL	Content-Type Header Missing
+10020	FAIL	Anti-clickjacking Header
+10021	FAIL	X-Content-Type-Options Header Missing
+10023	WARN	Information Disclosure - Debug Error Messages
+10024	FAIL	Information Disclosure - Sensitive Information in URL
+10025	WARN	Information Disclosure - Sensitive Information in HTTP Referrer Header
+10027	WARN	Information Disclosure - Suspicious Comments
+10028	WARN	Open Redirect
+10029	WARN	Cookie Poisoning
+10030	WARN	User Controllable Charset
+10031	WARN	User Controllable HTML Element Attribute
+10032	WARN	Viewstate
+10033	WARN	Directory Browsing
+10034	WARN	Heartbleed OpenSSL Vulnerability
+10035	FAIL	Strict-Transport-Security Header
+10036	FAIL	HTTP Server Response Header
+10037	WARN	Server Leaks Information via X-Powered-By
+10038	FAIL	Content Security Policy (CSP) Header Not Set
+10039	WARN	X-Backend-Server Header Information Leak
+10040	FAIL	Secure Pages Include Mixed Content
+10049	WARN	Storable and Cacheable Content
+10050	WARN	Retrieved from Cache
+10052	FAIL	X-ChromeLogger-Data Header Information Leak
+10054	FAIL	Cookie Without SameSite Attribute
+10055	WARN	CSP
+10056	WARN	X-Debug-Token Information Leak
+10057	WARN	Username Hash Found
+10061	WARN	X-AspNet-Version Response Header
+10062	FAIL	PII Disclosure
+10096	WARN	Timestamp Disclosure
+10097	WARN	Hash Disclosure
+10098	WARN	Cross-Domain Misconfiguration

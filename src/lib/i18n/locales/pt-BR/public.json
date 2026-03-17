@@ -1,0 +1,13 @@
+{
+  "terms": {
+    "rateLabel": "CDI",
+    "loanRateLabel": "CET",
+    "checkingAccount": "Conta Corrente",
+    "currentAccount": "Conta Corrente",
+    "savingsAccount": "Poupança",
+    "depositInsuranceBody": "FGC",
+    "depositInsuranceLimit": "R$250.000",
+    "atmCount": "24.000+",
+    "atmNetworks": "Banco24Horas"
+  }
+}

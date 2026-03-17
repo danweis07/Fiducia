@@ -1,0 +1,28 @@
+{
+  "notFound": {
+    "title": "Page No Dey",
+    "description": "Di page wey you dey find no dey exist or dem don move am."
+  },
+  "home": {
+    "heroBadge": "We dey proudly serve communities for di whole country since 1952",
+    "heroTitle": "Banking Wey Dey Put",
+    "heroHighlight": "You First",
+    "heroDescription": "Join 175,000+ members wey dey enjoy beta rates, low fees, and personal service. As credit union wey no dey find profit, your money wahala na our only mission.",
+    "openAccount": "Open Account",
+    "signIn": "Sign In to Banking",
+    "noMonthlyFees": "No monthly fees",
+    "ncuaInsured": "NCUA insured",
+    "freeAtms": "Free ATMs",
+    "todaysTopRates": "Today Top Rates",
+    "viewAllRates": "See All Rates",
+    "productsTitle": "Products & Services",
+    "productsDescription": "From everyday banking to big life moments, we get di right solution for you.",
+    "whyChooseUsTitle": "Why 175,000+ Members Choose Us",
+    "whyChooseUsDescription": "As credit union wey members own, we dey invest for di tools and services wey matter most to you.",
+    "testimonialsTitle": "Wetin Our Members Dey Talk",
+    "ctaTitle": "You Ready to Join di Credit Union Family?",
+    "ctaDescription": "Open your account for few minutes — online or for any of our branches. Membership dey open for anybody wey dey our community.",
+    "findBranch": "Find Branch",
+    "questionsCallUs": "Questions? Call us for (800) 555-0199"
+  }
+}

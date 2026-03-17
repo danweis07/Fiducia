@@ -1,0 +1,39 @@
+{
+  "notFound": {
+    "title": "Pagina niet gevonden",
+    "description": "De pagina die u zoekt bestaat niet of is verplaatst."
+  },
+  "home": {
+    "heroBadge": "Met trots ten dienste van gemeenschappen in het hele land sinds 1952",
+    "heroTitle": "Banking die",
+    "heroHighlight": "U op de eerste plaats zet",
+    "heroDescription": "Sluit u aan bij meer dan 175.000 leden die genieten van betere tarieven, lagere kosten en persoonlijke service. Als non-profit kredietunie is uw financieel welzijn onze enige missie.",
+    "openAccount": "Rekening openen",
+    "signIn": "Inloggen bij banking",
+    "noMonthlyFees": "Geen maandelijkse kosten",
+    "ncuaInsured": "NCUA verzekerd",
+    "freeAtms": "Gratis geldautomaten",
+    "todaysTopRates": "Beste tarieven van vandaag",
+    "viewAllRates": "Alle tarieven bekijken",
+    "productsTitle": "Producten & diensten",
+    "productsDescription": "Van dagelijks bankieren tot belangrijke levensmomenten — wij hebben de juiste oplossing voor u.",
+    "whyChooseUsTitle": "Waarom meer dan 175.000 leden voor ons kiezen",
+    "whyChooseUsDescription": "Als kredietunie in eigendom van leden investeren wij in de tools en diensten die voor u het belangrijkst zijn.",
+    "testimonialsTitle": "Wat onze leden zeggen",
+    "ctaTitle": "Klaar om lid te worden van de kredietunie-familie?",
+    "ctaDescription": "Open uw rekening in enkele minuten — online of bij een van onze filialen. Lidmaatschap staat open voor iedereen in onze gemeenschap.",
+    "findBranch": "Filiaal zoeken",
+    "questionsCallUs": "Vragen? Bel ons op (800) 555-0199"
+  },
+  "terms": {
+    "rateLabel": "AER",
+    "loanRateLabel": "APR",
+    "checkingAccount": "Current Account",
+    "currentAccount": "Current Account",
+    "savingsAccount": "Savings",
+    "depositInsuranceBody": "DGSD",
+    "depositInsuranceLimit": "€100,000",
+    "atmCount": "50,000+",
+    "atmNetworks": "LINK and Mastercard"
+  }
+}

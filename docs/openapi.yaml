@@ -1,0 +1,2126 @@
+openapi: 3.1.0
+info:
+  title: Open Banking Platform — Gateway API
+  version: 1.0.0
+  description: |
+    Multi-tenant digital banking gateway API for vendor integrators.
+
+    All requests go through a single gateway endpoint. The `action` field in the
+    request body determines which handler is invoked. Responses follow a
+    consistent envelope: `{ data, error, meta }`.
+
+    ## Authentication
+    All authenticated endpoints require a valid Supabase JWT in the
+    `Authorization: Bearer <token>` header. Public endpoints (CMS public
+    content, system health) do not require authentication.
+
+    ## Multi-Tenancy
+    Tenant isolation is automatic — the JWT encodes the tenant context.
+    All queries are scoped by `tenant_id` + `auth.uid()`.
+
+    ## Monetary Values
+    All monetary amounts are expressed in **integer cents** (e.g. `5000` = $50.00).
+    Never use floating-point dollar values.
+
+    ## Error Codes
+    | Code | Meaning |
+    |------|---------|
+    | `UNAUTHORIZED` | Missing or invalid JWT |
+    | `FORBIDDEN` | Insufficient permissions |
+    | `NOT_FOUND` | Resource does not exist |
+    | `VALIDATION_ERROR` | Invalid input parameters |
+    | `RATE_LIMITED` | Too many requests |
+    | `INTERNAL_ERROR` | Server error |
+
+  contact:
+    name: Open Banking Platform Contributors
+  license:
+    name: MIT
+
+servers:
+  - url: https://{tenant}.supabase.co/functions/v1/gateway
+    description: Production gateway (per-tenant Supabase project)
+    variables:
+      tenant:
+        default: your-project-ref
+        description: Supabase project reference
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # =========================================================================
+    # ENVELOPE
+    # =========================================================================
+    GatewayRequest:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          description: The route action to invoke (e.g. `accounts.list`)
+        params:
+          type: object
+          description: Action-specific parameters
+
+    GatewayResponse:
+      type: object
+      properties:
+        data:
+          description: Action-specific response payload
+        error:
+          $ref: '#/components/schemas/GatewayError'
+        meta:
+          type: object
+          properties:
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    GatewayError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: Invalid account ID
+
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+        hasMore:
+          type: boolean
+
+    # =========================================================================
+    # BANKING DOMAIN
+    # =========================================================================
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [checking, savings, cd, moneyMarket]
+        name:
+          type: string
+        balanceCents:
+          type: integer
+          description: Current balance in cents
+        availableBalanceCents:
+          type: integer
+        status:
+          type: string
+          enum: [active, closed, frozen, dormant]
+        mask:
+          type: string
+          description: Masked account number (e.g. ****1234)
+        openedAt:
+          type: string
+          format: date-time
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: string
+        amountCents:
+          type: integer
+          description: Negative for debits, positive for credits
+        description:
+          type: string
+        category:
+          type: string
+        type:
+          type: string
+          enum: [debit, credit, transfer, fee, interest, dividend]
+        status:
+          type: string
+          enum: [posted, pending, cancelled]
+        date:
+          type: string
+          format: date
+        runningBalanceCents:
+          type: integer
+
+    Transfer:
+      type: object
+      properties:
+        id:
+          type: string
+        fromAccountId:
+          type: string
+        toAccountId:
+          type: string
+        amountCents:
+          type: integer
+        type:
+          type: string
+          enum: [internal, external, wire]
+        status:
+          type: string
+          enum: [pending, completed, cancelled, failed]
+        memo:
+          type: string
+        scheduledDate:
+          type: string
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+
+    Beneficiary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nickname:
+          type: string
+        accountNumberMasked:
+          type: string
+        routingNumber:
+          type: string
+        bankName:
+          type: string
+        type:
+          type: string
+          enum: [ach, wire, internal]
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [debit, credit]
+        status:
+          type: string
+          enum: [active, locked, cancelled, expired]
+        lastFour:
+          type: string
+        expirationDate:
+          type: string
+        dailyLimitCents:
+          type: integer
+
+    Bill:
+      type: object
+      properties:
+        id:
+          type: string
+        payeeName:
+          type: string
+        amountCents:
+          type: integer
+        dueDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [pending, paid, overdue, cancelled]
+
+    RDCDeposit:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: string
+        amountCents:
+          type: integer
+        status:
+          type: string
+          enum: [processing, accepted, rejected]
+        checkNumber:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        type:
+          type: string
+        read:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    Loan:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        principalCents:
+          type: integer
+        balanceCents:
+          type: integer
+        interestRate:
+          type: number
+        status:
+          type: string
+          enum: [active, paid_off, delinquent, defaulted]
+        nextPaymentDate:
+          type: string
+          format: date
+        nextPaymentAmountCents:
+          type: integer
+
+    SavingsGoal:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        targetAmountCents:
+          type: integer
+        currentAmountCents:
+          type: integer
+        targetDate:
+          type: string
+          format: date
+        status:
+          type: string
+
+    WireTransfer:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [domestic, international]
+        amountCents:
+          type: integer
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    StopPayment:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: string
+        checkNumber:
+          type: string
+        amountCents:
+          type: integer
+        status:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+
+    Dispute:
+      type: object
+      properties:
+        id:
+          type: string
+        transactionId:
+          type: string
+        amountCents:
+          type: integer
+        reason:
+          type: string
+        status:
+          type: string
+          enum: [open, under_review, provisional_credit, resolved, denied]
+        filedAt:
+          type: string
+          format: date-time
+
+    BankingCapabilities:
+      type: object
+      description: Backend-driven feature flags for the tenant
+      properties:
+        transfersEnabled:
+          type: boolean
+        billPayEnabled:
+          type: boolean
+        rdcEnabled:
+          type: boolean
+        p2pEnabled:
+          type: boolean
+        wireTransfersEnabled:
+          type: boolean
+        cardOffersEnabled:
+          type: boolean
+
+    TenantTheme:
+      type: object
+      properties:
+        primaryColor:
+          type: string
+        logoUrl:
+          type: string
+        institutionName:
+          type: string
+
+# =============================================================================
+# PATHS — organized by domain
+# =============================================================================
+paths:
+  /gateway:
+    post:
+      summary: Gateway dispatch endpoint
+      description: |
+        Single entry point for all API operations. The `action` field in the
+        request body determines which handler processes the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GatewayRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: Rate limited
+
+  # ===========================================================================
+  # ACCOUNTS
+  # ===========================================================================
+  /gateway#accounts.list:
+    post:
+      tags: [Accounts]
+      summary: List all accounts
+      description: Returns all accounts for the authenticated member.
+      operationId: accounts.list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: accounts.list
+      responses:
+        '200':
+          description: Account list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accounts:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Account'
+
+  /gateway#accounts.get:
+    post:
+      tags: [Accounts]
+      summary: Get single account
+      operationId: accounts.get
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action, params]
+              properties:
+                action:
+                  type: string
+                  example: accounts.get
+                params:
+                  type: object
+                  required: [id]
+                  properties:
+                    id:
+                      type: string
+      responses:
+        '200':
+          description: Account detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      account:
+                        $ref: '#/components/schemas/Account'
+
+  /gateway#accounts.summary:
+    post:
+      tags: [Accounts]
+      summary: Get account summary (totals)
+      operationId: accounts.summary
+      responses:
+        '200':
+          description: Summary with total balances and account count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      totalBalanceCents:
+                        type: integer
+                      totalAvailableCents:
+                        type: integer
+                      accountCount:
+                        type: integer
+
+  # ===========================================================================
+  # TRANSACTIONS
+  # ===========================================================================
+  /gateway#transactions.list:
+    post:
+      tags: [Transactions]
+      summary: List transactions
+      operationId: transactions.list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: transactions.list
+                params:
+                  type: object
+                  properties:
+                    accountId:
+                      type: string
+                    type:
+                      type: string
+                    status:
+                      type: string
+                    category:
+                      type: string
+                    fromDate:
+                      type: string
+                      format: date
+                    toDate:
+                      type: string
+                      format: date
+                    search:
+                      type: string
+                    limit:
+                      type: integer
+                      default: 20
+                    offset:
+                      type: integer
+                      default: 0
+      responses:
+        '200':
+          description: Paginated transaction list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      transactions:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Transaction'
+
+  /gateway#transactions.get:
+    post:
+      tags: [Transactions]
+      summary: Get single transaction
+      operationId: transactions.get
+      responses:
+        '200':
+          description: Transaction detail
+
+  /gateway#transactions.search:
+    post:
+      tags: [Transactions]
+      summary: Search transactions
+      operationId: transactions.search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [query]
+                  properties:
+                    query:
+                      type: string
+                    accountId:
+                      type: string
+                    limit:
+                      type: integer
+      responses:
+        '200':
+          description: Search results
+
+  # ===========================================================================
+  # TRANSFERS
+  # ===========================================================================
+  /gateway#transfers.create:
+    post:
+      tags: [Transfers]
+      summary: Create a transfer
+      operationId: transfers.create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [fromAccountId, type, amountCents]
+                  properties:
+                    fromAccountId:
+                      type: string
+                    toAccountId:
+                      type: string
+                    toBeneficiaryId:
+                      type: string
+                    type:
+                      type: string
+                      enum: [internal, external]
+                    amountCents:
+                      type: integer
+                    memo:
+                      type: string
+      responses:
+        '200':
+          description: Created transfer
+
+  /gateway#transfers.schedule:
+    post:
+      tags: [Transfers]
+      summary: Schedule a future or recurring transfer
+      operationId: transfers.schedule
+      responses:
+        '200':
+          description: Scheduled transfer
+
+  /gateway#transfers.cancel:
+    post:
+      tags: [Transfers]
+      summary: Cancel a pending transfer
+      operationId: transfers.cancel
+      responses:
+        '200':
+          description: Cancellation result
+
+  /gateway#transfers.list:
+    post:
+      tags: [Transfers]
+      summary: List transfers
+      operationId: transfers.list
+      responses:
+        '200':
+          description: Paginated transfer list
+
+  # ===========================================================================
+  # BENEFICIARIES
+  # ===========================================================================
+  /gateway#beneficiaries.list:
+    post:
+      tags: [Beneficiaries]
+      summary: List beneficiaries
+      operationId: beneficiaries.list
+      responses:
+        '200':
+          description: Beneficiary list
+
+  /gateway#beneficiaries.create:
+    post:
+      tags: [Beneficiaries]
+      summary: Create a beneficiary
+      operationId: beneficiaries.create
+      responses:
+        '200':
+          description: Created beneficiary
+
+  /gateway#beneficiaries.delete:
+    post:
+      tags: [Beneficiaries]
+      summary: Delete a beneficiary
+      operationId: beneficiaries.delete
+      responses:
+        '200':
+          description: Deletion result
+
+  # ===========================================================================
+  # CARDS
+  # ===========================================================================
+  /gateway#cards.list:
+    post:
+      tags: [Cards]
+      summary: List cards
+      operationId: cards.list
+      responses:
+        '200':
+          description: Card list
+
+  /gateway#cards.lock:
+    post:
+      tags: [Cards]
+      summary: Lock a card
+      operationId: cards.lock
+      responses:
+        '200':
+          description: Locked card
+
+  /gateway#cards.unlock:
+    post:
+      tags: [Cards]
+      summary: Unlock a card
+      operationId: cards.unlock
+      responses:
+        '200':
+          description: Unlocked card
+
+  /gateway#cards.setLimit:
+    post:
+      tags: [Cards]
+      summary: Set daily spending limit
+      operationId: cards.setLimit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [id, dailyLimitCents]
+                  properties:
+                    id:
+                      type: string
+                    dailyLimitCents:
+                      type: integer
+      responses:
+        '200':
+          description: Updated card
+
+  # ===========================================================================
+  # BILLS
+  # ===========================================================================
+  /gateway#bills.list:
+    post:
+      tags: [Bills]
+      summary: List bills
+      operationId: bills.list
+      responses:
+        '200':
+          description: Bill list
+
+  /gateway#bills.create:
+    post:
+      tags: [Bills]
+      summary: Create a bill payment
+      operationId: bills.create
+      responses:
+        '200':
+          description: Created bill
+
+  /gateway#bills.pay:
+    post:
+      tags: [Bills]
+      summary: Pay a bill
+      operationId: bills.pay
+      responses:
+        '200':
+          description: Paid bill
+
+  /gateway#bills.cancel:
+    post:
+      tags: [Bills]
+      summary: Cancel a bill
+      operationId: bills.cancel
+      responses:
+        '200':
+          description: Cancellation result
+
+  # ===========================================================================
+  # RDC (Remote Deposit Capture)
+  # ===========================================================================
+  /gateway#rdc.deposit:
+    post:
+      tags: [RDC]
+      summary: Submit a check deposit
+      operationId: rdc.deposit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [accountId, amountCents, frontImageBase64, backImageBase64]
+                  properties:
+                    accountId:
+                      type: string
+                    amountCents:
+                      type: integer
+                    frontImageBase64:
+                      type: string
+                      format: byte
+                    backImageBase64:
+                      type: string
+                      format: byte
+                    checkNumber:
+                      type: string
+      responses:
+        '200':
+          description: Deposit submission result
+
+  /gateway#rdc.status:
+    post:
+      tags: [RDC]
+      summary: Get deposit status
+      operationId: rdc.status
+      responses:
+        '200':
+          description: Deposit status
+
+  /gateway#rdc.history:
+    post:
+      tags: [RDC]
+      summary: List deposit history
+      operationId: rdc.history
+      responses:
+        '200':
+          description: Deposit history
+
+  # ===========================================================================
+  # NOTIFICATIONS
+  # ===========================================================================
+  /gateway#notifications.list:
+    post:
+      tags: [Notifications]
+      summary: List notifications
+      operationId: notifications.list
+      responses:
+        '200':
+          description: Notification list
+
+  /gateway#notifications.markRead:
+    post:
+      tags: [Notifications]
+      summary: Mark notification as read
+      operationId: notifications.markRead
+      responses:
+        '200':
+          description: Success
+
+  /gateway#notifications.markAllRead:
+    post:
+      tags: [Notifications]
+      summary: Mark all notifications read
+      operationId: notifications.markAllRead
+      responses:
+        '200':
+          description: Success
+
+  /gateway#notifications.unreadCount:
+    post:
+      tags: [Notifications]
+      summary: Get unread notification count
+      operationId: notifications.unreadCount
+      responses:
+        '200':
+          description: Unread count
+
+  /gateway#notifications.preferences.get:
+    post:
+      tags: [Notifications]
+      summary: Get notification preferences
+      operationId: notifications.preferences.get
+      responses:
+        '200':
+          description: Preferences
+
+  /gateway#notifications.preferences.update:
+    post:
+      tags: [Notifications]
+      summary: Update notification preferences
+      operationId: notifications.preferences.update
+      responses:
+        '200':
+          description: Updated preferences
+
+  # ===========================================================================
+  # STATEMENTS
+  # ===========================================================================
+  /gateway#statements.list:
+    post:
+      tags: [Statements]
+      summary: List statements for an account
+      operationId: statements.list
+      responses:
+        '200':
+          description: Statement list
+
+  /gateway#statements.get:
+    post:
+      tags: [Statements]
+      summary: Get statement detail
+      operationId: statements.get
+      responses:
+        '200':
+          description: Statement detail
+
+  /gateway#statements.download:
+    post:
+      tags: [Statements]
+      summary: Download statement PDF
+      operationId: statements.download
+      responses:
+        '200':
+          description: Pre-signed download URL
+
+  # ===========================================================================
+  # LOANS
+  # ===========================================================================
+  /gateway#loans.list:
+    post:
+      tags: [Loans]
+      summary: List loans
+      operationId: loans.list
+      responses:
+        '200':
+          description: Loan list
+
+  /gateway#loans.get:
+    post:
+      tags: [Loans]
+      summary: Get loan detail
+      operationId: loans.get
+      responses:
+        '200':
+          description: Loan detail
+
+  /gateway#loans.schedule:
+    post:
+      tags: [Loans]
+      summary: Get loan amortization schedule
+      operationId: loans.schedule
+      responses:
+        '200':
+          description: Schedule items
+
+  /gateway#loans.makePayment:
+    post:
+      tags: [Loans]
+      summary: Make a loan payment
+      operationId: loans.makePayment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [loanId, amountCents, fromAccountId]
+                  properties:
+                    loanId:
+                      type: string
+                    amountCents:
+                      type: integer
+                    fromAccountId:
+                      type: string
+                    extraPrincipalCents:
+                      type: integer
+      responses:
+        '200':
+          description: Payment result
+
+  # ===========================================================================
+  # WIRE TRANSFERS
+  # ===========================================================================
+  /gateway#wires.createDomestic:
+    post:
+      tags: [Wire Transfers]
+      summary: Create domestic wire transfer
+      operationId: wires.createDomestic
+      responses:
+        '200':
+          description: Wire transfer created
+
+  /gateway#wires.createInternational:
+    post:
+      tags: [Wire Transfers]
+      summary: Create international wire transfer
+      operationId: wires.createInternational
+      responses:
+        '200':
+          description: Wire transfer created
+
+  /gateway#wires.list:
+    post:
+      tags: [Wire Transfers]
+      summary: List wire transfers
+      operationId: wires.list
+      responses:
+        '200':
+          description: Wire list
+
+  /gateway#wires.fees:
+    post:
+      tags: [Wire Transfers]
+      summary: Get wire transfer fees
+      operationId: wires.fees
+      responses:
+        '200':
+          description: Fee schedule
+
+  /gateway#wires.limits:
+    post:
+      tags: [Wire Transfers]
+      summary: Get wire transfer limits
+      operationId: wires.limits
+      responses:
+        '200':
+          description: Wire limits
+
+  # ===========================================================================
+  # STOP PAYMENTS
+  # ===========================================================================
+  /gateway#stopPayments.create:
+    post:
+      tags: [Stop Payments]
+      summary: Create a stop payment
+      operationId: stopPayments.create
+      responses:
+        '200':
+          description: Stop payment created
+
+  /gateway#stopPayments.list:
+    post:
+      tags: [Stop Payments]
+      summary: List stop payments
+      operationId: stopPayments.list
+      responses:
+        '200':
+          description: Stop payment list
+
+  /gateway#stopPayments.fee:
+    post:
+      tags: [Stop Payments]
+      summary: Get stop payment fee
+      operationId: stopPayments.fee
+      responses:
+        '200':
+          description: Fee amount
+
+  # ===========================================================================
+  # P2P TRANSFERS
+  # ===========================================================================
+  /gateway#p2p.enroll:
+    post:
+      tags: [P2P]
+      summary: Enroll in P2P transfers
+      operationId: p2p.enroll
+      responses:
+        '200':
+          description: Enrollment result
+
+  /gateway#p2p.send:
+    post:
+      tags: [P2P]
+      summary: Send P2P payment
+      operationId: p2p.send
+      responses:
+        '200':
+          description: Payment sent
+
+  /gateway#p2p.request:
+    post:
+      tags: [P2P]
+      summary: Request P2P payment
+      operationId: p2p.request
+      responses:
+        '200':
+          description: Request created
+
+  /gateway#p2p.transactions:
+    post:
+      tags: [P2P]
+      summary: List P2P transactions
+      operationId: p2p.transactions
+      responses:
+        '200':
+          description: Transaction list
+
+  /gateway#p2p.limits:
+    post:
+      tags: [P2P]
+      summary: Get P2P limits
+      operationId: p2p.limits
+      responses:
+        '200':
+          description: Limits
+
+  # ===========================================================================
+  # SAVINGS GOALS
+  # ===========================================================================
+  /gateway#goals.list:
+    post:
+      tags: [Savings Goals]
+      summary: List savings goals
+      operationId: goals.list
+      responses:
+        '200':
+          description: Goals list
+
+  /gateway#goals.create:
+    post:
+      tags: [Savings Goals]
+      summary: Create a savings goal
+      operationId: goals.create
+      responses:
+        '200':
+          description: Created goal
+
+  /gateway#goals.contribute:
+    post:
+      tags: [Savings Goals]
+      summary: Contribute to a goal
+      operationId: goals.contribute
+      responses:
+        '200':
+          description: Contribution result
+
+  /gateway#goals.summary:
+    post:
+      tags: [Savings Goals]
+      summary: Get goals summary
+      operationId: goals.summary
+      responses:
+        '200':
+          description: Summary
+
+  # ===========================================================================
+  # DISPUTES
+  # ===========================================================================
+  /gateway#disputes.file:
+    post:
+      tags: [Disputes]
+      summary: File a transaction dispute (Reg E)
+      operationId: disputes.file
+      responses:
+        '200':
+          description: Dispute filed
+
+  /gateway#disputes.list:
+    post:
+      tags: [Disputes]
+      summary: List disputes
+      operationId: disputes.list
+      responses:
+        '200':
+          description: Dispute list
+
+  /gateway#disputes.get:
+    post:
+      tags: [Disputes]
+      summary: Get dispute detail
+      operationId: disputes.get
+      responses:
+        '200':
+          description: Dispute detail
+
+  # ===========================================================================
+  # JOINT ACCOUNTS
+  # ===========================================================================
+  /gateway#jointAccounts.owners.list:
+    post:
+      tags: [Joint Accounts]
+      summary: List joint account owners
+      operationId: jointAccounts.owners.list
+      responses:
+        '200':
+          description: Owner list
+
+  /gateway#jointAccounts.owners.add:
+    post:
+      tags: [Joint Accounts]
+      summary: Add a joint account owner
+      operationId: jointAccounts.owners.add
+      responses:
+        '200':
+          description: Owner added
+
+  /gateway#jointAccounts.summary:
+    post:
+      tags: [Joint Accounts]
+      summary: Get joint account summary
+      operationId: jointAccounts.summary
+      responses:
+        '200':
+          description: Summary
+
+  # ===========================================================================
+  # OVERDRAFT PROTECTION
+  # ===========================================================================
+  /gateway#overdraft.settings.get:
+    post:
+      tags: [Overdraft]
+      summary: Get overdraft settings
+      operationId: overdraft.settings.get
+      responses:
+        '200':
+          description: Overdraft settings
+
+  /gateway#overdraft.settings.update:
+    post:
+      tags: [Overdraft]
+      summary: Update overdraft settings
+      operationId: overdraft.settings.update
+      responses:
+        '200':
+          description: Updated settings
+
+  # ===========================================================================
+  # SPENDING ALERTS
+  # ===========================================================================
+  /gateway#alerts.list:
+    post:
+      tags: [Spending Alerts]
+      summary: List spending alert rules
+      operationId: alerts.list
+      responses:
+        '200':
+          description: Alert list
+
+  /gateway#alerts.create:
+    post:
+      tags: [Spending Alerts]
+      summary: Create a spending alert
+      operationId: alerts.create
+      responses:
+        '200':
+          description: Created alert
+
+  # ===========================================================================
+  # DOCUMENT VAULT
+  # ===========================================================================
+  /gateway#vault.documents.list:
+    post:
+      tags: [Document Vault]
+      summary: List vault documents
+      operationId: vault.documents.list
+      responses:
+        '200':
+          description: Document list
+
+  /gateway#vault.documents.upload:
+    post:
+      tags: [Document Vault]
+      summary: Upload a document
+      operationId: vault.documents.upload
+      responses:
+        '200':
+          description: Uploaded document
+
+  /gateway#vault.summary:
+    post:
+      tags: [Document Vault]
+      summary: Get vault storage summary
+      operationId: vault.summary
+      responses:
+        '200':
+          description: Vault summary
+
+  # ===========================================================================
+  # CHECK ORDERING
+  # ===========================================================================
+  /gateway#checks.styles:
+    post:
+      tags: [Check Orders]
+      summary: List available check styles
+      operationId: checks.styles
+      responses:
+        '200':
+          description: Style list
+
+  /gateway#checks.order.create:
+    post:
+      tags: [Check Orders]
+      summary: Create a check order
+      operationId: checks.order.create
+      responses:
+        '200':
+          description: Order created
+
+  # ===========================================================================
+  # DIRECT DEPOSIT SWITCHING
+  # ===========================================================================
+  /gateway#directDeposit.employers:
+    post:
+      tags: [Direct Deposit]
+      summary: List supported employers
+      operationId: directDeposit.employers
+      responses:
+        '200':
+          description: Employer list
+
+  /gateway#directDeposit.initiate:
+    post:
+      tags: [Direct Deposit]
+      summary: Initiate direct deposit switch
+      operationId: directDeposit.initiate
+      responses:
+        '200':
+          description: Switch initiated
+
+  # ===========================================================================
+  # CARD SERVICES
+  # ===========================================================================
+  /gateway#cardServices.travelNotice.create:
+    post:
+      tags: [Card Services]
+      summary: Create a travel notice
+      operationId: cardServices.travelNotice.create
+      responses:
+        '200':
+          description: Notice created
+
+  /gateway#cardServices.travelNotice.list:
+    post:
+      tags: [Card Services]
+      summary: List travel notices
+      operationId: cardServices.travelNotice.list
+      responses:
+        '200':
+          description: Notice list
+
+  /gateway#cardServices.replacement.request:
+    post:
+      tags: [Card Services]
+      summary: Request card replacement
+      operationId: cardServices.replacement.request
+      responses:
+        '200':
+          description: Replacement requested
+
+  # ===========================================================================
+  # DEVICE MANAGEMENT
+  # ===========================================================================
+  /gateway#devices.list:
+    post:
+      tags: [Devices]
+      summary: List registered devices
+      operationId: devices.list
+      responses:
+        '200':
+          description: Device list
+
+  /gateway#devices.remove:
+    post:
+      tags: [Devices]
+      summary: Remove a device
+      operationId: devices.remove
+      responses:
+        '200':
+          description: Device removed
+
+  # ===========================================================================
+  # EXTERNAL ACCOUNTS (Plaid)
+  # ===========================================================================
+  /gateway#external-accounts.link-token:
+    post:
+      tags: [External Accounts]
+      summary: Create Plaid Link token
+      operationId: external-accounts.link-token
+      security: [bearerAuth: []]
+      responses:
+        '200':
+          description: Link token for Plaid SDK
+
+  /gateway#external-accounts.list:
+    post:
+      tags: [External Accounts]
+      summary: List linked external accounts
+      operationId: external-accounts.list
+      responses:
+        '200':
+          description: External account list
+
+  # ===========================================================================
+  # ENRICHMENT (MX Platform)
+  # ===========================================================================
+  /gateway#enrichment.enhance:
+    post:
+      tags: [Enrichment]
+      summary: Enrich a transaction with merchant data
+      operationId: enrichment.enhance
+      responses:
+        '200':
+          description: Enriched transaction
+
+  # ===========================================================================
+  # KYC IDENTITY VERIFICATION
+  # ===========================================================================
+  /gateway#kyc.evaluate:
+    post:
+      tags: [KYC]
+      summary: Submit KYC identity evaluation
+      operationId: kyc.evaluate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [firstName, lastName, email, phone, dateOfBirth, ssn, address]
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    email:
+                      type: string
+                      format: email
+                    phone:
+                      type: string
+                    dateOfBirth:
+                      type: string
+                      format: date
+                    ssn:
+                      type: string
+                      description: Social Security Number (PII - encrypted in transit)
+                    address:
+                      type: object
+                      required: [line1, city, state, zip]
+                      properties:
+                        line1:
+                          type: string
+                        line2:
+                          type: string
+                        city:
+                          type: string
+                        state:
+                          type: string
+                        zip:
+                          type: string
+      responses:
+        '200':
+          description: KYC evaluation result
+
+  /gateway#kyc.status:
+    post:
+      tags: [KYC]
+      summary: Check KYC evaluation status
+      operationId: kyc.status
+      responses:
+        '200':
+          description: Evaluation status
+
+  # ===========================================================================
+  # DIGITAL ACTIVATION
+  # ===========================================================================
+  /gateway#activation.config:
+    post:
+      tags: [Activation]
+      summary: Get activation configuration
+      operationId: activation.config
+      responses:
+        '200':
+          description: Activation config (steps, fields, rules)
+
+  /gateway#activation.verifyIdentity:
+    post:
+      tags: [Activation]
+      summary: Verify member identity
+      operationId: activation.verifyIdentity
+      responses:
+        '200':
+          description: Verification result
+
+  /gateway#activation.complete:
+    post:
+      tags: [Activation]
+      summary: Complete activation flow
+      operationId: activation.complete
+      responses:
+        '200':
+          description: Activation status
+
+  # ===========================================================================
+  # FINANCIAL DATA & INSIGHTS
+  # ===========================================================================
+  /gateway#financial.spending:
+    post:
+      tags: [Financial Insights]
+      summary: Get spending summary by category
+      operationId: financial.spending
+      responses:
+        '200':
+          description: Spending summary
+
+  /gateway#financial.trends:
+    post:
+      tags: [Financial Insights]
+      summary: Get monthly spending trends
+      operationId: financial.trends
+      responses:
+        '200':
+          description: Monthly trend data
+
+  /gateway#financial.budgets.list:
+    post:
+      tags: [Financial Insights]
+      summary: List budgets
+      operationId: financial.budgets.list
+      responses:
+        '200':
+          description: Budget list
+
+  /gateway#financial.budgets.set:
+    post:
+      tags: [Financial Insights]
+      summary: Set a budget for a category
+      operationId: financial.budgets.set
+      responses:
+        '200':
+          description: Budget set
+
+  /gateway#financial.networth:
+    post:
+      tags: [Financial Insights]
+      summary: Get net worth calculation
+      operationId: financial.networth
+      responses:
+        '200':
+          description: Net worth data
+
+  /gateway#financial.recurring:
+    post:
+      tags: [Financial Insights]
+      summary: Get recurring transaction analysis
+      operationId: financial.recurring
+      responses:
+        '200':
+          description: Recurring transactions
+
+  # ===========================================================================
+  # CARD-LINKED OFFERS
+  # ===========================================================================
+  /gateway#offers.list:
+    post:
+      tags: [Card Offers]
+      summary: List card-linked offers
+      operationId: offers.list
+      responses:
+        '200':
+          description: Offer list
+
+  /gateway#offers.activate:
+    post:
+      tags: [Card Offers]
+      summary: Activate an offer
+      operationId: offers.activate
+      responses:
+        '200':
+          description: Activated
+
+  # ===========================================================================
+  # ACCOUNT OPENING
+  # ===========================================================================
+  /gateway#account-opening.config:
+    post:
+      tags: [Account Opening]
+      summary: Get account opening configuration
+      operationId: account-opening.config
+      responses:
+        '200':
+          description: Opening config
+
+  /gateway#account-opening.create:
+    post:
+      tags: [Account Opening]
+      summary: Create an account opening application
+      operationId: account-opening.create
+      responses:
+        '200':
+          description: Application created
+
+  # ===========================================================================
+  # BILL PAY (adapter-backed)
+  # ===========================================================================
+  /gateway#billpay.billers.search:
+    post:
+      tags: [Bill Pay]
+      summary: Search billers
+      operationId: billpay.billers.search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [query]
+                  properties:
+                    query:
+                      type: string
+                    category:
+                      type: string
+                    zipCode:
+                      type: string
+                    limit:
+                      type: integer
+      responses:
+        '200':
+          description: Biller search results
+
+  /gateway#billpay.payees.list:
+    post:
+      tags: [Bill Pay]
+      summary: List enrolled payees
+      operationId: billpay.payees.list
+      responses:
+        '200':
+          description: Payee list
+
+  # ===========================================================================
+  # SECURE MESSAGING
+  # ===========================================================================
+  /gateway#messaging.threads.list:
+    post:
+      tags: [Secure Messaging]
+      summary: List message threads
+      operationId: messaging.threads.list
+      responses:
+        '200':
+          description: Thread list
+
+  /gateway#messaging.threads.create:
+    post:
+      tags: [Secure Messaging]
+      summary: Create a new message thread
+      operationId: messaging.threads.create
+      responses:
+        '200':
+          description: Thread created
+
+  /gateway#messaging.departments.list:
+    post:
+      tags: [Secure Messaging]
+      summary: List messaging departments
+      operationId: messaging.departments.list
+      responses:
+        '200':
+          description: Department list
+
+  # ===========================================================================
+  # AI CHAT
+  # ===========================================================================
+  /gateway#ai.chat.send:
+    post:
+      tags: [AI Chat]
+      summary: Send a chat message to AI assistant
+      operationId: ai.chat.send
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [message]
+                  properties:
+                    message:
+                      type: string
+                    conversationId:
+                      type: string
+      responses:
+        '200':
+          description: AI response
+
+  /gateway#ai.chat.suggestions:
+    post:
+      tags: [AI Chat]
+      summary: Get conversation suggestions
+      operationId: ai.chat.suggestions
+      responses:
+        '200':
+          description: Suggestions
+
+  # ===========================================================================
+  # SSO PROVIDER MANAGEMENT (Admin)
+  # ===========================================================================
+  /gateway#sso.providers.list:
+    post:
+      tags: [SSO]
+      summary: List SSO providers
+      operationId: sso.providers.list
+      responses:
+        '200':
+          description: Provider list
+
+  /gateway#sso.providers.create:
+    post:
+      tags: [SSO]
+      summary: Create SSO provider
+      operationId: sso.providers.create
+      responses:
+        '200':
+          description: Provider created
+
+  /gateway#sso.providers.test:
+    post:
+      tags: [SSO]
+      summary: Test SSO connection
+      operationId: sso.providers.test
+      responses:
+        '200':
+          description: Connection test result
+
+  # ===========================================================================
+  # CMS CONTENT MANAGEMENT
+  # ===========================================================================
+  /gateway#cms.content.list:
+    post:
+      tags: [CMS]
+      summary: List CMS content
+      operationId: cms.content.list
+      responses:
+        '200':
+          description: Content list
+
+  /gateway#cms.content.public:
+    post:
+      tags: [CMS]
+      summary: Get public content by slug (no auth required)
+      operationId: cms.content.public
+      security: []
+      responses:
+        '200':
+          description: Public content
+
+  /gateway#cms.channels.list:
+    post:
+      tags: [CMS]
+      summary: List CMS channels
+      operationId: cms.channels.list
+      responses:
+        '200':
+          description: Channel list
+
+  # ===========================================================================
+  # EXPERIMENTS / A/B TESTING
+  # ===========================================================================
+  /gateway#experiments.list:
+    post:
+      tags: [Experiments]
+      summary: List experiments
+      operationId: experiments.list
+      responses:
+        '200':
+          description: Experiment list
+
+  /gateway#experiments.assign:
+    post:
+      tags: [Experiments]
+      summary: Get experiment assignment for current user
+      operationId: experiments.assign
+      responses:
+        '200':
+          description: Assignment (variant)
+
+  /gateway#experiments.results:
+    post:
+      tags: [Experiments]
+      summary: Get experiment results
+      operationId: experiments.results
+      responses:
+        '200':
+          description: Experiment results
+
+  # ===========================================================================
+  # DATA EXPORT & REPORTING
+  # ===========================================================================
+  /gateway#exports.list:
+    post:
+      tags: [Data Export]
+      summary: List data exports
+      operationId: exports.list
+      responses:
+        '200':
+          description: Export list
+
+  /gateway#exports.create:
+    post:
+      tags: [Data Export]
+      summary: Create a data export
+      operationId: exports.create
+      responses:
+        '200':
+          description: Export created
+
+  /gateway#exports.download:
+    post:
+      tags: [Data Export]
+      summary: Download an export file
+      operationId: exports.download
+      responses:
+        '200':
+          description: Download URL
+
+  # ===========================================================================
+  # WEBHOOKS
+  # ===========================================================================
+  /gateway#webhooks.endpoints.list:
+    post:
+      tags: [Webhooks]
+      summary: List webhook endpoints
+      operationId: webhooks.endpoints.list
+      responses:
+        '200':
+          description: Endpoint list
+
+  /gateway#webhooks.endpoints.create:
+    post:
+      tags: [Webhooks]
+      summary: Create webhook endpoint
+      operationId: webhooks.endpoints.create
+      responses:
+        '200':
+          description: Endpoint created
+
+  /gateway#webhooks.stats:
+    post:
+      tags: [Webhooks]
+      summary: Get webhook delivery stats
+      operationId: webhooks.stats
+      responses:
+        '200':
+          description: Delivery statistics
+
+  # ===========================================================================
+  # ADMIN
+  # ===========================================================================
+  /gateway#admin.users.suspend:
+    post:
+      tags: [Admin]
+      summary: Suspend a user
+      operationId: admin.users.suspend
+      responses:
+        '200':
+          description: User suspended
+
+  /gateway#admin.users.activate:
+    post:
+      tags: [Admin]
+      summary: Activate a user
+      operationId: admin.users.activate
+      responses:
+        '200':
+          description: User activated
+
+  /gateway#admin.analytics.keyMetrics:
+    post:
+      tags: [Admin]
+      summary: Get key analytics metrics
+      operationId: admin.analytics.keyMetrics
+      responses:
+        '200':
+          description: Key metrics
+
+  /gateway#admin.compliance.kycReviews:
+    post:
+      tags: [Admin]
+      summary: List KYC reviews
+      operationId: admin.compliance.kycReviews
+      responses:
+        '200':
+          description: KYC review list
+
+  /gateway#admin.roles.list:
+    post:
+      tags: [Admin]
+      summary: List RBAC roles
+      operationId: admin.roles.list
+      responses:
+        '200':
+          description: Role list
+
+  # ===========================================================================
+  # CONFIG
+  # ===========================================================================
+  /gateway#config.capabilities:
+    post:
+      tags: [Config]
+      summary: Get tenant capabilities (backend-driven UI)
+      operationId: config.capabilities
+      responses:
+        '200':
+          description: Capabilities config
+
+  /gateway#config.theme:
+    post:
+      tags: [Config]
+      summary: Get tenant theme/branding
+      operationId: config.theme
+      responses:
+        '200':
+          description: Theme config
+
+  # ===========================================================================
+  # SESSION MANAGEMENT
+  # ===========================================================================
+  /gateway#sessions.list:
+    post:
+      tags: [Sessions]
+      summary: List active sessions
+      operationId: sessions.list
+      responses:
+        '200':
+          description: Session list
+
+  /gateway#sessions.revoke:
+    post:
+      tags: [Sessions]
+      summary: Revoke a session
+      operationId: sessions.revoke
+      responses:
+        '200':
+          description: Session revoked
+
+  # ===========================================================================
+  # SYSTEM
+  # ===========================================================================
+  /gateway#system.health:
+    post:
+      tags: [System]
+      summary: Health check
+      operationId: system.health
+      security: []
+      responses:
+        '200':
+          description: System health status
+
+  # ===========================================================================
+  # LOCATIONS
+  # ===========================================================================
+  /gateway#locations.search:
+    post:
+      tags: [Locations]
+      summary: Search ATM and branch locations
+      operationId: locations.search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  required: [latitude, longitude]
+                  properties:
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+                    radiusMiles:
+                      type: number
+                    type:
+                      type: string
+                      enum: [atm, branch, all]
+      responses:
+        '200':
+          description: Location list
+
+  # ===========================================================================
+  # INTEGRATIONS
+  # ===========================================================================
+  /gateway#integrations.providers:
+    post:
+      tags: [Integrations]
+      summary: List available integration providers
+      operationId: integrations.providers
+      responses:
+        '200':
+          description: Provider list
+
+  /gateway#integrations.connect:
+    post:
+      tags: [Integrations]
+      summary: Connect an integration
+      operationId: integrations.connect
+      responses:
+        '200':
+          description: Connected
+
+  # ===========================================================================
+  # PASSWORD POLICY
+  # ===========================================================================
+  /gateway#passwordPolicy.get:
+    post:
+      tags: [Password Policy]
+      summary: Get password policy rules
+      operationId: passwordPolicy.get
+      responses:
+        '200':
+          description: Policy rules
+
+  # ===========================================================================
+  # ONBOARDING
+  # ===========================================================================
+  /gateway#onboarding.status:
+    post:
+      tags: [Onboarding]
+      summary: Get tenant onboarding status
+      operationId: onboarding.status
+      responses:
+        '200':
+          description: Onboarding status
+
+tags:
+  - name: Accounts
+    description: Banking account operations
+  - name: Transactions
+    description: Transaction listing and search
+  - name: Transfers
+    description: Internal and external fund transfers
+  - name: Beneficiaries
+    description: External transfer recipients
+  - name: Cards
+    description: Debit/credit card management
+  - name: Bills
+    description: Bill payment operations
+  - name: RDC
+    description: Remote Deposit Capture (check scanning)
+  - name: Notifications
+    description: Member notification management
+  - name: Statements
+    description: Account statement access
+  - name: Loans
+    description: Loan management and payments
+  - name: Wire Transfers
+    description: Domestic and international wire transfers
+  - name: Stop Payments
+    description: Check stop payment orders
+  - name: P2P
+    description: Peer-to-peer transfers (Zelle-style)
+  - name: Savings Goals
+    description: Savings goal tracking
+  - name: Disputes
+    description: Transaction dispute filing (Reg E)
+  - name: Joint Accounts
+    description: Joint account owner management
+  - name: Overdraft
+    description: Overdraft protection settings
+  - name: Spending Alerts
+    description: Custom spending alert rules
+  - name: Document Vault
+    description: Secure document storage
+  - name: Check Orders
+    description: Personal check ordering
+  - name: Direct Deposit
+    description: Direct deposit switching
+  - name: Card Services
+    description: Travel notices and card replacement
+  - name: Devices
+    description: Registered device management
+  - name: External Accounts
+    description: Linked external accounts via Plaid
+  - name: Enrichment
+    description: Transaction enrichment via MX
+  - name: KYC
+    description: Identity verification
+  - name: Activation
+    description: Digital activation flow
+  - name: Financial Insights
+    description: Spending analysis, budgets, net worth
+  - name: Card Offers
+    description: Card-linked offers
+  - name: Account Opening
+    description: New account applications
+  - name: Bill Pay
+    description: Biller search and payment scheduling
+  - name: Secure Messaging
+    description: Secure member-to-staff messaging
+  - name: AI Chat
+    description: AI-powered banking assistant
+  - name: SSO
+    description: Single sign-on provider management
+  - name: CMS
+    description: Content management system
+  - name: Experiments
+    description: A/B testing and feature experiments
+  - name: Data Export
+    description: Data export and reporting
+  - name: Webhooks
+    description: Webhook delivery management
+  - name: Admin
+    description: Administrative operations
+  - name: Config
+    description: Tenant configuration and capabilities
+  - name: Sessions
+    description: Session management
+  - name: System
+    description: System health and diagnostics
+  - name: Locations
+    description: ATM and branch locator
+  - name: Integrations
+    description: Third-party integration management
+  - name: Password Policy
+    description: Password policy configuration
+  - name: Onboarding
+    description: Tenant onboarding workflow

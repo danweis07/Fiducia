@@ -1,0 +1,95 @@
+# OWASP ZAP DAST (Dynamic Application Security Testing)
+# Runs a baseline security scan against a live staging deployment
+#
+# To activate: move this file to .github/workflows/dast-zap.yml
+# Requires: STAGING_URL secret set to your staging environment URL
+#
+name: DAST - OWASP ZAP
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Target URL to scan (staging environment)'
+        required: true
+        default: 'https://staging.example.com'
+        type: string
+      scan_type:
+        description: 'Scan type'
+        required: true
+        default: 'baseline'
+        type: choice
+        options:
+          - baseline    # ~1 min, passive scan only
+          - api         # API-focused scan
+          - full        # ~30+ min, active + passive
+
+jobs:
+  zap-baseline:
+    name: ZAP Baseline Scan
+    runs-on: ubuntu-latest
+    if: inputs.scan_type == 'baseline'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: ${{ inputs.target_url }}
+          rules_file_name: .github/zap-rules.tsv
+          cmd_options: '-a'
+
+      - name: Upload ZAP Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-baseline-report
+          path: report_html.html
+          retention-days: 30
+
+  zap-api:
+    name: ZAP API Scan
+    runs-on: ubuntu-latest
+    if: inputs.scan_type == 'api'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: OWASP ZAP API Scan
+        uses: zaproxy/action-api-scan@v0.9.0
+        with:
+          target: ${{ inputs.target_url }}/functions/v1/gateway
+          format: openapi
+          cmd_options: '-a'
+
+      - name: Upload ZAP API Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-api-report
+          path: report_html.html
+          retention-days: 30
+
+  zap-full:
+    name: ZAP Full Scan
+    runs-on: ubuntu-latest
+    if: inputs.scan_type == 'full'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: OWASP ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.12.0
+        with:
+          target: ${{ inputs.target_url }}
+          rules_file_name: .github/zap-rules.tsv
+          cmd_options: '-a'
+
+      - name: Upload ZAP Full Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-full-report
+          path: report_html.html
+          retention-days: 30

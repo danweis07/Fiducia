@@ -1,0 +1,39 @@
+{
+  "notFound": {
+    "title": "Pagina non trovata",
+    "description": "La pagina che stai cercando non esiste o è stata spostata."
+  },
+  "home": {
+    "heroBadge": "Al servizio delle comunità in tutto il paese con orgoglio dal 1952",
+    "heroTitle": "Banking che mette",
+    "heroHighlight": "Te al primo posto",
+    "heroDescription": "Unisciti a oltre 175.000 membri che godono di tassi migliori, commissioni più basse e servizio personalizzato. Come cooperativa di credito senza scopo di lucro, il tuo benessere finanziario è la nostra unica missione.",
+    "openAccount": "Apri un conto",
+    "signIn": "Accedi al banking",
+    "noMonthlyFees": "Nessun canone mensile",
+    "ncuaInsured": "Assicurato NCUA",
+    "freeAtms": "ATM gratuiti",
+    "todaysTopRates": "I migliori tassi di oggi",
+    "viewAllRates": "Vedi tutti i tassi",
+    "productsTitle": "Prodotti e servizi",
+    "productsDescription": "Dal banking quotidiano ai grandi traguardi della vita, abbiamo la soluzione giusta per te.",
+    "whyChooseUsTitle": "Perché oltre 175.000 membri ci scelgono",
+    "whyChooseUsDescription": "Come cooperativa di credito di proprietà dei membri, investiamo negli strumenti e nei servizi che contano di più per te.",
+    "testimonialsTitle": "Cosa dicono i nostri membri",
+    "ctaTitle": "Pronto a unirti alla famiglia della cooperativa di credito?",
+    "ctaDescription": "Apri il tuo conto in pochi minuti — online o in una delle nostre filiali. L'adesione è aperta a chiunque nella nostra comunità.",
+    "findBranch": "Trova una filiale",
+    "questionsCallUs": "Domande? Chiamaci al (800) 555-0199"
+  },
+  "terms": {
+    "rateLabel": "AER",
+    "loanRateLabel": "APR",
+    "checkingAccount": "Current Account",
+    "currentAccount": "Current Account",
+    "savingsAccount": "Savings",
+    "depositInsuranceBody": "DGSD",
+    "depositInsuranceLimit": "€100,000",
+    "atmCount": "50,000+",
+    "atmNetworks": "LINK and Mastercard"
+  }
+}

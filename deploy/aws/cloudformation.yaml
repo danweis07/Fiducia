@@ -1,0 +1,152 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Open Banking Platform - Static frontend hosting on S3 + CloudFront.
+  This template deploys the React SPA. Supabase (backend) should be
+  configured separately at https://supabase.com or self-hosted.
+
+Parameters:
+  DomainName:
+    Type: String
+    Default: ''
+    Description: >
+      Optional custom domain name (e.g., banking.example.com).
+      Leave empty to use the CloudFront default domain.
+
+  AcmCertificateArn:
+    Type: String
+    Default: ''
+    Description: >
+      Optional ACM certificate ARN for HTTPS on custom domain.
+      Must be in us-east-1 for CloudFront. Leave empty if not using a custom domain.
+
+Conditions:
+  HasCustomDomain: !Not [!Equals [!Ref DomainName, '']]
+
+Resources:
+  # S3 bucket for static site hosting
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'open-banking-platform-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      Tags:
+        - Key: Project
+          Value: OpenBankingPlatform
+
+  # Origin Access Identity for CloudFront -> S3
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: 'OAI for Open Banking Platform S3 bucket'
+
+  # Bucket policy allowing CloudFront OAI to read objects
+  WebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Statement:
+          - Sid: AllowCloudFrontOAI
+            Effect: Allow
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId
+            Action: 's3:GetObject'
+            Resource: !Sub '${WebsiteBucket.Arn}/*'
+
+  # CloudFront distribution
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Comment: Open Banking Platform CDN
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100
+
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt WebsiteBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
+
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          CachedMethods: [GET, HEAD]
+          Compress: true
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          # Cache static assets for 1 year; index.html for 5 minutes
+          DefaultTTL: 86400
+          MaxTTL: 31536000
+          MinTTL: 0
+
+        # SPA fallback: serve index.html for all 404s (client-side routing)
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 300
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 300
+
+        # Custom domain (conditional)
+        Aliases:
+          !If
+            - HasCustomDomain
+            - [!Ref DomainName]
+            - !Ref 'AWS::NoValue'
+
+        ViewerCertificate:
+          !If
+            - HasCustomDomain
+            - AcmCertificateArn: !Ref AcmCertificateArn
+              SslSupportMethod: sni-only
+              MinimumProtocolVersion: TLSv1.2_2021
+            - CloudFrontDefaultCertificate: true
+
+      Tags:
+        - Key: Project
+          Value: OpenBankingPlatform
+
+Outputs:
+  CloudFrontURL:
+    Description: CloudFront distribution URL for the banking platform
+    Value: !Sub 'https://${CloudFrontDistribution.DomainName}'
+
+  CloudFrontDistributionId:
+    Description: CloudFront distribution ID (for cache invalidation during deploys)
+    Value: !Ref CloudFrontDistribution
+
+  S3BucketName:
+    Description: S3 bucket name for uploading built assets
+    Value: !Ref WebsiteBucket
+
+  DeployCommand:
+    Description: Command to deploy the frontend after building
+    Value: !Sub |
+      # Build the frontend
+      npm run build
+
+      # Upload to S3
+      aws s3 sync dist/ s3://${WebsiteBucket} --delete
+
+      # Invalidate CloudFront cache
+      aws cloudfront create-invalidation \
+        --distribution-id ${CloudFrontDistribution} \
+        --paths "/*"

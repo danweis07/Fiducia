@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "Se încarcă...",
+    "error": "A apărut o eroare",
+    "errorMessage": "Ceva nu a funcționat corect. Vă rugăm să încercați din nou.",
+    "success": "Succes",
+    "cancel": "Anulează",
+    "confirm": "Confirmă",
+    "save": "Salvează",
+    "back": "Înapoi",
+    "next": "Următorul",
+    "submit": "Trimite",
+    "close": "Închide",
+    "edit": "Editează",
+    "delete": "Șterge",
+    "search": "Caută",
+    "noResults": "Nu s-au găsit rezultate",
+    "retry": "Încearcă din nou",
+    "learnMore": "Află mai multe",
+    "viewDetails": "Vezi detalii",
+    "showMore": "Arată mai mult",
+    "showLess": "Arată mai puțin",
+    "required": "Obligatoriu",
+    "optional": "Opțional",
+    "yes": "Da",
+    "no": "Nu",
+    "or": "sau",
+    "and": "și"
+  },
+  "a11y": {
+    "skipToContent": "Salt la conținutul principal",
+    "openMenu": "Deschide meniul",
+    "closeMenu": "Închide meniul",
+    "openNavigation": "Deschide navigarea",
+    "closeNavigation": "Închide navigarea",
+    "toggleDarkMode": "Comută modul întunecat",
+    "selectLanguage": "Selectează limba",
+    "expandSection": "Extinde secțiunea",
+    "collapseSection": "Restrânge secțiunea",
+    "loading": "Conținutul se încarcă",
+    "notification": "Notificare",
+    "required": "Acest câmp este obligatoriu",
+    "showPassword": "Arată parola",
+    "hidePassword": "Ascunde parola",
+    "externalLink": "Se deschide într-o fereastră nouă",
+    "pagination": "Paginare",
+    "previousPage": "Pagina anterioară",
+    "nextPage": "Pagina următoare",
+    "page": "Pagina {{number}}"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "Platformă Bancară Digitală",
+    "signIn": "Autentificare",
+    "signUp": "Înregistrare",
+    "email": "E-mail",
+    "emailPlaceholder": "you@company.com",
+    "password": "Parolă",
+    "confirmPassword": "Confirmă parola",
+    "forgotPassword": "Ai uitat parola?",
+    "resetPassword": "Resetează parola",
+    "sendResetLink": "Trimite link de resetare",
+    "backToSignIn": "Înapoi la autentificare",
+    "signInWithSSO": "Autentificare cu SSO",
+    "createAccount": "Creează cont",
+    "firmName": "Numele firmei",
+    "firmNamePlaceholder": "Compania ta",
+    "minCharacters": "Min. 8 caractere",
+    "signInFailed": "Autentificare eșuată",
+    "signUpFailed": "Înregistrare eșuată",
+    "checkYourEmail": "Verifică-ți e-mailul",
+    "confirmationLinkSent": "Ți-am trimis un link de confirmare. Te rugăm să verifici căsuța de e-mail.",
+    "resetFailed": "Resetare eșuată",
+    "resetLinkSent": "Ți-am trimis un link de resetare a parolei. Te rugăm să verifici căsuța de e-mail.",
+    "alreadyHaveAccount": "Ai deja un cont?",
+    "noAccount": "Nu ai un cont?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "Ups! Pagina nu a fost găsită",
+    "returnHome": "Înapoi la pagina principală"
+  },
+  "resetPassword": {
+    "invalidLink": "Link invalid",
+    "invalidLinkDesc": "Acest link de resetare a parolei este invalid sau a expirat.",
+    "goToSignIn": "Mergi la autentificare",
+    "setNewPassword": "Setează parola nouă",
+    "setNewPasswordDesc": "Introdu noua ta parolă mai jos.",
+    "newPassword": "Parolă nouă",
+    "confirmPassword": "Confirmă parola",
+    "minCharacters": "Min. 8 caractere",
+    "updatePassword": "Actualizează parola",
+    "updateFailed": "Actualizare eșuată",
+    "passwordUpdated": "Parola a fost actualizată",
+    "passwordUpdatedDesc": "Acum te poți autentifica cu noua ta parolă."
+  },
+  "demoSelector": {
+    "title": "Alege un demo",
+    "subtitle": "Explorează platforma cu date de exemplu — nu este nevoie de cont.",
+    "demos": {
+      "banking": {
+        "title": "Bancare digitală",
+        "description": "Conturi, transferuri, plata facturilor, depunere la distanță, controlul cardurilor și multe altele."
+      },
+      "admin": {
+        "title": "Portal de administrare",
+        "description": "Gestionarea chiriașilor, branding, conformitate, analize și jurnale de audit."
+      }
+    }
+  }
+}

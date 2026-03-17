@@ -1,0 +1,85 @@
+groups:
+  - name: banking-platform
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} over the last 5 minutes"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API latency"
+          description: "95th percentile latency is {{ $value }}s"
+
+      - alert: GatewayDown
+        expr: up{job="supabase-gateway"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Supabase gateway is down"
+
+      - alert: DatabaseConnectionPoolExhausted
+        expr: pg_stat_activity_count / pg_settings_max_connections > 0.9
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: "{{ $value | humanizePercentage }} of connections in use"
+
+      - alert: HighTransferFailureRate
+        expr: rate(banking_transfers_failed_total[15m]) / rate(banking_transfers_total[15m]) > 0.1
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Transfer failure rate above 10%"
+
+      - alert: RDCProcessingBacklog
+        expr: banking_rdc_pending_count > 100
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "RDC processing backlog detected"
+
+      - alert: WebhookDeliveryBacklog
+        expr: banking_webhook_pending_count > 500
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Webhook delivery backlog"
+
+      - alert: KYCVerificationSlow
+        expr: histogram_quantile(0.95, rate(banking_kyc_duration_seconds_bucket[5m])) > 30
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "KYC verification taking too long"
+
+      - alert: DiskSpaceRunningLow
+        expr: node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} < 0.15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk space below 15%"
+
+      - alert: MemoryPressure
+        expr: container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container memory usage above 90%"

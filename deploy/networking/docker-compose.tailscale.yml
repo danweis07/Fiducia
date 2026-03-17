@@ -1,0 +1,47 @@
+# =============================================================================
+# Docker Compose — Tailscale Sidecar for Private Core Banking Connectivity
+# =============================================================================
+# Banks require private tunnels (no public internet) to reach their core
+# banking systems (Fineract, Symitar, CU*Answers). Tailscale provides a
+# zero-config WireGuard mesh that connects the banking platform to the
+# institution's on-prem network.
+#
+# Usage:
+#   1. Create a Tailscale auth key at https://login.tailscale.com/admin/settings/keys
+#   2. Set TAILSCALE_AUTHKEY in your secrets manager (Vault / AWS SM)
+#   3. docker compose -f docker-compose.yml -f deploy/networking/docker-compose.tailscale.yml up
+#
+# The app container routes traffic to core banking hosts through the
+# Tailscale sidecar, which terminates the WireGuard tunnel.
+
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    hostname: banking-platform
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - TS_AUTHKEY=${TAILSCALE_AUTHKEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_EXTRA_ARGS=--advertise-tags=tag:banking-platform --accept-routes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "tailscale", "status", "--json"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Override the app service to route through Tailscale
+  app:
+    network_mode: "service:tailscale"
+    depends_on:
+      tailscale:
+        condition: service_healthy
+
+volumes:
+  tailscale-state:

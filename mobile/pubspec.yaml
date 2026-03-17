@@ -1,0 +1,73 @@
+name: digital_banking
+description: Digital banking mobile app — multi-tenant credit union platform.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+  flutter: '>=3.16.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Navigation
+  go_router: ^14.0.0
+
+  # State management
+  flutter_riverpod: ^2.5.0
+  riverpod_annotation: ^2.3.0
+
+  # Networking
+  dio: ^5.4.0
+
+  # Auth
+  supabase_flutter: ^2.3.0
+
+  # Location & Maps
+  geolocator: ^12.0.0
+  geocoding: ^3.0.0
+  google_maps_flutter: ^2.6.0
+  permission_handler: ^11.3.0
+
+  # UI
+  flutter_svg: ^2.0.0
+  cached_network_image: ^3.3.0
+  shimmer: ^3.0.0
+  intl: ^0.19.0
+
+  # Storage
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.0
+
+  # Biometrics
+  local_auth: ^2.2.0
+
+  # Push notifications
+  firebase_core: ^2.27.0
+  firebase_messaging: ^14.7.0
+  flutter_local_notifications: ^17.0.0
+
+  # Messaging providers (Braze, Airship)
+  braze_plugin: ^10.0.0
+  airship_flutter: ^7.0.0
+
+  # Camera / Image
+  image_picker: ^1.0.0
+
+  # Utilities
+  url_launcher: ^6.2.0
+  connectivity_plus: ^6.0.0
+  package_info_plus: ^8.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.0
+  riverpod_generator: ^2.4.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

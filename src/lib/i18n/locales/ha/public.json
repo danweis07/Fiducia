@@ -1,0 +1,28 @@
+{
+  "notFound": {
+    "title": "Ba a Sami Shafin Ba",
+    "description": "Shafin da kake nema ba ya wanzu ko kuma an matsar da shi."
+  },
+  "home": {
+    "heroBadge": "Muna yi wa al'ummomin ƙasa hidima da alfahari tun 1952",
+    "heroTitle": "Banki da Yake Sanya",
+    "heroHighlight": "Kai Da Farko",
+    "heroDescription": "Ka haɗa kai da membobi 175,000+ waɗanda suke cin gajiyar kyawawan riba, ƙananan kuɗaɗe, da sabis na kai tsaye. A matsayin ƙungiyar bashi marar riba, jin daɗin kuɗinka shine manufarmu kaɗai.",
+    "openAccount": "Buɗe Asusu",
+    "signIn": "Shiga Banki",
+    "noMonthlyFees": "Babu kuɗin wata-wata",
+    "ncuaInsured": "NCUA tabbatacce",
+    "freeAtms": "ATM kyauta",
+    "todaysTopRates": "Mafi Kyawun Riba Na Yau",
+    "viewAllRates": "Duba Dukan Riba",
+    "productsTitle": "Kayayyaki & Sabis",
+    "productsDescription": "Daga banki na yau da kullum zuwa manyan abubuwan rayuwa, muna da mafita daidai a gare ka.",
+    "whyChooseUsTitle": "Me Ya Sa Membobi 175,000+ Suka Zaɓe Mu",
+    "whyChooseUsDescription": "A matsayin ƙungiyar bashi mallakin membobi, muna saka hannun jari a cikin kayan aiki da sabis da suka fi muhimmanci a gare ka.",
+    "testimonialsTitle": "Abin Da Membobinmu Suke Cewa",
+    "ctaTitle": "Kana a Shirye Ka Shiga Iyalin Ƙungiyar Bashi?",
+    "ctaDescription": "Buɗe asusunka cikin mintoci — ta yanar gizo ko a kowace resharmu. Zama memba yana buɗe ga kowa a cikin al'ummarmu.",
+    "findBranch": "Nemo Reshe",
+    "questionsCallUs": "Tambayoyi? Ka kira mu a (800) 555-0199"
+  }
+}

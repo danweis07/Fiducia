@@ -1,0 +1,39 @@
+{
+  "notFound": {
+    "title": "Stránka nenalezena",
+    "description": "Stránka, kterou hledáte, neexistuje nebo byla přesunuta."
+  },
+  "home": {
+    "heroBadge": "S hrdostí sloužíme komunitám po celé zemi od roku 1952",
+    "heroTitle": "Bankovnictví, které dává",
+    "heroHighlight": "Vás na první místo",
+    "heroDescription": "Přidejte se k více než 175 000 členům, kteří využívají lepší úrokové sazby, nižší poplatky a osobní služby. Jako nezisková úvěrová unie je vaše finanční pohoda naší jedinou misí.",
+    "openAccount": "Otevřít účet",
+    "signIn": "Přihlásit se k bankovnictví",
+    "noMonthlyFees": "Žádné měsíční poplatky",
+    "ncuaInsured": "Pojištěno NCUA",
+    "freeAtms": "Bezplatné ATM",
+    "todaysTopRates": "Dnešní nejlepší sazby",
+    "viewAllRates": "Zobrazit všechny sazby",
+    "productsTitle": "Produkty a služby",
+    "productsDescription": "Od každodenního bankovnictví po důležité životní události — máme pro vás správné řešení.",
+    "whyChooseUsTitle": "Proč si nás vybírá více než 175 000 členů",
+    "whyChooseUsDescription": "Jako člensky vlastněná úvěrová unie investujeme do nástrojů a služeb, které jsou pro vás nejdůležitější.",
+    "testimonialsTitle": "Co říkají naši členové",
+    "ctaTitle": "Jste připraveni vstoupit do rodiny úvěrové unie?",
+    "ctaDescription": "Otevřete si účet během několika minut — online nebo na kterékoli z našich poboček. Členství je otevřeno komukoli v naší komunitě.",
+    "findBranch": "Najít pobočku",
+    "questionsCallUs": "Máte otázky? Zavolejte nám na (800) 555-0199"
+  },
+  "terms": {
+    "rateLabel": "AER",
+    "loanRateLabel": "APR",
+    "checkingAccount": "Current Account",
+    "currentAccount": "Current Account",
+    "savingsAccount": "Savings",
+    "depositInsuranceBody": "DGSD",
+    "depositInsuranceLimit": "€100,000",
+    "atmCount": "50,000+",
+    "atmNetworks": "LINK and Mastercard"
+  }
+}

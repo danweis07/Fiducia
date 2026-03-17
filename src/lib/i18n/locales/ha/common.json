@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "Ana lodi...",
+    "error": "An sami kuskure",
+    "errorMessage": "Wani abu bai dace ba. Da fatan za a sake gwadawa.",
+    "success": "Nasara",
+    "cancel": "Soke",
+    "confirm": "Tabbatar",
+    "save": "Ajiye",
+    "back": "Baya",
+    "next": "Gaba",
+    "submit": "Aika",
+    "close": "Rufe",
+    "edit": "Gyara",
+    "delete": "Share",
+    "search": "Bincika",
+    "noResults": "Ba a sami sakamako ba",
+    "retry": "Sake gwadawa",
+    "learnMore": "Ƙara koyo",
+    "viewDetails": "Duba cikakkun bayanai",
+    "showMore": "Nuna ƙari",
+    "showLess": "Nuna ƙasa",
+    "required": "Dole ne",
+    "optional": "Na zaɓi",
+    "yes": "Eh",
+    "no": "A'a",
+    "or": "ko",
+    "and": "da"
+  },
+  "a11y": {
+    "skipToContent": "Tsallake zuwa babban abun ciki",
+    "openMenu": "Buɗe menu",
+    "closeMenu": "Rufe menu",
+    "openNavigation": "Buɗe kewayawa",
+    "closeNavigation": "Rufe kewayawa",
+    "toggleDarkMode": "Canja yanayin duhu",
+    "selectLanguage": "Zaɓi harshe",
+    "expandSection": "Faɗaɗa sashe",
+    "collapseSection": "Taƙaita sashe",
+    "loading": "Ana lodi abun ciki",
+    "notification": "Sanarwa",
+    "required": "Ana buƙatar wannan filin",
+    "showPassword": "Nuna kalmar sirri",
+    "hidePassword": "Ɓoye kalmar sirri",
+    "externalLink": "Yana buɗewa a sabon taga",
+    "pagination": "Shafuffuka",
+    "previousPage": "Shafin baya",
+    "nextPage": "Shafi na gaba",
+    "page": "Shafi {{number}}"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "Dandalin Banki na Dijital",
+    "signIn": "Shiga",
+    "signUp": "Yi rajista",
+    "email": "Imel",
+    "emailPlaceholder": "you@company.com",
+    "password": "Kalmar sirri",
+    "confirmPassword": "Tabbatar da kalmar sirri",
+    "forgotPassword": "An manta kalmar sirri?",
+    "resetPassword": "Sake saita kalmar sirri",
+    "sendResetLink": "Aika hanyar haɗi don sake saita",
+    "backToSignIn": "Koma shiga",
+    "signInWithSSO": "Shiga da SSO",
+    "createAccount": "Ƙirƙiri asusu",
+    "firmName": "Sunan kamfani",
+    "firmNamePlaceholder": "Kamfanin ku",
+    "minCharacters": "Aƙalla haruffa 8",
+    "signInFailed": "Shiga bai yi nasara ba",
+    "signUpFailed": "Rajista bai yi nasara ba",
+    "checkYourEmail": "Duba imel ɗin ku",
+    "confirmationLinkSent": "Mun aiko muku da hanyar haɗi na tabbatarwa. Da fatan za a duba akwatin saƙo.",
+    "resetFailed": "Sake saita bai yi nasara ba",
+    "resetLinkSent": "Mun aiko muku da hanyar haɗi don sake saita kalmar sirri. Da fatan za a duba akwatin saƙo.",
+    "alreadyHaveAccount": "Kuna da asusu a riga?",
+    "noAccount": "Ba ku da asusu?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "Oho! Ba a sami shafin ba",
+    "returnHome": "Koma gida"
+  },
+  "resetPassword": {
+    "invalidLink": "Hanyar haɗi marar inganci",
+    "invalidLinkDesc": "Wannan hanyar haɗi don sake saita kalmar sirri ba ta da inganci ko ta ƙare.",
+    "goToSignIn": "Je zuwa shiga",
+    "setNewPassword": "Saita sabuwar kalmar sirri",
+    "setNewPasswordDesc": "Shigar da sabuwar kalmar sirri a ƙasa.",
+    "newPassword": "Sabuwar kalmar sirri",
+    "confirmPassword": "Tabbatar da kalmar sirri",
+    "minCharacters": "Aƙalla haruffa 8",
+    "updatePassword": "Sabunta kalmar sirri",
+    "updateFailed": "Sabuntawa bai yi nasara ba",
+    "passwordUpdated": "An sabunta kalmar sirri",
+    "passwordUpdatedDesc": "Yanzu za ku iya shiga da sabuwar kalmar sirri."
+  },
+  "demoSelector": {
+    "title": "Zaɓi wasan gwaji",
+    "subtitle": "Bincika dandalin tare da bayanan samfuri — ba a buƙatar asusu.",
+    "demos": {
+      "banking": {
+        "title": "Banki na Dijital",
+        "description": "Asusun, canja wurin kuɗi, biyan kuɗi, ajiyar nesa, sarrafa kati da ƙari."
+      },
+      "admin": {
+        "title": "Ƙofar Gudanarwa",
+        "description": "Gudanar da masu haya, alamar kasuwanci, bin doka, nazarin bayanai da rajistan dubawa."
+      }
+    }
+  }
+}

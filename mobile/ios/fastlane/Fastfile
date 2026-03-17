@@ -1,0 +1,78 @@
+default_platform(:ios)
+
+platform :ios do
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SETUP
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  before_all do
+    setup_ci if ENV["CI"]
+  end
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CODE SIGNING
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  desc "Sync certificates and provisioning profiles"
+  lane :sync_certs do
+    match(type: "development")
+    match(type: "appstore")
+  end
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # BUILD
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  desc "Build development IPA"
+  lane :build_dev do
+    sync_certs
+    sh("cd ../.. && flutter build ipa --debug --dart-define=SUPABASE_URL=#{ENV['SUPABASE_URL']} --dart-define=SUPABASE_ANON_KEY=#{ENV['SUPABASE_ANON_KEY']}")
+  end
+
+  desc "Build production IPA for App Store"
+  lane :build_release do
+    sync_certs
+    increment_build_number(
+      build_number: ENV["BUILD_NUMBER"] || latest_testflight_build_number + 1
+    )
+    sh("cd ../.. && flutter build ipa --release --dart-define=SUPABASE_URL=#{ENV['SUPABASE_URL']} --dart-define=SUPABASE_ANON_KEY=#{ENV['SUPABASE_ANON_KEY']}")
+  end
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # TESTING
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  desc "Run Flutter tests"
+  lane :test do
+    sh("cd ../.. && flutter test")
+  end
+
+  desc "Run Flutter analyze"
+  lane :lint do
+    sh("cd ../.. && flutter analyze")
+  end
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DEPLOYMENT
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  desc "Upload to TestFlight"
+  lane :beta do
+    build_release
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      ipa: "../build/ios/ipa/digital_banking.ipa"
+    )
+  end
+
+  desc "Upload to App Store"
+  lane :release do
+    build_release
+    upload_to_app_store(
+      skip_screenshots: true,
+      skip_metadata: false,
+      ipa: "../build/ios/ipa/digital_banking.ipa",
+      submit_for_review: false
+    )
+  end
+end

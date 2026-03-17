@@ -1,0 +1,21 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "npm ci && npm run build"
+  },
+  "deploy": {
+    "startCommand": "npx serve dist -s -l tcp://0.0.0.0:$PORT",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 30,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3
+  },
+  "environments": {
+    "production": {
+      "deploy": {
+        "numReplicas": 2
+      }
+    }
+  }
+}

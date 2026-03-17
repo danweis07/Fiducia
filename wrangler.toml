@@ -1,0 +1,26 @@
+# =============================================================================
+# Cloudflare Workers / Pages — Digital Banking Platform
+# =============================================================================
+# Deploy with: npx wrangler pages deploy dist
+# Or connect your repo at dash.cloudflare.com for automatic deploys.
+
+name = "digital-banking-platform"
+compatibility_date = "2025-12-01"
+
+# --- Pages Configuration ---
+# The SPA is deployed as a Cloudflare Pages project.
+# Build output is the Vite `dist/` directory.
+pages_build_output_dir = "dist"
+
+[build]
+command = "npm ci && npm run build"
+
+# --- Environment Variables ---
+# Set secrets via: npx wrangler pages secret put VITE_SUPABASE_URL
+# Or configure in the Cloudflare Dashboard > Pages > Settings > Environment variables.
+
+[env.production]
+vars = { VITE_DEMO_MODE = "false" }
+
+[env.preview]
+vars = { VITE_DEMO_MODE = "true" }

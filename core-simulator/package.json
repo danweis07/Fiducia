@@ -1,0 +1,12 @@
+{
+  "name": "fiducia-core-simulator",
+  "version": "1.0.0",
+  "description": "Core banking simulator — mimics CU*Answers/Symitar/Fineract REST endpoints for local development and CI/CD",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

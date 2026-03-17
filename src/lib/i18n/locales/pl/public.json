@@ -1,0 +1,39 @@
+{
+  "notFound": {
+    "title": "Strona nie znaleziona",
+    "description": "Strona, której szukasz, nie istnieje lub została przeniesiona."
+  },
+  "home": {
+    "heroBadge": "Z dumą obsługujemy społeczności w całym kraju od 1952 roku",
+    "heroTitle": "Bankowość, która stawia",
+    "heroHighlight": "Ciebie na pierwszym miejscu",
+    "heroDescription": "Dołącz do ponad 175 000 członków, którzy korzystają z lepszych stawek, niższych opłat i indywidualnej obsługi. Jako nienastawiona na zysk unia kredytowa, Twój dobrobyt finansowy jest naszą jedyną misją.",
+    "openAccount": "Otwórz konto",
+    "signIn": "Zaloguj się do bankowości",
+    "noMonthlyFees": "Bez opłat miesięcznych",
+    "ncuaInsured": "Ubezpieczone przez NCUA",
+    "freeAtms": "Darmowe bankomaty",
+    "todaysTopRates": "Najlepsze dzisiejsze stawki",
+    "viewAllRates": "Zobacz wszystkie stawki",
+    "productsTitle": "Produkty i usługi",
+    "productsDescription": "Od codziennej bankowości po ważne momenty w życiu — mamy odpowiednie rozwiązanie dla Ciebie.",
+    "whyChooseUsTitle": "Dlaczego ponad 175 000 członków nas wybiera",
+    "whyChooseUsDescription": "Jako unia kredytowa będąca własnością członków, inwestujemy w narzędzia i usługi, które są dla Ciebie najważniejsze.",
+    "testimonialsTitle": "Co mówią nasi członkowie",
+    "ctaTitle": "Gotowy dołączyć do rodziny unii kredytowej?",
+    "ctaDescription": "Otwórz konto w kilka minut — online lub w dowolnym z naszych oddziałów. Członkostwo jest otwarte dla każdego w naszej społeczności.",
+    "findBranch": "Znajdź oddział",
+    "questionsCallUs": "Pytania? Zadzwoń do nas pod (800) 555-0199"
+  },
+  "terms": {
+    "rateLabel": "AER",
+    "loanRateLabel": "APR",
+    "checkingAccount": "Current Account",
+    "currentAccount": "Current Account",
+    "savingsAccount": "Savings",
+    "depositInsuranceBody": "DGSD",
+    "depositInsuranceLimit": "€100,000",
+    "atmCount": "50,000+",
+    "atmNetworks": "LINK and Mastercard"
+  }
+}

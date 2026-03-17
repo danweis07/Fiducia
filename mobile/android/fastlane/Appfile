@@ -1,0 +1,5 @@
+# Android App Configuration
+# Update these values for your organization before first use.
+
+json_key_file(ENV["PLAY_STORE_JSON_KEY"] || "path/to/play-store-credentials.json")
+package_name(ENV["PACKAGE_NAME"] || "com.example.digitalbanking")

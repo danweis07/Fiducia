@@ -1,0 +1,49 @@
+# Load & Stress Testing with k6
+# Performance testing against staging environment
+#
+# To activate: move this file to .github/workflows/load-testing.yml
+# Requires: k6 test scripts in tests/load/
+#
+name: Load Testing (k6)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Target base URL'
+        required: true
+        default: 'https://staging.example.com'
+        type: string
+      test_profile:
+        description: 'Test profile to run'
+        required: true
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke        # 1 VU, 30s — sanity check
+          - load         # 50 VUs, 5min — normal load
+          - stress       # 200 VUs, 10min — find breaking point
+          - soak         # 30 VUs, 30min — memory leaks, stability
+
+jobs:
+  k6-test:
+    name: k6 ${{ inputs.test_profile }} test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run k6 test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/load/${{ inputs.test_profile }}.js
+        env:
+          K6_BASE_URL: ${{ inputs.target_url }}
+
+      - name: Upload k6 results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-${{ inputs.test_profile }}-results
+          path: k6-results/
+          retention-days: 30

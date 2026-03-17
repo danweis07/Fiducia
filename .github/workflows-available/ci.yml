@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint, Type Check, Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint -- --max-warnings 40
+
+      - name: Format Check
+        run: npx prettier --check "src/**/*.{ts,tsx}"
+
+      - name: Type Check
+        run: npm run typecheck
+
+      - name: Unit Tests
+        run: npm run test:run
+
+      - name: Build
+        run: npm run build
+
+  coverage:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: validate
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run Tests with Coverage
+        run: npm run test:coverage
+
+      - name: Upload Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30

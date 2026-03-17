@@ -1,0 +1,39 @@
+{
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die Seite, die Sie suchen, existiert nicht oder wurde verschoben."
+  },
+  "home": {
+    "heroBadge": "Seit 1952 stolz im Dienst der Gemeinschaft landesweit",
+    "heroTitle": "Banking, das",
+    "heroHighlight": "Sie an erste Stelle setzt",
+    "heroDescription": "Schließen Sie sich über 175.000 Mitgliedern an, die bessere Zinsen, niedrigere Gebühren und persönlichen Service genießen. Als gemeinnützige Kreditgenossenschaft ist Ihr finanzielles Wohlergehen unsere einzige Mission.",
+    "openAccount": "Konto eröffnen",
+    "signIn": "Zum Banking anmelden",
+    "noMonthlyFees": "Keine monatlichen Gebühren",
+    "ncuaInsured": "NCUA-versichert",
+    "freeAtms": "Kostenlose Geldautomaten",
+    "todaysTopRates": "Heutige Top-Zinsen",
+    "viewAllRates": "Alle Zinsen anzeigen",
+    "productsTitle": "Produkte & Dienstleistungen",
+    "productsDescription": "Vom alltäglichen Banking bis zu wichtigen Lebensmomenten — wir haben die richtige Lösung für Sie.",
+    "whyChooseUsTitle": "Warum über 175.000 Mitglieder uns wählen",
+    "whyChooseUsDescription": "Als mitgliedereigene Kreditgenossenschaft investieren wir in die Werkzeuge und Dienste, die Ihnen am wichtigsten sind.",
+    "testimonialsTitle": "Was unsere Mitglieder sagen",
+    "ctaTitle": "Bereit, der Kreditgenossenschafts-Familie beizutreten?",
+    "ctaDescription": "Eröffnen Sie Ihr Konto in wenigen Minuten — online oder in einer unserer Filialen. Die Mitgliedschaft steht jedem in unserer Gemeinschaft offen.",
+    "findBranch": "Filiale finden",
+    "questionsCallUs": "Fragen? Rufen Sie uns an unter (800) 555-0199"
+  },
+  "terms": {
+    "rateLabel": "AER",
+    "loanRateLabel": "APR",
+    "checkingAccount": "Current Account",
+    "currentAccount": "Current Account",
+    "savingsAccount": "Savings",
+    "depositInsuranceBody": "DGSD",
+    "depositInsuranceLimit": "€100,000",
+    "atmCount": "50,000+",
+    "atmNetworks": "LINK and Mastercard"
+  }
+}

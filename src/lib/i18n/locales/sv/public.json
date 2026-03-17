@@ -1,0 +1,39 @@
+{
+  "notFound": {
+    "title": "Sidan hittades inte",
+    "description": "Sidan du letar efter finns inte eller har flyttats."
+  },
+  "home": {
+    "heroBadge": "Stolt tjänande av samhällen i hela landet sedan 1952",
+    "heroTitle": "Banking som sätter",
+    "heroHighlight": "Dig först",
+    "heroDescription": "Gå med bland 175 000+ medlemmar som njuter av bättre räntor, lägre avgifter och personlig service. Som en icke-vinstdrivande kreditförening är ditt ekonomiska välbefinnande vårt enda uppdrag.",
+    "openAccount": "Öppna konto",
+    "signIn": "Logga in på banking",
+    "noMonthlyFees": "Inga månadsavgifter",
+    "ncuaInsured": "NCUA-försäkrad",
+    "freeAtms": "Gratis uttagsautomater",
+    "todaysTopRates": "Dagens bästa räntor",
+    "viewAllRates": "Visa alla räntor",
+    "productsTitle": "Produkter & tjänster",
+    "productsDescription": "Från vardagligt bankande till livets stora milstolpar — vi har rätt lösning för dig.",
+    "whyChooseUsTitle": "Varför 175 000+ medlemmar väljer oss",
+    "whyChooseUsDescription": "Som en medlemsägd kreditförening investerar vi i de verktyg och tjänster som betyder mest för dig.",
+    "testimonialsTitle": "Vad våra medlemmar säger",
+    "ctaTitle": "Redo att gå med i kreditföreningsfamiljen?",
+    "ctaDescription": "Öppna ditt konto på några minuter — online eller på något av våra kontor. Medlemskap är öppet för alla i vårt samhälle.",
+    "findBranch": "Hitta ett kontor",
+    "questionsCallUs": "Frågor? Ring oss på (800) 555-0199"
+  },
+  "terms": {
+    "rateLabel": "AER",
+    "loanRateLabel": "APR",
+    "checkingAccount": "Current Account",
+    "currentAccount": "Current Account",
+    "savingsAccount": "Savings",
+    "depositInsuranceBody": "DGSD",
+    "depositInsuranceLimit": "€100,000",
+    "atmCount": "50,000+",
+    "atmNetworks": "LINK and Mastercard"
+  }
+}

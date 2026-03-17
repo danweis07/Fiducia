@@ -1,0 +1,11 @@
+apiVersion: v2
+name: banking-platform
+description: Multi-tenant digital banking platform
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - banking
+  - fintech
+  - multi-tenant
+  - supabase

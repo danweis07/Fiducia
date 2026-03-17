@@ -1,0 +1,13 @@
+# iOS App Configuration
+# Update these values for your organization before first use.
+#
+# Find your App ID at: https://developer.apple.com/account/resources/identifiers
+# Find your Team ID at: https://developer.apple.com/account/#/membership
+
+app_identifier(ENV["APP_IDENTIFIER"] || "com.example.digitalbanking")
+apple_id(ENV["APPLE_ID"] || "developer@example.com")
+team_id(ENV["TEAM_ID"] || "XXXXXXXXXX")
+
+itc_team_id(ENV["ITC_TEAM_ID"])
+
+for_platform :ios

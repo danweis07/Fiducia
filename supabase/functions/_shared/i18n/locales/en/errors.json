@@ -1,0 +1,147 @@
+{
+  "AUTH_REQUIRED": {
+    "title": "Sign in required",
+    "message": "Your session has ended. Please sign in to continue.",
+    "action": "Sign in"
+  },
+  "AUTH_EXPIRED": {
+    "title": "Session expired",
+    "message": "Your session has expired for security. Please sign in again.",
+    "action": "Sign in again"
+  },
+  "AUTH_MFA_REQUIRED": {
+    "title": "Verification needed",
+    "message": "Please complete multi-factor authentication to proceed.",
+    "action": "Verify identity"
+  },
+  "AUTH_FORBIDDEN": {
+    "title": "Access denied",
+    "message": "You do not have permission to perform this action.",
+    "action": "Contact support"
+  },
+  "ACCOUNT_NOT_FOUND": {
+    "title": "Account not found",
+    "message": "The account you are looking for could not be found.",
+    "action": "Go to accounts"
+  },
+  "ACCOUNT_FROZEN": {
+    "title": "Account frozen",
+    "message": "This account has been frozen and cannot process transactions at this time.",
+    "action": "Contact support"
+  },
+  "ACCOUNT_CLOSED": {
+    "title": "Account closed",
+    "message": "This account has been closed and is no longer active.",
+    "action": "Go to accounts"
+  },
+  "INSUFFICIENT_FUNDS": {
+    "title": "Insufficient funds",
+    "message": "There are not enough funds in this account to complete the transaction.",
+    "action": "Check balance"
+  },
+  "TRANSFER_LIMIT_EXCEEDED": {
+    "title": "Transfer limit exceeded",
+    "message": "This transfer exceeds your daily or per-transaction limit.",
+    "action": "Try a smaller amount"
+  },
+  "TRANSFER_INVALID_AMOUNT": {
+    "title": "Invalid amount",
+    "message": "Please enter a valid transfer amount greater than zero.",
+    "action": "Enter a valid amount"
+  },
+  "TRANSFER_SAME_ACCOUNT": {
+    "title": "Same account selected",
+    "message": "The source and destination accounts must be different.",
+    "action": "Select a different account"
+  },
+  "TRANSFER_CUTOFF_PASSED": {
+    "title": "Cutoff time passed",
+    "message": "The daily processing cutoff has passed. Your transfer will be processed on the next business day.",
+    "action": "Schedule for tomorrow"
+  },
+  "TRANSFER_NOT_FOUND": {
+    "title": "Transfer not found",
+    "message": "The transfer you are looking for could not be found.",
+    "action": "View transfers"
+  },
+  "BILL_NOT_FOUND": {
+    "title": "Bill not found",
+    "message": "The bill or payee you are looking for could not be found.",
+    "action": "View payees"
+  },
+  "BILL_ALREADY_PAID": {
+    "title": "Already paid",
+    "message": "This bill has already been paid.",
+    "action": "View payment history"
+  },
+  "BILL_PAST_DUE": {
+    "title": "Bill past due",
+    "message": "This bill is past its due date. Late fees may apply.",
+    "action": "Pay now"
+  },
+  "CARD_NOT_FOUND": {
+    "title": "Card not found",
+    "message": "The card you are looking for could not be found.",
+    "action": "View cards"
+  },
+  "CARD_ALREADY_LOCKED": {
+    "title": "Card already locked",
+    "message": "This card is already locked.",
+    "action": "Unlock card"
+  },
+  "CARD_LIMIT_INVALID": {
+    "title": "Invalid card limit",
+    "message": "The spending limit you entered is not valid. Please check the minimum and maximum allowed.",
+    "action": "Adjust limit"
+  },
+  "RDC_IMAGE_QUALITY": {
+    "title": "Image quality issue",
+    "message": "The check image could not be read clearly. Please retake the photo in good lighting.",
+    "action": "Retake photo"
+  },
+  "RDC_AMOUNT_EXCEEDED": {
+    "title": "Deposit limit exceeded",
+    "message": "This check exceeds your mobile deposit limit.",
+    "action": "Visit a branch"
+  },
+  "RDC_DUPLICATE_CHECK": {
+    "title": "Duplicate check detected",
+    "message": "This check appears to have already been deposited.",
+    "action": "Check deposit history"
+  },
+  "VALIDATION_ERROR": {
+    "title": "Validation error",
+    "message": "Some fields contain invalid data. Please review and correct them.",
+    "action": "Review form"
+  },
+  "INVALID_INPUT": {
+    "title": "Invalid input",
+    "message": "Please check your input and try again.",
+    "action": "Fix input"
+  },
+  "RATE_LIMITED": {
+    "title": "Too many requests",
+    "message": "You have made too many requests. Please wait a moment and try again.",
+    "action": "Wait and retry"
+  },
+  "INTERNAL_ERROR": {
+    "title": "Something went wrong",
+    "message": "An unexpected error occurred. Our team has been notified.",
+    "action": "Try again"
+  },
+  "SERVICE_UNAVAILABLE": {
+    "title": "Service unavailable",
+    "message": "This service is temporarily unavailable. Please try again in a few minutes.",
+    "action": "Try again later"
+  },
+  "GATEWAY_ERROR": {
+    "title": "Connection error",
+    "message": "We could not connect to the banking service. Please check your connection and try again.",
+    "action": "Try again"
+  },
+  "fallback": {
+    "title": "Something went wrong",
+    "message": "An unexpected error occurred. Please try again.",
+    "action": "Try again"
+  }
+}

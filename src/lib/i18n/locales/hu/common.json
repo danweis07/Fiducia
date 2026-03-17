@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "Betöltés...",
+    "error": "Hiba történt",
+    "errorMessage": "Valami hiba történt. Kérjük, próbálja újra.",
+    "success": "Sikeres",
+    "cancel": "Mégse",
+    "confirm": "Megerősítés",
+    "save": "Mentés",
+    "back": "Vissza",
+    "next": "Következő",
+    "submit": "Beküldés",
+    "close": "Bezárás",
+    "edit": "Szerkesztés",
+    "delete": "Törlés",
+    "search": "Keresés",
+    "noResults": "Nincs találat",
+    "retry": "Próbálja újra",
+    "learnMore": "Tudjon meg többet",
+    "viewDetails": "Részletek megtekintése",
+    "showMore": "Több megjelenítése",
+    "showLess": "Kevesebb megjelenítése",
+    "required": "Kötelező",
+    "optional": "Opcionális",
+    "yes": "Igen",
+    "no": "Nem",
+    "or": "vagy",
+    "and": "és"
+  },
+  "a11y": {
+    "skipToContent": "Ugrás a fő tartalomra",
+    "openMenu": "Menü megnyitása",
+    "closeMenu": "Menü bezárása",
+    "openNavigation": "Navigáció megnyitása",
+    "closeNavigation": "Navigáció bezárása",
+    "toggleDarkMode": "Sötét mód váltása",
+    "selectLanguage": "Nyelv kiválasztása",
+    "expandSection": "Szakasz kibontása",
+    "collapseSection": "Szakasz összecsukása",
+    "loading": "Tartalom betöltése",
+    "notification": "Értesítés",
+    "required": "Ez a mező kötelező",
+    "showPassword": "Jelszó megjelenítése",
+    "hidePassword": "Jelszó elrejtése",
+    "externalLink": "Új ablakban nyílik meg",
+    "pagination": "Lapozás",
+    "previousPage": "Előző oldal",
+    "nextPage": "Következő oldal",
+    "page": "{{number}}. oldal"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "Digitális Banki Platform",
+    "signIn": "Bejelentkezés",
+    "signUp": "Regisztráció",
+    "email": "E-mail",
+    "emailPlaceholder": "you@company.com",
+    "password": "Jelszó",
+    "confirmPassword": "Jelszó megerősítése",
+    "forgotPassword": "Elfelejtette jelszavát?",
+    "resetPassword": "Jelszó visszaállítása",
+    "sendResetLink": "Visszaállító link küldése",
+    "backToSignIn": "Vissza a bejelentkezéshez",
+    "signInWithSSO": "Bejelentkezés SSO-val",
+    "createAccount": "Fiók létrehozása",
+    "firmName": "Cégnév",
+    "firmNamePlaceholder": "Az Ön cége",
+    "minCharacters": "Min. 8 karakter",
+    "signInFailed": "A bejelentkezés sikertelen",
+    "signUpFailed": "A regisztráció sikertelen",
+    "checkYourEmail": "Ellenőrizze e-mailjét",
+    "confirmationLinkSent": "Küldtünk egy megerősítő linket. Kérjük, ellenőrizze postaládáját.",
+    "resetFailed": "A visszaállítás sikertelen",
+    "resetLinkSent": "Küldtünk egy jelszó-visszaállító linket. Kérjük, ellenőrizze postaládáját.",
+    "alreadyHaveAccount": "Már van fiókja?",
+    "noAccount": "Nincs fiókja?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "Hoppá! Az oldal nem található",
+    "returnHome": "Vissza a főoldalra"
+  },
+  "resetPassword": {
+    "invalidLink": "Érvénytelen link",
+    "invalidLinkDesc": "Ez a jelszó-visszaállító link érvénytelen vagy lejárt.",
+    "goToSignIn": "Bejelentkezéshez",
+    "setNewPassword": "Új jelszó beállítása",
+    "setNewPasswordDesc": "Adja meg az új jelszavát alább.",
+    "newPassword": "Új jelszó",
+    "confirmPassword": "Jelszó megerősítése",
+    "minCharacters": "Min. 8 karakter",
+    "updatePassword": "Jelszó frissítése",
+    "updateFailed": "A frissítés sikertelen",
+    "passwordUpdated": "Jelszó frissítve",
+    "passwordUpdatedDesc": "Most már bejelentkezhet az új jelszavával."
+  },
+  "demoSelector": {
+    "title": "Válasszon egy demót",
+    "subtitle": "Fedezze fel a platformot mintaadatokkal — fiók nélkül.",
+    "demos": {
+      "banking": {
+        "title": "Digitális Bankolás",
+        "description": "Számlák, átutalások, számlafizetés, távoli befizetés, kártyakezelés és még sok más."
+      },
+      "admin": {
+        "title": "Admin Portál",
+        "description": "Bérlőkezelés, arculattervezés, megfelelőség, analitika és auditnapló."
+      }
+    }
+  }
+}

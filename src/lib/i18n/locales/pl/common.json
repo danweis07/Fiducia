@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "Ładowanie...",
+    "error": "Wystąpił błąd",
+    "errorMessage": "Coś poszło nie tak. Spróbuj ponownie.",
+    "success": "Sukces",
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź",
+    "save": "Zapisz",
+    "back": "Wstecz",
+    "next": "Dalej",
+    "submit": "Wyślij",
+    "close": "Zamknij",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "search": "Szukaj",
+    "noResults": "Nie znaleziono wyników",
+    "retry": "Spróbuj ponownie",
+    "learnMore": "Dowiedz się więcej",
+    "viewDetails": "Zobacz szczegóły",
+    "showMore": "Pokaż więcej",
+    "showLess": "Pokaż mniej",
+    "required": "Wymagane",
+    "optional": "Opcjonalne",
+    "yes": "Tak",
+    "no": "Nie",
+    "or": "lub",
+    "and": "i"
+  },
+  "a11y": {
+    "skipToContent": "Przejdź do głównej treści",
+    "openMenu": "Otwórz menu",
+    "closeMenu": "Zamknij menu",
+    "openNavigation": "Otwórz nawigację",
+    "closeNavigation": "Zamknij nawigację",
+    "toggleDarkMode": "Przełącz tryb ciemny",
+    "selectLanguage": "Wybierz język",
+    "expandSection": "Rozwiń sekcję",
+    "collapseSection": "Zwiń sekcję",
+    "loading": "Treść się ładuje",
+    "notification": "Powiadomienie",
+    "required": "To pole jest wymagane",
+    "showPassword": "Pokaż hasło",
+    "hidePassword": "Ukryj hasło",
+    "externalLink": "Otwiera się w nowym oknie",
+    "pagination": "Stronicowanie",
+    "previousPage": "Poprzednia strona",
+    "nextPage": "Następna strona",
+    "page": "Strona {{number}}"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "Platforma Bankowości Cyfrowej",
+    "signIn": "Zaloguj się",
+    "signUp": "Zarejestruj się",
+    "email": "E-mail",
+    "emailPlaceholder": "you@company.com",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "forgotPassword": "Zapomniałeś hasła?",
+    "resetPassword": "Zresetuj hasło",
+    "sendResetLink": "Wyślij link resetujący",
+    "backToSignIn": "Powrót do logowania",
+    "signInWithSSO": "Zaloguj się przez SSO",
+    "createAccount": "Utwórz konto",
+    "firmName": "Nazwa firmy",
+    "firmNamePlaceholder": "Twoja firma",
+    "minCharacters": "Min. 8 znaków",
+    "signInFailed": "Logowanie nie powiodło się",
+    "signUpFailed": "Rejestracja nie powiodła się",
+    "checkYourEmail": "Sprawdź swój e-mail",
+    "confirmationLinkSent": "Wysłaliśmy Ci link potwierdzający. Sprawdź swoją skrzynkę odbiorczą.",
+    "resetFailed": "Resetowanie nie powiodło się",
+    "resetLinkSent": "Wysłaliśmy Ci link do resetowania hasła. Sprawdź swoją skrzynkę odbiorczą.",
+    "alreadyHaveAccount": "Masz już konto?",
+    "noAccount": "Nie masz konta?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "Ups! Strona nie znaleziona",
+    "returnHome": "Powrót do strony głównej"
+  },
+  "resetPassword": {
+    "invalidLink": "Nieprawidłowy link",
+    "invalidLinkDesc": "Ten link do resetowania hasła jest nieprawidłowy lub wygasł.",
+    "goToSignIn": "Przejdź do logowania",
+    "setNewPassword": "Ustaw nowe hasło",
+    "setNewPasswordDesc": "Wprowadź nowe hasło poniżej.",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "minCharacters": "Min. 8 znaków",
+    "updatePassword": "Zaktualizuj hasło",
+    "updateFailed": "Aktualizacja nie powiodła się",
+    "passwordUpdated": "Hasło zaktualizowane",
+    "passwordUpdatedDesc": "Możesz teraz zalogować się nowym hasłem."
+  },
+  "demoSelector": {
+    "title": "Wybierz demo",
+    "subtitle": "Poznaj platformę z przykładowymi danymi — konto nie jest wymagane.",
+    "demos": {
+      "banking": {
+        "title": "Bankowość cyfrowa",
+        "description": "Konta, przelewy, płatności rachunków, wpłata mobilna, zarządzanie kartami i więcej."
+      },
+      "admin": {
+        "title": "Portal administratora",
+        "description": "Zarządzanie najemcami, branding, zgodność, analizy i dzienniki audytu."
+      }
+    }
+  }
+}

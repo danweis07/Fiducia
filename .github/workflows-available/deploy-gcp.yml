@@ -1,0 +1,71 @@
+name: Deploy to GCP Cloud Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  SERVICE_NAME: open-banking-platform
+  REGISTRY: gcr.io
+
+jobs:
+  deploy:
+    name: Build & Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for GCR
+        run: gcloud auth configure-docker
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE="${REGISTRY}/${PROJECT_ID}/${SERVICE_NAME}:${GITHUB_SHA::8}"
+          docker build \
+            --build-arg VITE_SUPABASE_URL="${{ secrets.VITE_SUPABASE_URL }}" \
+            --build-arg VITE_SUPABASE_ANON_KEY="${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            --build-arg VITE_DEMO_MODE=false \
+            -t "$IMAGE" \
+            -t "${REGISTRY}/${PROJECT_ID}/${SERVICE_NAME}:latest" \
+            .
+          docker push "$IMAGE"
+          docker push "${REGISTRY}/${PROJECT_ID}/${SERVICE_NAME}:latest"
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          image: ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+
+      - name: Show deployment URL
+        run: |
+          URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --format='value(status.url)')
+          echo "## Deployed to Cloud Run" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** $URL" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** ${REGISTRY}/${PROJECT_ID}/${SERVICE_NAME}:${GITHUB_SHA::8}" >> $GITHUB_STEP_SUMMARY

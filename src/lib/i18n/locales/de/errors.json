@@ -1,0 +1,147 @@
+{
+  "AUTH_REQUIRED": {
+    "title": "Anmeldung erforderlich",
+    "message": "Ihre Sitzung ist beendet. Bitte melden Sie sich an, um fortzufahren.",
+    "action": "Anmelden"
+  },
+  "AUTH_EXPIRED": {
+    "title": "Sitzung abgelaufen",
+    "message": "Ihre Sitzung ist aus Sicherheitsgründen abgelaufen. Bitte melden Sie sich erneut an.",
+    "action": "Erneut anmelden"
+  },
+  "AUTH_MFA_REQUIRED": {
+    "title": "Verifizierung erforderlich",
+    "message": "Bitte führen Sie die Multi-Faktor-Authentifizierung durch, um fortzufahren.",
+    "action": "Identität verifizieren"
+  },
+  "AUTH_FORBIDDEN": {
+    "title": "Zugriff verweigert",
+    "message": "Sie haben keine Berechtigung, diese Aktion auszuführen.",
+    "action": "Support kontaktieren"
+  },
+  "ACCOUNT_NOT_FOUND": {
+    "title": "Konto nicht gefunden",
+    "message": "Das gesuchte Konto konnte nicht gefunden werden.",
+    "action": "Zu den Konten"
+  },
+  "ACCOUNT_FROZEN": {
+    "title": "Konto gesperrt",
+    "message": "Dieses Konto wurde gesperrt und kann derzeit keine Transaktionen verarbeiten.",
+    "action": "Support kontaktieren"
+  },
+  "ACCOUNT_CLOSED": {
+    "title": "Konto geschlossen",
+    "message": "Dieses Konto wurde geschlossen und ist nicht mehr aktiv.",
+    "action": "Zu den Konten"
+  },
+  "INSUFFICIENT_FUNDS": {
+    "title": "Unzureichende Mittel",
+    "message": "Auf diesem Konto befinden sich nicht genügend Mittel, um die Transaktion abzuschließen.",
+    "action": "Kontostand prüfen"
+  },
+  "TRANSFER_LIMIT_EXCEEDED": {
+    "title": "Überweisungslimit überschritten",
+    "message": "Diese Überweisung überschreitet Ihr Tages- oder Einzeltransaktionslimit.",
+    "action": "Kleineren Betrag versuchen"
+  },
+  "TRANSFER_INVALID_AMOUNT": {
+    "title": "Ungültiger Betrag",
+    "message": "Bitte geben Sie einen gültigen Überweisungsbetrag größer als Null ein.",
+    "action": "Gültigen Betrag eingeben"
+  },
+  "TRANSFER_SAME_ACCOUNT": {
+    "title": "Gleiches Konto gewählt",
+    "message": "Quell- und Zielkonto müssen unterschiedlich sein.",
+    "action": "Anderes Konto wählen"
+  },
+  "TRANSFER_CUTOFF_PASSED": {
+    "title": "Annahmeschluss überschritten",
+    "message": "Der tägliche Verarbeitungsschluss ist vorbei. Ihre Überweisung wird am nächsten Geschäftstag verarbeitet.",
+    "action": "Für morgen planen"
+  },
+  "TRANSFER_NOT_FOUND": {
+    "title": "Überweisung nicht gefunden",
+    "message": "Die gesuchte Überweisung konnte nicht gefunden werden.",
+    "action": "Überweisungen anzeigen"
+  },
+  "BILL_NOT_FOUND": {
+    "title": "Rechnung nicht gefunden",
+    "message": "Die gesuchte Rechnung oder der Empfänger konnte nicht gefunden werden.",
+    "action": "Empfänger anzeigen"
+  },
+  "BILL_ALREADY_PAID": {
+    "title": "Bereits bezahlt",
+    "message": "Diese Rechnung wurde bereits bezahlt.",
+    "action": "Zahlungshistorie anzeigen"
+  },
+  "BILL_PAST_DUE": {
+    "title": "Rechnung überfällig",
+    "message": "Diese Rechnung hat das Fälligkeitsdatum überschritten. Verspätungsgebühren können anfallen.",
+    "action": "Jetzt bezahlen"
+  },
+  "CARD_NOT_FOUND": {
+    "title": "Karte nicht gefunden",
+    "message": "Die gesuchte Karte konnte nicht gefunden werden.",
+    "action": "Karten anzeigen"
+  },
+  "CARD_ALREADY_LOCKED": {
+    "title": "Karte bereits gesperrt",
+    "message": "Diese Karte ist bereits gesperrt.",
+    "action": "Karte entsperren"
+  },
+  "CARD_LIMIT_INVALID": {
+    "title": "Ungültiges Kartenlimit",
+    "message": "Das eingegebene Ausgabenlimit ist ungültig. Bitte prüfen Sie das erlaubte Minimum und Maximum.",
+    "action": "Limit anpassen"
+  },
+  "RDC_IMAGE_QUALITY": {
+    "title": "Bildqualitätsproblem",
+    "message": "Das Scheckbild konnte nicht klar gelesen werden. Bitte machen Sie das Foto bei guter Beleuchtung erneut.",
+    "action": "Foto erneut aufnehmen"
+  },
+  "RDC_AMOUNT_EXCEEDED": {
+    "title": "Einzahlungslimit überschritten",
+    "message": "Dieser Scheck überschreitet Ihr Limit für mobile Einzahlungen.",
+    "action": "Filiale besuchen"
+  },
+  "RDC_DUPLICATE_CHECK": {
+    "title": "Doppelter Scheck erkannt",
+    "message": "Dieser Scheck scheint bereits eingezahlt worden zu sein.",
+    "action": "Einzahlungshistorie prüfen"
+  },
+  "VALIDATION_ERROR": {
+    "title": "Validierungsfehler",
+    "message": "Einige Felder enthalten ungültige Daten. Bitte überprüfen und korrigieren Sie diese.",
+    "action": "Formular überprüfen"
+  },
+  "INVALID_INPUT": {
+    "title": "Ungültige Eingabe",
+    "message": "Bitte überprüfen Sie Ihre Eingabe und versuchen Sie es erneut.",
+    "action": "Eingabe korrigieren"
+  },
+  "RATE_LIMITED": {
+    "title": "Zu viele Anfragen",
+    "message": "Sie haben zu viele Anfragen gestellt. Bitte warten Sie einen Moment und versuchen Sie es erneut.",
+    "action": "Warten und erneut versuchen"
+  },
+  "INTERNAL_ERROR": {
+    "title": "Etwas ist schiefgelaufen",
+    "message": "Ein unerwarteter Fehler ist aufgetreten. Unser Team wurde benachrichtigt.",
+    "action": "Erneut versuchen"
+  },
+  "SERVICE_UNAVAILABLE": {
+    "title": "Dienst nicht verfügbar",
+    "message": "Dieser Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in einigen Minuten erneut.",
+    "action": "Später erneut versuchen"
+  },
+  "GATEWAY_ERROR": {
+    "title": "Verbindungsfehler",
+    "message": "Es konnte keine Verbindung zum Bankdienst hergestellt werden. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "action": "Erneut versuchen"
+  },
+  "fallback": {
+    "title": "Etwas ist schiefgelaufen",
+    "message": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "action": "Erneut versuchen"
+  }
+}

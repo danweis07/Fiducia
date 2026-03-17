@@ -1,0 +1,60 @@
+# Container Image Scanning with Trivy
+# Scans Docker images for OS and library vulnerabilities before deployment
+#
+# To activate: move this file to .github/workflows/container-scan.yml
+#
+name: Container Security Scan
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - 'Dockerfile.dev'
+      - 'package-lock.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - 'Dockerfile.dev'
+      - 'package-lock.json'
+
+jobs:
+  scan:
+    name: Trivy Container Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image for scanning
+        run: |
+          docker build \
+            --build-arg VITE_SUPABASE_URL=https://placeholder.supabase.co \
+            --build-arg VITE_SUPABASE_ANON_KEY=placeholder \
+            --build-arg VITE_DEMO_MODE=true \
+            -t banking-platform:scan-${{ github.sha }} \
+            .
+
+      - name: Run Trivy container scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: banking-platform:scan-${{ github.sha }}
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          format: table
+
+      - name: Upload Trivy SARIF results
+        if: always()
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: banking-platform:scan-${{ github.sha }}
+          format: sarif
+          output: trivy-container-results.sarif
+
+      - name: Upload to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-container-results.sarif
+          category: trivy-container

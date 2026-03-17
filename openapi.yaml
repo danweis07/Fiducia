@@ -1,0 +1,633 @@
+openapi: 3.1.0
+info:
+  title: Digital Banking Platform API
+  description: |
+    Multi-tenant digital banking platform API. All requests go through a single
+    gateway endpoint using RPC-style action routing.
+
+    ## Authentication
+    All authenticated endpoints require a valid Supabase JWT in the Authorization header.
+
+    ## Request Format
+    ```json
+    POST /functions/v1/gateway
+    {
+      "action": "accounts.list",
+      "params": { "limit": 10 }
+    }
+    ```
+
+    ## Response Format
+    ```json
+    {
+      "data": { ... },
+      "meta": { "pagination": { "total": 100, "limit": 10, "offset": 0, "hasMore": true } }
+    }
+    ```
+  version: 0.1.0
+  contact:
+    name: API Support
+  license:
+    name: MIT
+
+servers:
+  - url: https://{project}.supabase.co/functions/v1
+    description: Supabase Edge Functions
+    variables:
+      project:
+        default: your-project-ref
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Accounts
+    description: Banking account operations
+  - name: Transactions
+    description: Transaction history and search
+  - name: Transfers
+    description: Internal and external money transfers
+  - name: Beneficiaries
+    description: External transfer recipients
+  - name: Bill Pay
+    description: Bill payment and payee management
+  - name: Cards
+    description: Card management and controls
+  - name: RDC
+    description: Remote Deposit Capture
+  - name: Statements
+    description: Account statements
+  - name: Notifications
+    description: User notifications and preferences
+  - name: Loans
+    description: Loan products and management
+  - name: External Accounts
+    description: Plaid-linked external accounts
+  - name: Financial Data
+    description: Spending insights, budgets, net worth
+  - name: Card Offers
+    description: Card-linked offers and rewards
+  - name: KYC
+    description: Identity verification
+  - name: Activation
+    description: Digital activation / member enrollment
+  - name: Account Opening
+    description: New account applications
+  - name: SSO
+    description: Single Sign-On provider management
+  - name: CMS
+    description: Content management system
+  - name: Experiments
+    description: A/B testing
+  - name: AI
+    description: AI chat assistant
+  - name: Admin Users
+    description: User management (admin)
+  - name: Admin Compliance
+    description: KYC/AML/GDPR compliance
+  - name: Admin Analytics
+    description: Platform analytics
+  - name: Admin Branding
+    description: Tenant branding configuration
+  - name: Data Export
+    description: Report generation and export
+  - name: Webhooks
+    description: Webhook endpoint and delivery management
+  - name: RBAC
+    description: Role-based access control
+  - name: Sessions
+    description: Session management
+  - name: Integrations
+    description: Third-party integration management
+  - name: Config
+    description: Platform configuration
+  - name: System
+    description: Health and diagnostics
+
+paths:
+  /gateway:
+    post:
+      summary: Gateway RPC Endpoint
+      description: All API calls go through this single endpoint with an action parameter.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GatewayRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayResponse'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '429':
+          description: Rate limited
+        '500':
+          description: Internal server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    GatewayRequest:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          description: The RPC action to execute
+          enum:
+            # Accounts
+            - accounts.list
+            - accounts.get
+            - accounts.summary
+            # Transactions
+            - transactions.list
+            - transactions.get
+            - transactions.search
+            # Transfers
+            - transfers.create
+            - transfers.schedule
+            - transfers.cancel
+            - transfers.list
+            # Beneficiaries
+            - beneficiaries.list
+            - beneficiaries.create
+            - beneficiaries.delete
+            # Bills
+            - bills.list
+            - bills.create
+            - bills.pay
+            - bills.cancel
+            # RDC
+            - rdc.deposit
+            - rdc.status
+            - rdc.history
+            # Cards
+            - cards.list
+            - cards.lock
+            - cards.unlock
+            - cards.setLimit
+            # Statements
+            - statements.list
+            - statements.get
+            - statements.config
+            - statements.download
+            # Notifications
+            - notifications.list
+            - notifications.markRead
+            - notifications.markAllRead
+            - notifications.unreadCount
+            - notifications.preferences.get
+            - notifications.preferences.update
+            - notifications.test
+            # Config
+            - config.capabilities
+            - config.theme
+            # Password Policy
+            - passwordPolicy.get
+            - passwordPolicy.update
+            # Member Profile
+            - member.addresses
+            - member.updateAddress
+            - member.documents
+            - member.identifiers
+            # Account Products
+            - accountProducts.list
+            - accountProducts.get
+            # CD
+            - cd.maturity
+            - cd.updateMaturityAction
+            # Loan Products
+            - loanProducts.list
+            # Loans
+            - loans.list
+            - loans.get
+            - loans.schedule
+            - loans.payments
+            - loans.makePayment
+            # Charges
+            - charges.definitions
+            - charges.list
+            # Standing Instructions
+            - standingInstructions.list
+            - standingInstructions.create
+            - standingInstructions.update
+            # Activation
+            - activation.config
+            - activation.verifyIdentity
+            - activation.acceptTerms
+            - activation.createCredentials
+            - activation.enrollMFA
+            - activation.verifyMFA
+            - activation.registerDevice
+            - activation.complete
+            - activation.getTerms
+            - activation.createTermsVersion
+            - activation.getTermsAcceptances
+            - activation.checkTermsStatus
+            # Locations
+            - locations.search
+            # External Accounts
+            - external-accounts.link-token
+            - external-accounts.exchange
+            - external-accounts.list
+            - external-accounts.balances
+            - external-accounts.transactions
+            # Enrichment
+            - enrichment.enhance
+            - enrichment.batch
+            # KYC
+            - kyc.evaluate
+            - kyc.status
+            # Integrations
+            - integrations.providers
+            - integrations.connected
+            - integrations.connect
+            - integrations.disconnect
+            - integrations.health
+            - integrations.syncLogs
+            # CMS
+            - cms.channels.list
+            - cms.channels.update
+            - cms.content.list
+            - cms.content.get
+            - cms.content.create
+            - cms.content.update
+            - cms.content.delete
+            - cms.content.publish
+            - cms.content.archive
+            - cms.content.versions
+            - cms.tokens.list
+            - cms.tokens.create
+            - cms.tokens.revoke
+            - cms.content.public
+            - cms.content.publicList
+            # Experiments
+            - experiments.list
+            - experiments.get
+            - experiments.create
+            - experiments.update
+            - experiments.start
+            - experiments.pause
+            - experiments.resume
+            - experiments.complete
+            - experiments.assign
+            - experiments.track
+            - experiments.results
+            # Bill Pay (adapter)
+            - billpay.billers.search
+            - billpay.payees.list
+            - billpay.payees.enroll
+            - billpay.payments.schedule
+            - billpay.payments.cancel
+            - billpay.payments.status
+            - billpay.payments.list
+            - billpay.ebills.list
+            # Financial Data
+            - financial.enrich
+            - financial.spending
+            - financial.trends
+            - financial.budgets.list
+            - financial.budgets.set
+            - financial.networth
+            - financial.networth.history
+            - financial.recurring
+            # Card Offers
+            - offers.list
+            - offers.activate
+            - offers.deactivate
+            - offers.redemptions
+            - offers.summary
+            # Account Opening
+            - account-opening.config
+            - account-opening.create
+            - account-opening.get
+            - account-opening.selectProducts
+            - account-opening.submitFunding
+            - account-opening.complete
+            - account-opening.cancel
+            # SSO
+            - sso.providers.list
+            - sso.providers.get
+            - sso.providers.create
+            - sso.providers.update
+            - sso.providers.delete
+            - sso.providers.test
+            # Admin Users
+            - admin.users.suspend
+            - admin.users.activate
+            - admin.users.resetPassword
+            - admin.users.invite
+            # Admin Branding
+            - admin.branding.update
+            # Admin Compliance
+            - admin.compliance.kycReviews
+            - admin.compliance.approveKyc
+            - admin.compliance.rejectKyc
+            - admin.compliance.amlAlerts
+            - admin.compliance.updateAmlStatus
+            - admin.compliance.gdprRequests
+            - admin.compliance.updateGdprStatus
+            # Admin Analytics
+            - admin.analytics.accountGrowth
+            - admin.analytics.transactionVolume
+            - admin.analytics.depositTrends
+            - admin.analytics.keyMetrics
+            # AI
+            - ai.chat.send
+            - ai.chat.suggestions
+            - ai.chat.feedback
+            - ai.chat.escalate
+            - ai.assistant.chat
+            - ai.prompts.list
+            - ai.prompts.update
+            - ai.history
+            # Data Export
+            - exports.list
+            - exports.create
+            - exports.get
+            - exports.download
+            - exports.delete
+            - exports.summary
+            - reports.templates.list
+            - reports.templates.create
+            - reports.templates.update
+            - reports.templates.delete
+            # Webhooks
+            - webhooks.endpoints.list
+            - webhooks.endpoints.create
+            - webhooks.endpoints.update
+            - webhooks.endpoints.delete
+            - webhooks.deliveries.list
+            - webhooks.dlq
+            - webhooks.deliveries.retry
+            - webhooks.stats
+            # RBAC
+            - admin.roles.list
+            - admin.roles.create
+            - admin.roles.update
+            - admin.roles.delete
+            - admin.roles.assign
+            - admin.roles.permissions
+            # Sessions
+            - sessions.list
+            - sessions.revoke
+            - sessions.revokeAll
+            - sessions.activity
+            # Onboarding
+            - onboarding.status
+            - onboarding.updateStep
+            - onboarding.complete
+            - onboarding.reset
+            # System
+            - system.health
+        params:
+          type: object
+          description: Action-specific parameters
+
+    GatewayResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          description: Response payload
+        meta:
+          type: object
+          properties:
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum: [UNAUTHORIZED, INVALID_PARAMS, NOT_FOUND, DB_ERROR, RATE_LIMITED, FORBIDDEN]
+            message:
+              type: string
+
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+        hasMore:
+          type: boolean
+
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [checking, savings, money_market, cd]
+        nickname:
+          type: string
+        accountNumberMasked:
+          type: string
+          example: "****1234"
+        routingNumber:
+          type: string
+        balanceCents:
+          type: integer
+          description: Balance in cents (integer to avoid floating-point)
+        availableBalanceCents:
+          type: integer
+        status:
+          type: string
+          enum: [active, frozen, closed, pending]
+        interestRateBps:
+          type: integer
+          description: Interest rate in basis points
+        openedAt:
+          type: string
+          format: date-time
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [debit, credit, transfer, fee, interest, deposit, withdrawal, payment]
+        description:
+          type: string
+        amountCents:
+          type: integer
+        balanceAfterCents:
+          type: integer
+        status:
+          type: string
+          enum: [pending, posted, declined, reversed]
+        category:
+          type: string
+        merchantName:
+          type: string
+        postedAt:
+          type: string
+          format: date-time
+
+    Transfer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fromAccountId:
+          type: string
+          format: uuid
+        toAccountId:
+          type: string
+          format: uuid
+        amountCents:
+          type: integer
+        memo:
+          type: string
+        status:
+          type: string
+          enum: [pending, completed, failed, cancelled]
+        scheduledAt:
+          type: string
+          format: date-time
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [debit, credit]
+        lastFour:
+          type: string
+        status:
+          type: string
+          enum: [active, locked, expired, cancelled]
+        dailyLimitCents:
+          type: integer
+        transactionLimitCents:
+          type: integer
+
+    Loan:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        productId:
+          type: string
+        type:
+          type: string
+          enum: [personal, auto, mortgage, student, business, credit_line]
+        principalCents:
+          type: integer
+        balanceCents:
+          type: integer
+        interestRateBps:
+          type: integer
+        status:
+          type: string
+          enum: [active, paid_off, defaulted, delinquent]
+        termMonths:
+          type: integer
+        nextPaymentDate:
+          type: string
+          format: date
+        nextPaymentCents:
+          type: integer
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [transaction, security, marketing, account, system]
+        title:
+          type: string
+        body:
+          type: string
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    WebhookEndpoint:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+        isActive:
+          type: boolean
+        description:
+          type: string
+
+    ExportRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        reportType:
+          type: string
+          enum: [transactions, accounts, compliance, audit, financial_summary, member_activity, loan_portfolio, deposit_summary]
+        format:
+          type: string
+          enum: [csv, pdf, json, xlsx]
+        status:
+          type: string
+          enum: [pending, processing, completed, failed, expired]
+        dateRangeStart:
+          type: string
+          format: date
+        dateRangeEnd:
+          type: string
+          format: date
+        rowCount:
+          type: integer
+        fileSizeBytes:
+          type: integer

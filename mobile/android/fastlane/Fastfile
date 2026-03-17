@@ -1,0 +1,66 @@
+default_platform(:android)
+
+platform :android do
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SETUP
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  before_all do
+    setup_ci if ENV["CI"]
+  end
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # BUILD
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  desc "Build debug APK"
+  lane :build_debug do
+    sh("cd ../.. && flutter build apk --debug --dart-define=SUPABASE_URL=#{ENV['SUPABASE_URL']} --dart-define=SUPABASE_ANON_KEY=#{ENV['SUPABASE_ANON_KEY']}")
+  end
+
+  desc "Build release AAB for Play Store"
+  lane :build_release do
+    version_code = ENV["BUILD_NUMBER"] || (Time.now.to_i / 60).to_s
+    sh("cd ../.. && flutter build appbundle --release --build-number=#{version_code} --dart-define=SUPABASE_URL=#{ENV['SUPABASE_URL']} --dart-define=SUPABASE_ANON_KEY=#{ENV['SUPABASE_ANON_KEY']}")
+  end
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # TESTING
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  desc "Run Flutter tests"
+  lane :test do
+    sh("cd ../.. && flutter test")
+  end
+
+  desc "Run Flutter analyze"
+  lane :lint do
+    sh("cd ../.. && flutter analyze")
+  end
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DEPLOYMENT
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  desc "Deploy to Google Play internal testing track"
+  lane :beta do
+    build_release
+    upload_to_play_store(
+      track: "internal",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Promote internal to production"
+  lane :release do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      skip_upload_aab: true,
+      skip_upload_metadata: false
+    )
+  end
+end

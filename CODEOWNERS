@@ -1,0 +1,21 @@
+# Default owners for everything in the repo
+* @danweis07
+
+# Frontend
+/src/ @danweis07
+
+# Backend / Edge Functions
+/supabase/ @danweis07
+
+# Mobile
+/mobile/ @danweis07
+
+# CI/CD and DevOps
+/.github/ @danweis07
+/scripts/ @danweis07
+docker-compose.yml @danweis07
+Dockerfile @danweis07
+
+# Documentation
+*.md @danweis07
+/docs/ @danweis07

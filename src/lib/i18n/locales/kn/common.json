@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+    "error": "ದೋಷ ಸಂಭವಿಸಿದೆ",
+    "errorMessage": "ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "success": "ಯಶಸ್ವಿ",
+    "cancel": "ರದ್ದುಮಾಡಿ",
+    "confirm": "ಖಚಿತಪಡಿಸಿ",
+    "save": "ಉಳಿಸಿ",
+    "back": "ಹಿಂದೆ",
+    "next": "ಮುಂದೆ",
+    "submit": "ಸಲ್ಲಿಸಿ",
+    "close": "ಮುಚ್ಚಿ",
+    "edit": "ಸಂಪಾದಿಸಿ",
+    "delete": "ಅಳಿಸಿ",
+    "search": "ಹುಡುಕಿ",
+    "noResults": "ಯಾವುದೇ ಫಲಿತಾಂಶಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+    "retry": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+    "learnMore": "ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ",
+    "viewDetails": "ವಿವರಗಳನ್ನು ನೋಡಿ",
+    "showMore": "ಹೆಚ್ಚು ತೋರಿಸಿ",
+    "showLess": "ಕಡಿಮೆ ತೋರಿಸಿ",
+    "required": "ಅಗತ್ಯ",
+    "optional": "ಐಚ್ಛಿಕ",
+    "yes": "ಹೌದು",
+    "no": "ಇಲ್ಲ",
+    "or": "ಅಥವಾ",
+    "and": "ಮತ್ತು"
+  },
+  "a11y": {
+    "skipToContent": "ಮುಖ್ಯ ವಿಷಯಕ್ಕೆ ಹೋಗಿ",
+    "openMenu": "ಮೆನು ತೆರೆಯಿರಿ",
+    "closeMenu": "ಮೆನು ಮುಚ್ಚಿ",
+    "openNavigation": "ನ್ಯಾವಿಗೇಶನ್ ತೆರೆಯಿರಿ",
+    "closeNavigation": "ನ್ಯಾವಿಗೇಶನ್ ಮುಚ್ಚಿ",
+    "toggleDarkMode": "ಡಾರ್ಕ್ ಮೋಡ್ ಟಾಗಲ್ ಮಾಡಿ",
+    "selectLanguage": "ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ",
+    "expandSection": "ವಿಭಾಗ ವಿಸ್ತರಿಸಿ",
+    "collapseSection": "ವಿಭಾಗ ಕುಗ್ಗಿಸಿ",
+    "loading": "ವಿಷಯ ಲೋಡ್ ಆಗುತ್ತಿದೆ",
+    "notification": "ಅಧಿಸೂಚನೆ",
+    "required": "ಈ ಕ್ಷೇತ್ರ ಅಗತ್ಯವಿದೆ",
+    "showPassword": "ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸಿ",
+    "hidePassword": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆಮಾಡಿ",
+    "externalLink": "ಹೊಸ ವಿಂಡೋದಲ್ಲಿ ತೆರೆಯುತ್ತದೆ",
+    "pagination": "ಪುಟ ವಿಂಗಡಣೆ",
+    "previousPage": "ಹಿಂದಿನ ಪುಟ",
+    "nextPage": "ಮುಂದಿನ ಪುಟ",
+    "page": "ಪುಟ {{number}}"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "ಡಿಜಿಟಲ್ ಬ್ಯಾಂಕಿಂಗ್ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್",
+    "signIn": "ಸೈನ್ ಇನ್",
+    "signUp": "ಸೈನ್ ಅಪ್",
+    "email": "ಇಮೇಲ್",
+    "emailPlaceholder": "you@company.com",
+    "password": "ಪಾಸ್‌ವರ್ಡ್",
+    "confirmPassword": "ಪಾಸ್‌ವರ್ಡ್ ಖಚಿತಪಡಿಸಿ",
+    "forgotPassword": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?",
+    "resetPassword": "ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ",
+    "sendResetLink": "ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸಿ",
+    "backToSignIn": "ಸೈನ್ ಇನ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+    "signInWithSSO": "SSO ಮೂಲಕ ಸೈನ್ ಇನ್ ಮಾಡಿ",
+    "createAccount": "ಖಾತೆ ರಚಿಸಿ",
+    "firmName": "ಸಂಸ್ಥೆಯ ಹೆಸರು",
+    "firmNamePlaceholder": "ನಿಮ್ಮ ಕಂಪನಿ",
+    "minCharacters": "ಕನಿಷ್ಠ ೮ ಅಕ್ಷರಗಳು",
+    "signInFailed": "ಸೈನ್ ಇನ್ ವಿಫಲವಾಯಿತು",
+    "signUpFailed": "ಸೈನ್ ಅಪ್ ವಿಫಲವಾಯಿತು",
+    "checkYourEmail": "ನಿಮ್ಮ ಇಮೇಲ್ ಪರಿಶೀಲಿಸಿ",
+    "confirmationLinkSent": "ನಾವು ನಿಮಗೆ ಖಚಿತಪಡಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸಿದ್ದೇವೆ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇನ್‌ಬಾಕ್ಸ್ ಪರಿಶೀಲಿಸಿ.",
+    "resetFailed": "ಮರುಹೊಂದಿಸುವಿಕೆ ವಿಫಲವಾಯಿತು",
+    "resetLinkSent": "ನಾವು ನಿಮಗೆ ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸಿದ್ದೇವೆ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇನ್‌ಬಾಕ್ಸ್ ಪರಿಶೀಲಿಸಿ.",
+    "alreadyHaveAccount": "ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ?",
+    "noAccount": "ಖಾತೆ ಇಲ್ಲವೇ?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "ಅಯ್ಯೋ! ಪುಟ ಕಂಡುಬಂದಿಲ್ಲ",
+    "returnHome": "ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ"
+  },
+  "resetPassword": {
+    "invalidLink": "ಅಮಾನ್ಯ ಲಿಂಕ್",
+    "invalidLinkDesc": "ಈ ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಅಮಾನ್ಯವಾಗಿದೆ ಅಥವಾ ಅವಧಿ ಮೀರಿದೆ.",
+    "goToSignIn": "ಸೈನ್ ಇನ್‌ಗೆ ಹೋಗಿ",
+    "setNewPassword": "ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಹೊಂದಿಸಿ",
+    "setNewPasswordDesc": "ಕೆಳಗೆ ನಿಮ್ಮ ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ.",
+    "newPassword": "ಹೊಸ ಪಾಸ್‌ವರ್ಡ್",
+    "confirmPassword": "ಪಾಸ್‌ವರ್ಡ್ ಖಚಿತಪಡಿಸಿ",
+    "minCharacters": "ಕನಿಷ್ಠ ೮ ಅಕ್ಷರಗಳು",
+    "updatePassword": "ಪಾಸ್‌ವರ್ಡ್ ನವೀಕರಿಸಿ",
+    "updateFailed": "ನವೀಕರಣ ವಿಫಲವಾಯಿತು",
+    "passwordUpdated": "ಪಾಸ್‌ವರ್ಡ್ ನವೀಕರಿಸಲಾಗಿದೆ",
+    "passwordUpdatedDesc": "ನೀವು ಈಗ ನಿಮ್ಮ ಹೊಸ ಪಾಸ್‌ವರ್ಡ್‌ನೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಮಾಡಬಹುದು."
+  },
+  "demoSelector": {
+    "title": "ಡೆಮೊ ಆಯ್ಕೆಮಾಡಿ",
+    "subtitle": "ಮಾದರಿ ಡೇಟಾದೊಂದಿಗೆ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಅನ್ನು ಅನ್ವೇಷಿಸಿ — ಖಾತೆ ಅಗತ್ಯವಿಲ್ಲ.",
+    "demos": {
+      "banking": {
+        "title": "ಡಿಜಿಟಲ್ ಬ್ಯಾಂಕಿಂಗ್",
+        "description": "ಖಾತೆಗಳು, ವರ್ಗಾವಣೆಗಳು, ಬಿಲ್ ಪಾವತಿ, ರಿಮೋಟ್ ಠೇವಣಿ, ಕಾರ್ಡ್ ನಿಯಂತ್ರಣಗಳು ಮತ್ತು ಹೆಚ್ಚಿನವು."
+      },
+      "admin": {
+        "title": "ಅಡ್ಮಿನ್ ಪೋರ್ಟಲ್",
+        "description": "ಟೆನೆಂಟ್ ನಿರ್ವಹಣೆ, ಬ್ರ್ಯಾಂಡಿಂಗ್, ಅನುಸರಣೆ, ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಆಡಿಟ್ ಲಾಗ್‌ಗಳು."
+      }
+    }
+  }
+}

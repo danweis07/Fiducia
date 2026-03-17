@@ -1,0 +1,173 @@
+name: Cleanup Stale Branches & Workflow Runs
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (preview only, no deletions)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+      delete_branches:
+        description: 'Delete stale branches'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      delete_workflow_runs:
+        description: 'Delete old workflow runs'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      protected_branches:
+        description: 'Comma-separated branches to keep (main is always kept)'
+        required: false
+        default: 'main'
+
+jobs:
+  cleanup-branches:
+    name: Delete Stale Branches
+    runs-on: ubuntu-latest
+    if: inputs.delete_branches == 'true'
+    permissions:
+      contents: write
+    steps:
+      - name: Delete all non-protected branches
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const dryRun = '${{ inputs.dry_run }}' === 'true';
+            const protectedInput = '${{ inputs.protected_branches }}';
+            const protectedBranches = new Set(
+              protectedInput.split(',').map(b => b.trim()).concat(['main', 'master'])
+            );
+
+            console.log(`Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}`);
+            console.log(`Protected branches: ${[...protectedBranches].join(', ')}`);
+
+            let page = 1;
+            let deleted = 0;
+            let skipped = 0;
+
+            while (true) {
+              const { data: branches } = await github.rest.repos.listBranches({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 100,
+                page,
+              });
+
+              if (branches.length === 0) break;
+
+              for (const branch of branches) {
+                if (protectedBranches.has(branch.name)) {
+                  console.log(`KEEP: ${branch.name}`);
+                  skipped++;
+                  continue;
+                }
+
+                if (dryRun) {
+                  console.log(`WOULD DELETE: ${branch.name}`);
+                  deleted++;
+                } else {
+                  try {
+                    await github.rest.git.deleteRef({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      ref: `heads/${branch.name}`,
+                    });
+                    console.log(`DELETED: ${branch.name}`);
+                    deleted++;
+                  } catch (err) {
+                    console.log(`FAILED: ${branch.name} - ${err.message}`);
+                  }
+                }
+              }
+
+              page++;
+            }
+
+            console.log(`\nSummary: ${deleted} deleted, ${skipped} kept`);
+
+  cleanup-workflow-runs:
+    name: Delete Old Workflow Runs
+    runs-on: ubuntu-latest
+    if: inputs.delete_workflow_runs == 'true'
+    permissions:
+      actions: write
+    steps:
+      - name: Delete all workflow runs
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const dryRun = '${{ inputs.dry_run }}' === 'true';
+
+            console.log(`Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}`);
+
+            // Get all workflows
+            const { data: workflows } = await github.rest.actions.listRepoWorkflows({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            let totalDeleted = 0;
+
+            for (const wf of workflows.workflows) {
+              console.log(`\n--- ${wf.name} (id: ${wf.id}) ---`);
+              let page = 1;
+              let wfDeleted = 0;
+
+              while (true) {
+                const { data: runs } = await github.rest.actions.listWorkflowRuns({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: wf.id,
+                  per_page: 100,
+                  page,
+                });
+
+                if (runs.workflow_runs.length === 0) break;
+
+                for (const run of runs.workflow_runs) {
+                  // Don't delete the current cleanup run
+                  if (run.id === context.runId) {
+                    console.log(`  SKIP: run ${run.id} (current run)`);
+                    continue;
+                  }
+
+                  if (dryRun) {
+                    console.log(`  WOULD DELETE: run ${run.id} (${run.created_at})`);
+                    wfDeleted++;
+                  } else {
+                    try {
+                      await github.rest.actions.deleteWorkflowRun({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        run_id: run.id,
+                      });
+                      console.log(`  DELETED: run ${run.id}`);
+                      wfDeleted++;
+                    } catch (err) {
+                      console.log(`  FAILED: run ${run.id} - ${err.message}`);
+                    }
+                  }
+                }
+
+                page++;
+              }
+
+              console.log(`  ${wf.name}: ${wfDeleted} runs deleted`);
+              totalDeleted += wfDeleted;
+            }
+
+            console.log(`\nTotal workflow runs deleted: ${totalDeleted}`);

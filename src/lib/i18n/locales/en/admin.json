@@ -1,0 +1,955 @@
+{
+  "accountOverview": {
+    "title": "Account Overview",
+    "subtitle": "View and manage all customer accounts across your institution.",
+    "allAccounts": "All Accounts ({{count}})",
+    "searchPlaceholder": "Search by name or account number...",
+    "noAccountsFound": "No accounts found.",
+    "filters": {
+      "allTypes": "All Types",
+      "checking": "Checking",
+      "savings": "Savings",
+      "cd": "CD",
+      "moneyMarket": "Money Market",
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "frozen": "Frozen",
+      "closed": "Closed"
+    },
+    "table": {
+      "customer": "Customer",
+      "account": "Account",
+      "type": "Type",
+      "balance": "Balance",
+      "status": "Status",
+      "opened": "Opened",
+      "actions": "Actions"
+    }
+  },
+  "admin": {
+    "analytics": {
+      "accountGrowth": "Account Growth",
+      "depositTrends": "Deposit Trends",
+      "keyMetrics": "Key Metrics",
+      "transactionVolume": "Transaction Volume"
+    },
+    "branding": {
+      "update": "Update Branding"
+    },
+    "compliance": {
+      "amlAlerts": "AML Alerts",
+      "gdprRequests": "GDPR Requests",
+      "kycReviews": "KYC Reviews",
+      "updateAmlStatus": "Update AML Status"
+    },
+    "users": {
+      "activate": "Activate",
+      "invite": "Invite User",
+      "resetPassword": "Reset Password",
+      "suspend": "Suspend"
+    }
+  },
+  "agentPolicies": {
+    "title": "Agent Policies & Autonomous Execution",
+    "description": "Manage AI agent service accounts, execution policies, and review autonomous actions.",
+    "runExecutor": "Run Executor",
+    "pauseAll": "Pause All",
+    "enable": "Enable",
+    "disabledAlertTitle": "Autonomous Execution Disabled",
+    "disabledAlertDescription": "All autonomous actions are currently paused. No AI agents can execute actions until re-enabled.",
+    "pausedAgo": "Paused {{time}}.",
+    "approval": {
+      "autoApprove": "Auto-approve",
+      "humanRequired": "Human Required",
+      "disabled": "Disabled"
+    },
+    "status": {
+      "completed": "Completed",
+      "executing": "Executing",
+      "pending": "Pending",
+      "approved": "Approved",
+      "failed": "Failed",
+      "rejected": "Rejected"
+    },
+    "time": {
+      "never": "Never",
+      "justNow": "Just now",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago"
+    },
+    "stats": {
+      "last24h": "Executions (24h)",
+      "last7d": "{{count}} in last 7 days",
+      "pendingEvents": "Pending Events",
+      "awaitingApproval": "{{count}} awaiting approval",
+      "activeRules": "Active Rules",
+      "serviceAccounts": "Service Accounts"
+    },
+    "tabs": {
+      "executionPolicies": "Execution Policies",
+      "serviceAccounts": "Service Accounts",
+      "executionLog": "Execution Log"
+    },
+    "policies": {
+      "description": "Define how each gateway action should be handled when triggered autonomously.",
+      "addPolicy": "Add Policy",
+      "emptyMessage": "No execution policies defined. Add a policy to control autonomous actions.",
+      "maxAutoPerHour": "Max {{count}}/hr auto-approved",
+      "notifyOnAuto": "Notifies on auto"
+    },
+    "accounts": {
+      "description": "API keys for external systems to invoke gateway actions programmatically.",
+      "createAccount": "Create Account",
+      "emptyMessage": "No service accounts configured.",
+      "actions": "Actions",
+      "rate": "Rate",
+      "used": "Used",
+      "invocations": "Invocations",
+      "revoke": "Revoke"
+    },
+    "executions": {
+      "description": "Recent autonomous action executions and their outcomes.",
+      "refresh": "Refresh",
+      "emptyMessage": "No executions recorded yet.",
+      "error": "Error"
+    },
+    "apiKeyDialog": {
+      "title": "API Key Created",
+      "description": "Copy this API key now. You won't be able to see it again.",
+      "warning": "This key will only be shown once. Store it securely.",
+      "done": "Done"
+    },
+    "createAccountDialog": {
+      "title": "Create Service Account",
+      "description": "Service accounts allow external systems to authenticate and execute actions via the gateway.",
+      "nameLabel": "Account Name",
+      "namePlaceholder": "e.g. Risk Engine Bot",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "What is this account used for?",
+      "allowedActionsLabel": "Allowed Actions",
+      "allowedActionsPlaceholder": "cards.lock,cards.unlock,transfers.flag",
+      "allowedActionsHint": "Comma-separated list of gateway actions this account can invoke.",
+      "rateLimitLabel": "Rate Limit (per hour)",
+      "cancel": "Cancel",
+      "create": "Create"
+    },
+    "createPolicyDialog": {
+      "title": "Create Execution Policy",
+      "description": "Define how a specific gateway action should be handled when triggered by an AI agent or automation.",
+      "gatewayActionLabel": "Gateway Action",
+      "gatewayActionPlaceholder": "e.g. cards.lock",
+      "approvalModeLabel": "Approval Mode",
+      "autoApproveOption": "Auto-approve",
+      "humanRequiredOption": "Human Required",
+      "disabledOption": "Disabled",
+      "maxAutoApprovalsLabel": "Max Auto-Approvals per Hour",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional description of this policy",
+      "cancel": "Cancel",
+      "savePolicy": "Save Policy"
+    },
+    "toasts": {
+      "autonomousEnabled": "Autonomous execution enabled",
+      "autonomousPaused": "Autonomous execution paused",
+      "toggleFailed": "Failed to toggle autonomous execution",
+      "accountCreated": "Service account created",
+      "createAccountFailed": "Failed to create service account",
+      "accountRevoked": "Service account revoked",
+      "revokeFailed": "Failed to revoke service account",
+      "policySaved": "Execution policy saved",
+      "savePolicyFailed": "Failed to save policy",
+      "policyDeleted": "Policy deleted",
+      "deleteFailed": "Failed to delete policy",
+      "executionApproved": "Execution approved",
+      "approveFailed": "Failed to approve execution",
+      "executionRejected": "Execution rejected",
+      "rejectFailed": "Failed to reject execution",
+      "executorTriggered": "Executor processed {{events}} events, {{actions}} actions executed",
+      "triggerFailed": "Failed to trigger executor",
+      "copiedToClipboard": "Copied to clipboard"
+    }
+  },
+  "aiAssistant": {
+    "title": "AI Assistant",
+    "description": "Manage system prompts, test responses, and review escalations.",
+    "tabs": {
+      "prompts": "Prompts",
+      "testConsole": "Test Console",
+      "escalations": "Escalations"
+    },
+    "prompts": {
+      "emptyTitle": "No prompts configured",
+      "emptyDescription": "Create your first AI prompt template to get started.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "edit": "Edit",
+      "systemPromptLabel": "System Prompt",
+      "saving": "Saving...",
+      "savePrompt": "Save Prompt",
+      "cancel": "Cancel",
+      "lastUpdated": "Last updated: {{date}}"
+    },
+    "testConsole": {
+      "title": "Test Console",
+      "description": "Send a test message to the AI assistant and see how it responds.",
+      "testMessageLabel": "Test Message",
+      "testMessagePlaceholder": "Type a message to test the AI assistant...",
+      "testButton": "Send",
+      "responseLabel": "Response"
+    },
+    "escalations": {
+      "queueTitle": "Escalation Queue",
+      "queueDescription": "Review conversations that have been escalated from the AI assistant.",
+      "emptyTitle": "No Escalations",
+      "emptyDescription": "There are no pending escalations at this time.",
+      "settingsTitle": "Escalation Settings",
+      "autoEscalateSupport": "Auto-escalate to support",
+      "autoEscalateSupportDesc": "Automatically escalate conversations when the AI cannot resolve the issue.",
+      "autoEscalateProduct": "Auto-escalate product inquiries",
+      "autoEscalateProductDesc": "Automatically escalate conversations about products and services.",
+      "notificationOnEscalation": "Email notification on escalation",
+      "notificationOnEscalationDesc": "Send an email to the support team when a conversation is escalated."
+    },
+    "toasts": {
+      "promptUpdated": "Prompt updated",
+      "promptUpdatedDesc": "The AI prompt has been saved successfully.",
+      "updateFailed": "Failed to update prompt",
+      "testFailed": "Test message failed"
+    }
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Track key performance metrics and growth trends.",
+    "export": "Export",
+    "dateRange": {
+      "last30Days": "Last 30 Days",
+      "last3Months": "Last 3 Months",
+      "last6Months": "Last 6 Months",
+      "last9Months": "Last 9 Months",
+      "lastYear": "Last Year"
+    },
+    "accountGrowth": "Account Growth",
+    "transactionVolume": "Transaction Volume",
+    "depositTrends": "Deposit Trends",
+    "acquisitionFunnel": "Acquisition Funnel",
+    "legend": {
+      "checking": "Checking",
+      "savings": "Savings",
+      "cds": "CDs"
+    }
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "subtitle": "Track all administrative actions.",
+    "export": "Export",
+    "exportCsv": "Export as CSV",
+    "exportJson": "Export as JSON",
+    "activityLog": "Activity Log",
+    "searchPlaceholder": "Search audit entries...",
+    "noEntriesFound": "No log entries found.",
+    "filters": {
+      "allActions": "All Actions",
+      "allUsers": "All Users"
+    },
+    "table": {
+      "timestamp": "Timestamp",
+      "user": "User",
+      "action": "Action",
+      "entity": "Entity",
+      "ipAddress": "IP Address",
+      "details": "Details"
+    }
+  },
+  "compliance": {
+    "title": "Compliance Center",
+    "subtitle": "KYC reviews, AML monitoring, and data governance.",
+    "complianceScore": "Compliance Score",
+    "kycQueue": "KYC Queue",
+    "amlAlerts": "AML Alerts",
+    "dataGovernance": "Data Governance",
+    "pendingKycVerifications": "Pending KYC Verifications",
+    "amlFlaggedTransactions": "AML Flagged Transactions",
+    "dataRetention": "Data Retention Policy",
+    "retentionPeriod": "Retention Period",
+    "nextPurge": "Next Scheduled Purge",
+    "gdprRequests": "GDPR / Data Requests",
+    "approve": "Approve",
+    "reject": "Reject",
+    "investigate": "Investigate",
+    "clear": "Clear",
+    "noKycReviews": "No KYC reviews pending.",
+    "noAmlAlerts": "No AML alerts.",
+    "noDataRequests": "No data requests found.",
+    "retention": {
+      "threeYears": "3 Years",
+      "fiveYears": "5 Years",
+      "sevenYears": "7 Years",
+      "tenYears": "10 Years"
+    },
+    "table": {
+      "customer": "Customer",
+      "submitted": "Submitted",
+      "documentType": "Document Type",
+      "status": "Status",
+      "actions": "Actions",
+      "amount": "Amount",
+      "reason": "Reason",
+      "flagged": "Flagged",
+      "requestType": "Request Type",
+      "requested": "Requested",
+      "completed": "Completed"
+    },
+    "toast": {
+      "kycApproved": "KYC Approved",
+      "kycRejected": "KYC Rejected",
+      "reviewActioned": "Review {{reviewId}} has been {{action}}.",
+      "actionFailed": "Action Failed",
+      "couldNotAction": "Could not {{action}} the review.",
+      "amlUpdated": "AML Status Updated",
+      "alertStatusChanged": "Alert status changed to {{status}}.",
+      "updateFailed": "Update Failed"
+    }
+  },
+  "contentManager": {
+    "title": "Content Manager",
+    "subtitle": "Manage content across {{count}} active channels.",
+    "newContent": "New Content",
+    "stats": {
+      "published": "Published",
+      "drafts": "Drafts",
+      "scheduled": "Scheduled",
+      "activeChannels": "Active Channels"
+    },
+    "deliveryChannels": "Delivery Channels",
+    "createdDate": "Created Date",
+    "dialog": {
+      "body": "Body",
+      "bodyPlaceholder": "Body Placeholder",
+      "cancel": "Cancel",
+      "contentType": "Content Type",
+      "createDraft": "Create Draft",
+      "editContent": "Edit Content",
+      "expiresAt": "Expires At",
+      "expiresHint": "Expires Hint",
+      "newContent": "New Content",
+      "saveChanges": "Save Changes",
+      "scheduleHint": "Schedule Hint",
+      "schedulePublish": "Schedule Publish",
+      "slug": "Slug",
+      "targetChannels": "Target Channels",
+      "titleLabel": "Title Label",
+      "titlePlaceholder": "Title Placeholder"
+    },
+    "expiresDate": "Expires Date",
+    "filters": {
+      "allChannels": "All Channels",
+      "allStatuses": "All Statuses",
+      "allTypes": "All Types",
+      "archived": "Archived",
+      "channel": "Channel",
+      "draft": "Draft",
+      "published": "Published",
+      "scheduled": "Scheduled",
+      "status": "Status",
+      "type": "Type"
+    },
+    "noContent": "No Content",
+    "publishedDate": "Published Date",
+    "scheduledDate": "Scheduled Date"
+  },
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "subtitle": "Overview of your institution's key metrics and recent activity.",
+    "recentActivity": "Recent Activity",
+    "depositGrowth": "Deposit Growth",
+    "vsLastMonth": "vs last month"
+  },
+  "dataExport": {
+    "title": "Data Export & Reporting",
+    "description": "Generate and download reports for compliance, auditing, and analysis.",
+    "newExport": "New Export",
+    "newTemplate": "New Template",
+    "cancel": "Cancel",
+    "generateExport": "Generate Export",
+    "run": "Run",
+    "manual": "Manual",
+    "emptyExports": "No exports found. Create a new export to get started.",
+    "emptyTemplates": "No report templates yet. Create one to save a reusable configuration.",
+    "tabs": {
+      "exports": "Exports",
+      "templates": "Templates"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "completed": "Completed",
+      "processing": "Processing",
+      "pending": "Pending",
+      "failed": "Failed",
+      "expired": "Expired",
+      "reportType": "Report Type",
+      "allTypes": "All Types"
+    },
+    "table": {
+      "report": "Report",
+      "format": "Format",
+      "dateRange": "Date Range",
+      "status": "Status",
+      "rows": "Rows",
+      "size": "Size",
+      "requested": "Requested",
+      "actions": "Actions"
+    },
+    "templateTable": {
+      "name": "Name",
+      "type": "Type",
+      "format": "Format",
+      "schedule": "Schedule",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "summary": {
+      "totalExports": "Total Exports",
+      "completed": "Completed",
+      "failed": "Failed",
+      "storageUsed": "Storage Used"
+    },
+    "reportTypes": {
+      "transactions": "Transactions",
+      "accounts": "Accounts",
+      "compliance": "Compliance",
+      "audit": "Audit",
+      "financialSummary": "Financial Summary",
+      "memberActivity": "Member Activity",
+      "loanPortfolio": "Loan Portfolio",
+      "depositSummary": "Deposit Summary"
+    },
+    "formats": {
+      "csv": "CSV",
+      "pdf": "PDF",
+      "json": "JSON",
+      "xlsx": "Excel (XLSX)"
+    },
+    "newExportDialog": {
+      "title": "Create New Export",
+      "description": "Configure and generate a new data export.",
+      "reportType": "Report Type",
+      "format": "Format",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    },
+    "toast": {
+      "exportCreated": "Export created",
+      "exportCreatedDesc": "Your export is being generated. You'll be notified when it's ready.",
+      "exportFailed": "Export failed",
+      "exportFailedDesc": "Could not create the export. Please try again.",
+      "downloadReady": "Download ready",
+      "downloadReadyDesc": "{{fileName}} is ready for download.",
+      "downloadFailed": "Download failed",
+      "exportDeleted": "Export deleted",
+      "templateCreated": "Template created"
+    }
+  },
+  "experiments": {
+    "createTitle": "Create Experiment",
+    "createDescription": "Set up a new A/B test for your CMS content.",
+    "newExperiment": "New Experiment",
+    "noResultsYet": "No results yet.",
+    "totalImpressions": "Total Impressions",
+    "totalConversions": "Total Conversions",
+    "control": "Control",
+    "variant": "Variant",
+    "addVariant": "Add Variant",
+    "cancel": "Cancel",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "e.g. Homepage Hero Banner Test",
+      "description": "Description",
+      "metric": "Success Metric",
+      "trafficPercent": "Traffic %",
+      "variants": "Variants",
+      "variantNamePlaceholder": "Variant name",
+      "weightPlaceholder": "Weight"
+    },
+    "metrics": {
+      "clickRate": "Click Rate",
+      "conversionRate": "Conversion Rate",
+      "dismissRate": "Dismiss Rate"
+    },
+    "toasts": {
+      "experimentCreated": "Experiment created",
+      "createFailed": "Failed to create experiment",
+      "experimentUpdated": "Experiment Updated"
+    },
+    "actions": {
+      "complete": "Complete",
+      "pause": "Pause",
+      "resume": "Resume",
+      "start": "Start"
+    },
+    "create": "Create",
+    "endedLabel": "Ended Label",
+    "metricLabel": "Metric Label",
+    "noExperiments": "No experiments yet. Create one to start A/B testing your content.",
+    "startedLabel": "Started",
+    "subtitle": "Manage A/B tests for CMS content",
+    "title": "Experiments",
+    "trafficLabel": "Traffic"
+  },
+  "integrations": {
+    "health": "Health"
+  },
+  "onboarding": {
+    "complete": "Complete",
+    "updateStep": "Update Step"
+  },
+  "userManagement": {
+    "title": "User Management",
+    "subtitle": "Manage customer accounts and verifications.",
+    "inviteUser": "Invite User",
+    "customers": "Customers",
+    "searchPlaceholder": "Search by name or email...",
+    "noUsersFound": "No users found.",
+    "statusActive": "Active",
+    "statusSuspended": "Suspended",
+    "statusClosed": "Closed",
+    "filters": {
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "suspended": "Suspended",
+      "closed": "Closed",
+      "kycStatus": "KYC Status",
+      "allKyc": "All KYC",
+      "approved": "Approved",
+      "inReview": "In Review",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "expired": "Expired"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "kyc": "KYC",
+      "accounts": "Accounts",
+      "lastLogin": "Last Login",
+      "status": "Status"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "suspend": "Suspend User",
+      "activate": "Activate User",
+      "resetPassword": "Reset Password"
+    },
+    "dialog": {
+      "suspendTitle": "Suspend User",
+      "activateTitle": "Activate User",
+      "resetTitle": "Reset Password",
+      "suspendDescription": "Are you sure you want to suspend {{name}}? They will lose access to their account.",
+      "activateDescription": "Are you sure you want to activate {{name}}? They will regain access to their account.",
+      "resetDescription": "Send a password reset email to {{name}}?",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "inviteDialog": {
+      "title": "Invite User",
+      "description": "Send an invitation to join your institution.",
+      "email": "Email Address",
+      "role": "Role",
+      "roleMember": "Member",
+      "roleAdmin": "Admin",
+      "sendInvitation": "Send Invitation"
+    },
+    "toasts": {
+      "userSuspended": "User Suspended",
+      "userSuspendedDesc": "{{name}} has been suspended.",
+      "userActivated": "User Activated",
+      "userActivatedDesc": "{{name}} has been activated.",
+      "passwordResetSent": "Password Reset Sent",
+      "passwordResetSentDesc": "A password reset email has been sent to {{name}}.",
+      "actionFailed": "Action Failed",
+      "actionFailedDesc": "Could not complete the action. Please try again.",
+      "invitationSent": "Invitation Sent",
+      "invitationSentDesc": "An invitation has been sent to {{email}}.",
+      "inviteFailed": "Invitation Failed",
+      "inviteFailedDesc": "Could not send the invitation. Please try again."
+    }
+  },
+  "apiTokens": {
+    "activeTokens": {
+      "description": "Manage tokens for accessing CMS content via API.",
+      "emptyMessage": "No tokens created yet.",
+      "title": "Active Tokens ({{count}})"
+    },
+    "allChannels": "All Channels",
+    "createDialog": {
+      "cancel": "Cancel",
+      "createToken": "Create Token",
+      "description": "Create a new API token for accessing CMS content.",
+      "expiresInLabel": "Expires In",
+      "never": "Never",
+      "ninetyDays": "90 Days",
+      "oneEightyDays": "180 Days",
+      "oneYear": "1 Year",
+      "permissionScopesLabel": "Permission Scopes",
+      "rateLimitLabel": "Rate Limit (req/hour)",
+      "restrictChannelsLabel": "Restrict to Channels",
+      "scopesHint": "Comma-separated list of scopes (e.g. content:read,content:write)",
+      "thirtyDays": "30 Days",
+      "title": "Create New API Token",
+      "tokenNameLabel": "Token Name",
+      "tokenNamePlaceholder": "e.g. Mobile App Token"
+    },
+    "createToken": "Create Token",
+    "created": "Created",
+    "description": "Manage API tokens for programmatic access to your CMS content.",
+    "expired": "Expired",
+    "expires": "Expires",
+    "integrationGuide": {
+      "authentication": "Authentication",
+      "channelParam": "Filter by delivery channel (e.g. web, mobile)",
+      "compatiblePlatforms": "Compatible Platforms",
+      "contentTypeParam": "Filter by content type",
+      "description": "Use these endpoints to fetch CMS content in your applications.",
+      "endpoint": "Endpoint",
+      "localeParam": "Return content in specified locale",
+      "queryParameters": "Query Parameters",
+      "slugParam": "Fetch specific content by slug",
+      "title": "Integration Guide"
+    },
+    "lastUsed": "Last Used",
+    "newTokenBanner": {
+      "dismiss": "Dismiss",
+      "storeSecurely": "Store Securely",
+      "title": "New Token Created",
+      "usageHint": "Include this token in the Authorization header: Bearer <token>"
+    },
+    "revoke": "Revoke",
+    "revokedTokens": {
+      "title": "Revoked Tokens ({{count}})"
+    },
+    "securityNotice": {
+      "description": "API tokens provide programmatic access to your content. Treat them like passwords — never share them publicly or commit them to source control.",
+      "title": "Token Security"
+    },
+    "title": "API Tokens"
+  },
+  "brandingEditor": {
+    "accentColor": "Accent Color",
+    "colors": "Colors",
+    "customCss": "Custom CSS",
+    "fontFamily": "Font Family",
+    "layoutTheme": "Layout Theme",
+    "logo": "Logo",
+    "logoDragDrop": "Drag & drop your logo here, or click to browse",
+    "logoFormats": "SVG, PNG, or WebP. Max 2MB.",
+    "preview": "Preview",
+    "previewDemo": {
+      "acrossAccounts": "across accounts",
+      "institutionName": "Institution Name",
+      "totalBalance": "Total Balance"
+    },
+    "primaryColor": "Primary Color",
+    "saveAndPublish": "Save & Publish",
+    "secondaryColor": "Secondary Color",
+    "subtitle": "Customize the look and feel for your customers.",
+    "title": "Branding",
+    "toast": {
+      "saveFailed": "Save Failed",
+      "saveFailedDescription": "Could not save branding changes. Please try again.",
+      "saved": "Branding Saved",
+      "savedDescription": "Your branding changes have been published."
+    },
+    "typography": "Typography",
+    "uploadLogo": "Upload Logo"
+  },
+  "cdpManager": {
+    "config": {
+      "active": "Active",
+      "connectionDescription": "Connection Description",
+      "connectionTitle": "Connection Title",
+      "consentCategories": "Consent Categories",
+      "consentCategoriesDescription": "Consent Categories Description",
+      "dataPlaneUrl": "Data Plane Url",
+      "dataPlaneUrlPlaceholder": "Data Plane Url Placeholder",
+      "disabled": "Disabled",
+      "saveConfiguration": "Save Configuration",
+      "sourceWriteKey": "Source Write Key",
+      "toasts": {
+        "saveFailed": "Save Failed",
+        "saved": "Saved"
+      },
+      "writeKeyPlaceholder": "Write Key Placeholder"
+    },
+    "description": "Description",
+    "destinations": {
+      "active": "Active",
+      "addDestination": "Add Destination",
+      "description": "Description",
+      "dialog": {
+        "apiKeyLabel": "Api Key Label",
+        "apiKeyPlaceholder": "Api Key Placeholder",
+        "cancel": "Cancel",
+        "create": "Create",
+        "description": "Description",
+        "nameLabel": "Name Label",
+        "namePlaceholder": "Name Placeholder",
+        "title": "Title",
+        "typeLabel": "Type Label",
+        "typePlaceholder": "Type Placeholder"
+      },
+      "disabled": "Disabled",
+      "emptyDescription": "Empty Description",
+      "emptyTitle": "Empty Title",
+      "lastSync": "Last Sync",
+      "toasts": {
+        "createFailed": "Create Failed",
+        "created": "Created",
+        "disabled": "Disabled",
+        "enabled": "Enabled",
+        "removed": "Removed"
+      },
+      "type": "Type"
+    },
+    "events": {
+      "delivered": "Delivered",
+      "deliveryRate": "Delivery Rate",
+      "emptyMessage": "Empty Message",
+      "failed": "Failed",
+      "recentEvents": "Recent Events",
+      "table": {
+        "category": "Category",
+        "destinations": "Destinations",
+        "event": "Event",
+        "status": "Status",
+        "time": "Time"
+      },
+      "topEvents": "Top Events",
+      "totalEvents7d": "Total Events7d"
+    },
+    "tabs": {
+      "configuration": "Configuration",
+      "destinations": "Destinations",
+      "events": "Events"
+    },
+    "title": "Title"
+  },
+  "integrationManager": {
+    "apiKey": "API Key",
+    "configure": "Configure",
+    "configureComingSoon": "Configuration wizard coming soon.",
+    "connected": "Connected",
+    "connectionFailed": "Connection Failed",
+    "connectionTest": "Connection Test",
+    "couldNotReach": "Could not reach",
+    "disconnected": "Disconnected",
+    "lastSync": "Last Sync",
+    "subtitle": "Manage third-party provider connections.",
+    "testConnection": "Test Connection",
+    "title": "Integrations",
+    "webhook": "Webhook"
+  },
+  "knowledgeBase": {
+    "description": "Description",
+    "documents": {
+      "emptyDescription": "Empty Description",
+      "emptyTitle": "Empty Title",
+      "indexedDescription": "Indexed Description",
+      "indexedTitle": "Indexed Title",
+      "table": {
+        "category": "Category",
+        "created": "Created",
+        "status": "Status",
+        "title": "Title"
+      }
+    },
+    "gaps": {
+      "description": "Description",
+      "emptyDescription": "Empty Description",
+      "emptyTitle": "Empty Title",
+      "table": {
+        "lastAsked": "Last Asked",
+        "occurrences": "Occurrences",
+        "question": "Question"
+      },
+      "title": "Title"
+    },
+    "tabs": {
+      "documents": "Documents",
+      "knowledgeGaps": "Knowledge Gaps"
+    },
+    "title": "Title",
+    "toasts": {
+      "deleteFailed": "Delete Failed",
+      "documentDeleted": "Document Deleted",
+      "documentUploaded": "Document Uploaded",
+      "documentUploadedDesc": "Document Uploaded Desc",
+      "uploadFailed": "Upload Failed"
+    },
+    "uploadDialog": {
+      "cancel": "Cancel",
+      "categoryLabel": "Category Label",
+      "categoryPlaceholder": "Category Placeholder",
+      "contentLabel": "Content Label",
+      "contentPlaceholder": "Content Placeholder",
+      "description": "Description",
+      "title": "Title",
+      "titleLabel": "Title Label",
+      "titlePlaceholder": "Title Placeholder",
+      "upload": "Upload",
+      "uploading": "Uploading"
+    },
+    "uploadDocument": "Upload Document"
+  },
+  "sso": {
+    "autoProvisionUsers": "Auto Provision Users",
+    "autoProvisionUsersDesc": "Auto Provision Users Desc",
+    "commonSettings": "Common Settings",
+    "defaultRole": "Default Role",
+    "emailDomainRestriction": "Email Domain Restriction",
+    "emailDomainRestrictionDesc": "Email Domain Restriction Desc",
+    "forceSso": "Force Sso",
+    "forceSsoDesc": "Force Sso Desc",
+    "noSsoConfigured": "No SSO Configured",
+    "oidc": {
+      "clientId": "Client ID",
+      "clientSecret": "Client Secret",
+      "description": "Connect your OpenID Connect identity provider for seamless SSO.",
+      "discoveryUrl": "Discovery URL",
+      "discoveryUrlDesc": "The OpenID Connect discovery URL for your identity provider.",
+      "providerPlaceholder": "e.g. Okta, Auth0, Azure AD",
+      "save": "Save OIDC",
+      "title": "OpenID Connect"
+    },
+    "oidcActive": "OIDC Active",
+    "optional": "Optional",
+    "providerName": "Provider Name",
+    "roles": {
+      "admin": "Admin",
+      "member": "Member",
+      "viewer": "Viewer"
+    },
+    "saml": {
+      "certificate": "X.509 Certificate",
+      "description": "Connect your SAML 2.0 identity provider for enterprise SSO.",
+      "entityId": "Entity ID",
+      "providerPlaceholder": "e.g. Okta, Azure AD, OneLogin",
+      "save": "Save SAML",
+      "sloUrl": "SLO URL",
+      "ssoUrl": "SSO URL",
+      "title": "SAML 2.0"
+    },
+    "samlActive": "SAML Active",
+    "subtitle": "Configure SAML or OIDC identity provider integration.",
+    "tabs": {
+      "oidc": "OpenID Connect",
+      "saml": "SAML 2.0"
+    },
+    "testConnection": "Test Connection",
+    "title": "Single Sign-On",
+    "toasts": {
+      "configSaved": "Configuration Saved",
+      "configSavedDesc": "Config Saved Desc",
+      "connectionFailed": "Connection Failed",
+      "connectionFailedDesc": "Connection Failed Desc",
+      "connectionSuccessful": "Connection Successful",
+      "connectionSuccessfulDesc": "Connection Successful Desc",
+      "saveFailed": "Save Failed",
+      "saveFailedDesc": "Save Failed Desc"
+    }
+  },
+  "tenantSettings": {
+    "consent": {
+      "autoBlockScripts": "Auto Block Scripts",
+      "autoBlockScriptsDesc": "Auto Block Scripts Desc",
+      "builtIn": "Built In",
+      "builtInDesc": "Built In Desc",
+      "configId": "Config Id",
+      "customerId": "Customer Id",
+      "description": "Description",
+      "domainScriptId": "Domain Script Id",
+      "ketch": "Ketch",
+      "ketchDesc": "Ketch Desc",
+      "ketchHelp": "Ketch Help",
+      "oneTrust": "One Trust",
+      "oneTrustDesc": "One Trust Desc",
+      "oneTrustHelp": "One Trust Help",
+      "organizationCode": "Organization Code",
+      "osano": "Osano",
+      "osanoDesc": "Osano Desc",
+      "osanoHelp": "Osano Help",
+      "propertyCode": "Property Code",
+      "provider": "Provider",
+      "title": "Title"
+    },
+    "features": {
+      "description": "Enable or disable product features for your institution.",
+      "title": "Feature Toggles"
+    },
+    "passwordPolicy": {
+      "allowEmailUsername": "Allow Email Username",
+      "allowEmailUsernameDesc": "Allow Email Username Desc",
+      "allowedSpecialChars": "Allowed Special Chars",
+      "description": "Description",
+      "disallowUsername": "Disallow Username",
+      "disallowUsernameDesc": "Disallow Username Desc",
+      "expirationHistory": "Expiration History",
+      "expiryDays": "Expiry Days",
+      "expiryDaysHelp": "Expiry Days Help",
+      "historyCount": "History Count",
+      "historyCountHelp": "History Count Help",
+      "lastUpdated": "Last Updated",
+      "lockoutDuration": "Lockout Duration",
+      "lockoutSettings": "Lockout Settings",
+      "maxFailedAttempts": "Max Failed Attempts",
+      "maxLength": "Max Length",
+      "minLength": "Min Length",
+      "requireDigit": "Require Digit",
+      "requireDigitDesc": "Require Digit Desc",
+      "requireLowercase": "Require Lowercase",
+      "requireLowercaseDesc": "Require Lowercase Desc",
+      "requireSpecialChar": "Require Special Char",
+      "requireSpecialCharDesc": "Require Special Char Desc",
+      "requireUppercase": "Require Uppercase",
+      "requireUppercaseDesc": "Require Uppercase Desc",
+      "requirements": "Requirements",
+      "saveButton": "Save Button",
+      "title": "Title",
+      "usernameRules": "Username Rules"
+    },
+    "profile": {
+      "contactEmail": "Contact Email",
+      "contactPhone": "Contact Phone",
+      "description": "Update your institution's basic information.",
+      "institutionName": "Institution Name",
+      "title": "Institution Profile",
+      "urlSlug": "URL Slug"
+    },
+    "saveChanges": "Save Changes",
+    "security": {
+      "description": "Description",
+      "mfaOptional": "Mfa Optional",
+      "mfaPolicy": "Mfa Policy",
+      "mfaRequiredAll": "Mfa Required All",
+      "mfaRequiredThreshold": "Mfa Required Threshold",
+      "rateLimit": "Rate Limit",
+      "sessionTimeout": "Session Timeout",
+      "title": "Title"
+    },
+    "subscription": {
+      "description": "Description",
+      "storage": "Storage",
+      "title": "Title",
+      "upgradePlan": "Upgrade Plan",
+      "users": "Users"
+    },
+    "subtitle": "Manage institution configuration, features, and security policies.",
+    "title": "Settings",
+    "toasts": {
+      "featureUpdateFailed": "Feature Update Failed",
+      "featureUpdated": "Feature Updated",
+      "passwordPolicyFailed": "Password Policy Failed",
+      "passwordPolicySaved": "Password Policy Saved"
+    }
+  }
+}

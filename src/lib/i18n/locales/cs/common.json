@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "Načítání...",
+    "error": "Došlo k chybě",
+    "errorMessage": "Něco se pokazilo. Zkuste to prosím znovu.",
+    "success": "Úspěch",
+    "cancel": "Zrušit",
+    "confirm": "Potvrdit",
+    "save": "Uložit",
+    "back": "Zpět",
+    "next": "Další",
+    "submit": "Odeslat",
+    "close": "Zavřít",
+    "edit": "Upravit",
+    "delete": "Smazat",
+    "search": "Hledat",
+    "noResults": "Nebyly nalezeny žádné výsledky",
+    "retry": "Zkusit znovu",
+    "learnMore": "Zjistit více",
+    "viewDetails": "Zobrazit podrobnosti",
+    "showMore": "Zobrazit více",
+    "showLess": "Zobrazit méně",
+    "required": "Povinné",
+    "optional": "Volitelné",
+    "yes": "Ano",
+    "no": "Ne",
+    "or": "nebo",
+    "and": "a"
+  },
+  "a11y": {
+    "skipToContent": "Přeskočit na hlavní obsah",
+    "openMenu": "Otevřít menu",
+    "closeMenu": "Zavřít menu",
+    "openNavigation": "Otevřít navigaci",
+    "closeNavigation": "Zavřít navigaci",
+    "toggleDarkMode": "Přepnout tmavý režim",
+    "selectLanguage": "Vybrat jazyk",
+    "expandSection": "Rozbalit sekci",
+    "collapseSection": "Sbalit sekci",
+    "loading": "Obsah se načítá",
+    "notification": "Oznámení",
+    "required": "Toto pole je povinné",
+    "showPassword": "Zobrazit heslo",
+    "hidePassword": "Skrýt heslo",
+    "externalLink": "Otevře se v novém okně",
+    "pagination": "Stránkování",
+    "previousPage": "Předchozí stránka",
+    "nextPage": "Další stránka",
+    "page": "Stránka {{number}}"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "Platforma digitálního bankovnictví",
+    "signIn": "Přihlásit se",
+    "signUp": "Registrovat se",
+    "email": "E-mail",
+    "emailPlaceholder": "you@company.com",
+    "password": "Heslo",
+    "confirmPassword": "Potvrdit heslo",
+    "forgotPassword": "Zapomněli jste heslo?",
+    "resetPassword": "Obnovit heslo",
+    "sendResetLink": "Odeslat odkaz pro obnovení",
+    "backToSignIn": "Zpět na přihlášení",
+    "signInWithSSO": "Přihlásit se přes SSO",
+    "createAccount": "Vytvořit účet",
+    "firmName": "Název firmy",
+    "firmNamePlaceholder": "Vaše společnost",
+    "minCharacters": "Min. 8 znaků",
+    "signInFailed": "Přihlášení se nezdařilo",
+    "signUpFailed": "Registrace se nezdařila",
+    "checkYourEmail": "Zkontrolujte svůj e-mail",
+    "confirmationLinkSent": "Poslali jsme vám potvrzovací odkaz. Zkontrolujte prosím svou schránku.",
+    "resetFailed": "Obnovení se nezdařilo",
+    "resetLinkSent": "Poslali jsme vám odkaz pro obnovení hesla. Zkontrolujte prosím svou schránku.",
+    "alreadyHaveAccount": "Již máte účet?",
+    "noAccount": "Nemáte účet?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "Jejda! Stránka nebyla nalezena",
+    "returnHome": "Zpět na domovskou stránku"
+  },
+  "resetPassword": {
+    "invalidLink": "Neplatný odkaz",
+    "invalidLinkDesc": "Tento odkaz pro obnovení hesla je neplatný nebo vypršel.",
+    "goToSignIn": "Přejít na přihlášení",
+    "setNewPassword": "Nastavit nové heslo",
+    "setNewPasswordDesc": "Zadejte níže své nové heslo.",
+    "newPassword": "Nové heslo",
+    "confirmPassword": "Potvrdit heslo",
+    "minCharacters": "Min. 8 znaků",
+    "updatePassword": "Aktualizovat heslo",
+    "updateFailed": "Aktualizace se nezdařila",
+    "passwordUpdated": "Heslo aktualizováno",
+    "passwordUpdatedDesc": "Nyní se můžete přihlásit pomocí nového hesla."
+  },
+  "demoSelector": {
+    "title": "Vyberte demo",
+    "subtitle": "Prozkoumejte platformu s ukázkovými daty — bez nutnosti účtu.",
+    "demos": {
+      "banking": {
+        "title": "Digitální bankovnictví",
+        "description": "Účty, převody, platby účtů, vzdálené vklady, správa karet a další."
+      },
+      "admin": {
+        "title": "Administrátorský portál",
+        "description": "Správa tenantů, branding, compliance, analytika a auditní záznamy."
+      }
+    }
+  }
+}

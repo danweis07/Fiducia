@@ -1,0 +1,28 @@
+{
+  "notFound": {
+    "title": "A Hụghị Peeji A",
+    "description": "Peeji a na-achọ adịghị ma ọ bụ e kwagara ya."
+  },
+  "home": {
+    "heroBadge": "Anyị ji nnukwu obi na-ejere obodo niile ozi kemgbe 1952",
+    "heroTitle": "Ụlọ Akụ Nke Na-etinye",
+    "heroHighlight": "Gị N'ụzọ Mbụ",
+    "heroDescription": "Sonyere ndị otu 175,000+ ndị na-enwe uru karịa, ụgwọ dị ala, na ọrụ onwe onye. Dị ka ụlọ ọgbakọ ego na-anaghị achọ uru, ọdịmma ego gị bụ naanị ebumnobi anyị.",
+    "openAccount": "Mepee Akaụntụ",
+    "signIn": "Banye n'Ụlọ Akụ",
+    "noMonthlyFees": "Enweghị ụgwọ ọnwa",
+    "ncuaInsured": "NCUA kwadoro",
+    "freeAtms": "ATM n'efu",
+    "todaysTopRates": "Ọnụego Kachasị Mma Taa",
+    "viewAllRates": "Hụ Ọnụego Niile",
+    "productsTitle": "Ngwaahịa & Ọrụ",
+    "productsDescription": "Site n'ụlọ akụ kwa ụbọchị ruo ihe omume ndụ dị mkpa, anyị nwere ihe ziri ezi maka gị.",
+    "whyChooseUsTitle": "Gịnị Mere Ndị Otu 175,000+ Ji Họrọ Anyị",
+    "whyChooseUsDescription": "Dị ka ụlọ ọgbakọ ego nke ndị otu nwe, anyị na-etinye ego n'ime ngwaọrụ na ọrụ ndị kachasị mkpa maka gị.",
+    "testimonialsTitle": "Ihe Ndị Otu Anyị Na-ekwu",
+    "ctaTitle": "Ị Dị Njikere Isonye N'ezinụlọ Ụlọ Ọgbakọ Ego?",
+    "ctaDescription": "Mepee akaụntụ gị n'ime nkeji ole na ole — n'ịntanetị ma ọ bụ n'alaka ọ bụla anyị nwere. Ịbụ onye otu dị mọpụ maka onye ọ bụla n'obodo anyị.",
+    "findBranch": "Chọọ Alaka",
+    "questionsCallUs": "Ajụjụ? Kpọọ anyị na (800) 555-0199"
+  }
+}

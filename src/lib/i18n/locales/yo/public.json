@@ -1,0 +1,28 @@
+{
+  "notFound": {
+    "title": "A Kò Rí Ojú-Ìwé",
+    "description": "Ojú-ìwé tí o ń wá kò sí tàbí a ti yí padà."
+  },
+  "home": {
+    "heroBadge": "A ti ń ṣe iṣẹ́ àwùjọ ní gbogbo orílẹ̀-èdè pẹ̀lú ìgbéraga láti ọdún 1952",
+    "heroTitle": "Ilé-ìfowópamọ́ Tí Ń Fi",
+    "heroHighlight": "Ọ Síwájú",
+    "heroDescription": "Darapọ̀ mọ́ àwọn ọmọ ẹgbẹ́ 175,000+ tí wọ́n ń gbádùn owó èlé tó dára jù, owó ìdíyelé tó kéré, àti iṣẹ́ àrà-ẹni. Gẹ́gẹ́ bí ẹgbẹ́ àjọ-owó aláìjèrè, àlàáfíà owó rẹ nìkan ni iṣẹ́-àṣè wa.",
+    "openAccount": "Ṣí Àkáǹtì",
+    "signIn": "Wọlé Sí Ilé-ìfowópamọ́",
+    "noMonthlyFees": "Kò sí owó ìdíyelé oṣù",
+    "ncuaInsured": "NCUA fìdí rẹ̀ múlẹ̀",
+    "freeAtms": "ATM ọ̀fẹ́",
+    "todaysTopRates": "Owó Èlé Tó Ga Jù Lónìí",
+    "viewAllRates": "Wo Gbogbo Owó Èlé",
+    "productsTitle": "Àwọn Ọjà àti Iṣẹ́",
+    "productsDescription": "Láti ilé-ìfowópamọ́ ojoojúmọ́ sí àwọn àkókò pàtàkì ìgbésí-ayé, a ní ojútùú tó tọ́ fún ọ.",
+    "whyChooseUsTitle": "Ìdí Tí Àwọn Ọmọ Ẹgbẹ́ 175,000+ Fi Yan Wa",
+    "whyChooseUsDescription": "Gẹ́gẹ́ bí ẹgbẹ́ àjọ-owó tí àwọn ọmọ ẹgbẹ́ ni, a ń ṣe ìdókòwò sínú àwọn irinṣẹ́ àti iṣẹ́ tó ṣe pàtàkì jù fún ọ.",
+    "testimonialsTitle": "Ohun Tí Àwọn Ọmọ Ẹgbẹ́ Wa Ń Sọ",
+    "ctaTitle": "Ṣé O Ti Ṣetán Láti Darapọ̀ Mọ́ Ẹbí Ẹgbẹ́ Àjọ-Owó?",
+    "ctaDescription": "Ṣí àkáǹtì rẹ ní ìṣẹ́jú díẹ̀ — lórí ayélujára tàbí ní ẹ̀ka àwa kankan. Ọmọ ẹgbẹ́ ṣí sílẹ̀ fún ẹnikẹ́ni nínú àwùjọ wa.",
+    "findBranch": "Wá Ẹ̀ka Kan",
+    "questionsCallUs": "Àwọn ìbéèrè? Pe wa ní (800) 555-0199"
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "लोड होत आहे...",
+    "error": "एक त्रुटी आली",
+    "errorMessage": "काहीतरी चुकले. कृपया पुन्हा प्रयत्न करा.",
+    "success": "यशस्वी",
+    "cancel": "रद्द करा",
+    "confirm": "पुष्टी करा",
+    "save": "जतन करा",
+    "back": "मागे",
+    "next": "पुढे",
+    "submit": "सबमिट करा",
+    "close": "बंद करा",
+    "edit": "संपादित करा",
+    "delete": "हटवा",
+    "search": "शोधा",
+    "noResults": "कोणतेही परिणाम सापडले नाहीत",
+    "retry": "पुन्हा प्रयत्न करा",
+    "learnMore": "अधिक जाणून घ्या",
+    "viewDetails": "तपशील पहा",
+    "showMore": "अधिक दाखवा",
+    "showLess": "कमी दाखवा",
+    "required": "आवश्यक",
+    "optional": "ऐच्छिक",
+    "yes": "हो",
+    "no": "नाही",
+    "or": "किंवा",
+    "and": "आणि"
+  },
+  "a11y": {
+    "skipToContent": "मुख्य मजकुरावर जा",
+    "openMenu": "मेनू उघडा",
+    "closeMenu": "मेनू बंद करा",
+    "openNavigation": "नेव्हिगेशन उघडा",
+    "closeNavigation": "नेव्हिगेशन बंद करा",
+    "toggleDarkMode": "डार्क मोड टॉगल करा",
+    "selectLanguage": "भाषा निवडा",
+    "expandSection": "विभाग विस्तृत करा",
+    "collapseSection": "विभाग संकुचित करा",
+    "loading": "मजकूर लोड होत आहे",
+    "notification": "सूचना",
+    "required": "हे फील्ड आवश्यक आहे",
+    "showPassword": "पासवर्ड दाखवा",
+    "hidePassword": "पासवर्ड लपवा",
+    "externalLink": "नवीन विंडोमध्ये उघडते",
+    "pagination": "पृष्ठांकन",
+    "previousPage": "मागील पृष्ठ",
+    "nextPage": "पुढील पृष्ठ",
+    "page": "पृष्ठ {{number}}"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "डिजिटल बँकिंग प्लॅटफॉर्म",
+    "signIn": "साइन इन",
+    "signUp": "साइन अप",
+    "email": "ईमेल",
+    "emailPlaceholder": "you@company.com",
+    "password": "पासवर्ड",
+    "confirmPassword": "पासवर्डची पुष्टी करा",
+    "forgotPassword": "पासवर्ड विसरलात?",
+    "resetPassword": "पासवर्ड रीसेट करा",
+    "sendResetLink": "रीसेट लिंक पाठवा",
+    "backToSignIn": "साइन इनवर परत जा",
+    "signInWithSSO": "SSO ने साइन इन करा",
+    "createAccount": "खाते तयार करा",
+    "firmName": "फर्मचे नाव",
+    "firmNamePlaceholder": "तुमची कंपनी",
+    "minCharacters": "किमान ८ अक्षरे",
+    "signInFailed": "साइन इन अयशस्वी",
+    "signUpFailed": "साइन अप अयशस्वी",
+    "checkYourEmail": "तुमचा ईमेल तपासा",
+    "confirmationLinkSent": "आम्ही तुम्हाला पुष्टीकरण लिंक पाठवली आहे. कृपया तुमचा इनबॉक्स तपासा.",
+    "resetFailed": "रीसेट अयशस्वी",
+    "resetLinkSent": "आम्ही तुम्हाला पासवर्ड रीसेट लिंक पाठवली आहे. कृपया तुमचा इनबॉक्स तपासा.",
+    "alreadyHaveAccount": "आधीच खाते आहे?",
+    "noAccount": "खाते नाही?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "अरेरे! पृष्ठ सापडले नाही",
+    "returnHome": "मुख्यपृष्ठावर परत जा"
+  },
+  "resetPassword": {
+    "invalidLink": "अवैध लिंक",
+    "invalidLinkDesc": "ही पासवर्ड रीसेट लिंक अवैध आहे किंवा कालबाह्य झाली आहे.",
+    "goToSignIn": "साइन इनवर जा",
+    "setNewPassword": "नवीन पासवर्ड सेट करा",
+    "setNewPasswordDesc": "खाली तुमचा नवीन पासवर्ड प्रविष्ट करा.",
+    "newPassword": "नवीन पासवर्ड",
+    "confirmPassword": "पासवर्डची पुष्टी करा",
+    "minCharacters": "किमान ८ अक्षरे",
+    "updatePassword": "पासवर्ड अपडेट करा",
+    "updateFailed": "अपडेट अयशस्वी",
+    "passwordUpdated": "पासवर्ड अपडेट झाला",
+    "passwordUpdatedDesc": "तुम्ही आता तुमच्या नवीन पासवर्डने साइन इन करू शकता."
+  },
+  "demoSelector": {
+    "title": "डेमो निवडा",
+    "subtitle": "नमुना डेटासह प्लॅटफॉर्म एक्सप्लोर करा — खात्याची गरज नाही.",
+    "demos": {
+      "banking": {
+        "title": "डिजिटल बँकिंग",
+        "description": "खाती, हस्तांतरण, बिल पेमेंट, रिमोट ठेव, कार्ड नियंत्रणे आणि बरेच काही."
+      },
+      "admin": {
+        "title": "अॅडमिन पोर्टल",
+        "description": "टेनंट व्यवस्थापन, ब्रँडिंग, अनुपालन, विश्लेषण आणि ऑडिट लॉग."
+      }
+    }
+  }
+}

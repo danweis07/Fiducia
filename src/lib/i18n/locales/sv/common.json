@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "Laddar...",
+    "error": "Ett fel uppstod",
+    "errorMessage": "Något gick fel. Försök igen.",
+    "success": "Lyckades",
+    "cancel": "Avbryt",
+    "confirm": "Bekräfta",
+    "save": "Spara",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "submit": "Skicka",
+    "close": "Stäng",
+    "edit": "Redigera",
+    "delete": "Radera",
+    "search": "Sök",
+    "noResults": "Inga resultat hittades",
+    "retry": "Försök igen",
+    "learnMore": "Läs mer",
+    "viewDetails": "Visa detaljer",
+    "showMore": "Visa mer",
+    "showLess": "Visa mindre",
+    "required": "Obligatorisk",
+    "optional": "Valfritt",
+    "yes": "Ja",
+    "no": "Nej",
+    "or": "eller",
+    "and": "och"
+  },
+  "a11y": {
+    "skipToContent": "Hoppa till huvudinnehåll",
+    "openMenu": "Öppna meny",
+    "closeMenu": "Stäng meny",
+    "openNavigation": "Öppna navigering",
+    "closeNavigation": "Stäng navigering",
+    "toggleDarkMode": "Växla mörkt läge",
+    "selectLanguage": "Välj språk",
+    "expandSection": "Expandera avsnitt",
+    "collapseSection": "Minimera avsnitt",
+    "loading": "Innehållet laddas",
+    "notification": "Avisering",
+    "required": "Detta fält är obligatoriskt",
+    "showPassword": "Visa lösenord",
+    "hidePassword": "Dölj lösenord",
+    "externalLink": "Öppnas i ett nytt fönster",
+    "pagination": "Sidindelning",
+    "previousPage": "Föregående sida",
+    "nextPage": "Nästa sida",
+    "page": "Sida {{number}}"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "Digital bankplattform",
+    "signIn": "Logga in",
+    "signUp": "Registrera",
+    "email": "E-post",
+    "emailPlaceholder": "you@company.com",
+    "password": "Lösenord",
+    "confirmPassword": "Bekräfta lösenord",
+    "forgotPassword": "Glömt lösenordet?",
+    "resetPassword": "Återställ lösenord",
+    "sendResetLink": "Skicka återställningslänk",
+    "backToSignIn": "Tillbaka till inloggning",
+    "signInWithSSO": "Logga in med SSO",
+    "createAccount": "Skapa konto",
+    "firmName": "Företagsnamn",
+    "firmNamePlaceholder": "Ditt företag",
+    "minCharacters": "Min 8 tecken",
+    "signInFailed": "Inloggningen misslyckades",
+    "signUpFailed": "Registreringen misslyckades",
+    "checkYourEmail": "Kolla din e-post",
+    "confirmationLinkSent": "Vi har skickat en bekräftelselänk till dig. Kontrollera din inkorg.",
+    "resetFailed": "Återställningen misslyckades",
+    "resetLinkSent": "Vi har skickat en länk för att återställa lösenordet. Kontrollera din inkorg.",
+    "alreadyHaveAccount": "Har du redan ett konto?",
+    "noAccount": "Har du inget konto?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "Hoppsan! Sidan hittades inte",
+    "returnHome": "Tillbaka till startsidan"
+  },
+  "resetPassword": {
+    "invalidLink": "Ogiltig länk",
+    "invalidLinkDesc": "Denna länk för lösenordsåterställning är ogiltig eller har gått ut.",
+    "goToSignIn": "Gå till inloggning",
+    "setNewPassword": "Ange nytt lösenord",
+    "setNewPasswordDesc": "Ange ditt nya lösenord nedan.",
+    "newPassword": "Nytt lösenord",
+    "confirmPassword": "Bekräfta lösenord",
+    "minCharacters": "Min 8 tecken",
+    "updatePassword": "Uppdatera lösenord",
+    "updateFailed": "Uppdateringen misslyckades",
+    "passwordUpdated": "Lösenordet uppdaterat",
+    "passwordUpdatedDesc": "Du kan nu logga in med ditt nya lösenord."
+  },
+  "demoSelector": {
+    "title": "Välj en demo",
+    "subtitle": "Utforska plattformen med exempeldata — inget konto behövs.",
+    "demos": {
+      "banking": {
+        "title": "Digital bankverksamhet",
+        "description": "Konton, överföringar, fakturabetaling, fjärrinsättning, kortkontroller och mer."
+      },
+      "admin": {
+        "title": "Administratörsportal",
+        "description": "Hyresgästhantering, varumärke, regelefterlevnad, analyser och granskningsloggar."
+      }
+    }
+  }
+}

@@ -1,0 +1,317 @@
+# Demo Credit Union — Full Reference
+
+> Complete product details, rate tables, branch information, and FAQs for AI assistants.
+> NOTE: This is a fictional credit union used to demonstrate the Open Banking Platform. All rates, products, locations, and personnel are illustrative examples. In production, all content is configured per-tenant.
+
+---
+
+## ORGANIZATION
+
+Name: Demo Credit Union
+Also known as: Demo CU
+Type: Federal Credit Union (not-for-profit financial cooperative)
+Charter: Chartered by the National Credit Union Administration (NCUA)
+Founded: 1952
+Headquarters: 100 Credit Union Way, Anytown, US 10001
+CEO: Sarah Chen
+CFO: Marcus Williams
+COO: Rachel Kim
+CTO: David Okafor
+Total Assets: $3.2 billion
+Members: 175,000+
+Employees: 850+
+Branches: Multiple locations nationwide
+ATM Network: 85,000+ surcharge-free (CO-OP + Allpoint)
+Shared Branching: 5,000+ locations nationwide via CO-OP network
+NMLS: #123456
+Routing Number: 265473851
+SWIFT/BIC: DMCUUS33
+
+---
+
+## SAVINGS PRODUCTS
+
+### Regular Savings
+- APY: 0.45%
+- Minimum to open: $5.00
+- Minimum to earn APY: $5.00
+- Monthly fee: None
+- Dividends: Paid monthly
+- Requirements: Membership share account
+
+### High-Yield Savings
+- APY: 4.25%
+- Minimum to open: $500
+- Minimum to earn APY: $500
+- Monthly fee: None
+- Dividends: Paid monthly
+- Withdrawal limit: 6 per month
+
+### Money Market Account
+- APY: 4.50% (balances $2,500+), 3.75% (balances $500-$2,499), 0.25% (below $500)
+- Minimum to open: $500
+- Check writing: Yes (6 checks/month)
+- Debit card: Optional
+
+### Share Certificates (CDs)
+| Term     | APY   | Min Deposit | Early Withdrawal Penalty |
+|----------|-------|-------------|--------------------------|
+| 3-Month  | 4.25% | $500        | 30 days interest         |
+| 6-Month  | 4.75% | $500        | 90 days interest         |
+| 12-Month | 5.00% | $500        | 180 days interest        |
+| 24-Month | 4.50% | $500        | 180 days interest        |
+| 36-Month | 4.25% | $1,000      | 365 days interest        |
+| 60-Month | 4.00% | $1,000      | 365 days interest        |
+
+- Dividends compounded daily, paid monthly
+- Auto-renewal at maturity
+- IRA CDs available at same rates
+- Jumbo CDs ($100K+): add 0.10% APY bonus
+
+---
+
+## CHECKING PRODUCTS
+
+### Basic Checking
+- Monthly fee: $0 (free)
+- Minimum balance: None
+- Debit card: Free Visa debit
+- ATMs: 85,000+ surcharge-free
+- Overdraft protection: Optional link to savings
+- Direct deposit: Yes, get paid up to 2 days early
+
+### Premium Checking
+- Monthly fee: $0 with $1,500 minimum daily balance ($8/month otherwise)
+- APY: 0.10% on all balances
+- Free checks (first box)
+- Free cashier's checks
+- Free wire transfers (domestic, up to 3/month)
+- Debit card rewards: 0.25% cash back
+
+### Student Checking
+- Eligibility: Ages 13-24
+- Monthly fee: $0
+- No minimum balance
+- Free debit card
+- Financial literacy resources
+- Auto-converts to Basic Checking at age 25
+
+---
+
+## LOAN PRODUCTS
+
+### Personal Loans
+- APR: from 7.49% (with autopay discount)
+- Amounts: $1,000 - $50,000
+- Terms: 12-84 months
+- No origination fee
+- No prepayment penalty
+- Unsecured
+
+### Auto Loans — New
+- APR: from 5.24%
+- Terms: 36, 48, 60, 72, 84 months
+- Max LTV: 125% (includes tax, title, warranties)
+- No prepayment penalty
+- Dealership or private party
+
+### Auto Loans — Used
+- APR: from 5.74%
+- Vehicle age: Up to 7 model years old
+- Terms: 36-72 months
+- Max LTV: 120%
+
+### Auto Loan Refinance
+- APR: from 5.49%
+- Refinance from any lender
+- Skip-a-payment option available
+
+### Home Equity Loan
+- APR: from 6.99% fixed
+- Amounts: $10,000 - $500,000
+- Terms: 5-30 years
+- LTV: up to 90%
+- No closing costs on lines under $250K
+
+### Home Equity Line of Credit (HELOC)
+- APR: Prime + 0.50% (currently 8.50%)
+- Draw period: 10 years
+- Repayment period: 20 years
+- Min draw: $5,000
+
+---
+
+## MORTGAGE PRODUCTS
+
+| Product      | Rate   | APR   | Points |
+|-------------|--------|-------|--------|
+| 30-Year Fixed | 6.375% | 6.50% | 0.0    |
+| 15-Year Fixed | 5.750% | 5.89% | 0.0    |
+| 5/1 ARM      | 5.25%  | 5.45% | 0.0    |
+| FHA 30-Year  | 6.00%  | 6.80% | 0.0    |
+| VA 30-Year   | 5.875% | 6.10% | 0.0    |
+
+- Jumbo loans: Available for amounts above $766,550
+- First-time homebuyer programs with down payment assistance
+- Closing cost credits for members with $50K+ in deposits
+- Construction-to-permanent loans available
+- Pre-approval: Apply online, decision within 24 hours
+
+---
+
+## CREDIT CARDS
+
+### Rewards Visa
+- APR: 14.99% - 24.99% variable
+- Annual fee: $0
+- Rewards: 2% cash back on dining and gas, 1% on everything else
+- Sign-up bonus: $200 after $1,000 spend in first 3 months
+- No foreign transaction fees
+- Cell phone protection included
+
+### Cash Back Card
+- APR: 13.99% - 23.99% variable
+- Annual fee: $0
+- Rewards: 1.5% unlimited cash back on all purchases
+- Sign-up bonus: $150 after $500 spend in first 3 months
+- 0% intro APR for 15 months on purchases and balance transfers
+
+### Low Rate Card
+- APR: 8.99% - 18.99% variable
+- Annual fee: $0
+- Best for: Balance transfers and carrying a balance
+- 0% intro APR for 21 months on balance transfers
+- No balance transfer fee for first 60 days
+
+---
+
+## DIGITAL BANKING
+
+### Online Banking
+- Account overview and transaction history
+- Bill pay with scheduled and recurring payments
+- Internal and external transfers
+- Account-to-account (A2A) linking
+- eStatements
+- Secure messaging
+
+### Mobile App (iOS & Android)
+- Mobile check deposit (up to $5,000/day for established accounts)
+- Card controls: lock/unlock, set spending limits, travel notifications
+- Person-to-person payments
+- Branch and ATM locator with GPS
+- Biometric login (Face ID, Touch ID, fingerprint)
+- Push notification alerts
+- Widget for quick balance check
+
+### Security Features
+- Multi-factor authentication (MFA)
+- Real-time fraud monitoring
+- Instant card lock/unlock
+- Transaction alerts (customizable thresholds)
+- Secure messaging
+- Session timeout after 10 minutes of inactivity
+
+---
+
+## SAMPLE BRANCH LOCATIONS
+
+Note: In production, branch locations are configured per-tenant. The following are sample locations for demonstration purposes.
+
+1. Main Branch — 100 Credit Union Way, Anytown, US 10001
+2. Downtown Branch — 250 Main Street, Anytown, US 10002
+3. Westside Branch — 1500 Market St, Anytown, US 10003
+4. Northside Branch — 7401 Commerce Ave, Anytown, US 10004
+5. Eastside Branch — 100 E Main St, Anytown, US 10005
+
+### Hours
+- Monday-Friday: 9:00 AM - 5:00 PM
+- Saturday: 9:00 AM - 1:00 PM
+- Sunday: Closed
+- Drive-through: Mon-Fri 8:00 AM - 6:00 PM, Sat 9:00 AM - 1:00 PM
+
+---
+
+## CONTACT INFORMATION
+
+- General: (800) 555-0199
+- Fraud Hotline: (800) 555-3728 (24/7)
+- Lost/Stolen Card: (800) 555-2273 (24/7)
+- Mortgage Center: (800) 555-4663
+- Business Banking: (800) 555-2491
+- Email: support@example-cu.org
+- Fax: (800) 555-0198
+- TTY/TDD: 711
+
+### Phone Hours
+- Monday-Friday: 7:00 AM - 7:00 PM EST
+- Saturday: 9:00 AM - 2:00 PM EST
+- Sunday: Closed
+
+### Social Media
+- Facebook: facebook.com/examplecu
+- Twitter/X: @examplecu
+- Instagram: @examplecu
+- LinkedIn: linkedin.com/company/example-cu
+- YouTube: youtube.com/examplecu
+
+---
+
+## FREQUENTLY ASKED QUESTIONS
+
+Q: Who can join Demo Credit Union?
+A: In this demo, membership is open to everyone. In production, eligibility criteria are configured per-tenant.
+
+Q: What is the routing number?
+A: 265473851 (sample)
+
+Q: How do I get paid early with direct deposit?
+A: Set up direct deposit and you may receive your paycheck up to 2 days early. This applies to ACH deposits from recognized payroll providers.
+
+Q: What are the ATM fees?
+A: Members pay no surcharge at 85,000+ CO-OP and Allpoint ATMs nationwide. If you use an out-of-network ATM, the ATM owner may charge a fee.
+
+Q: How do I report fraud?
+A: Call our 24/7 fraud hotline at (800) 555-3728. For online banking concerns, use secure messaging in the app or website.
+
+Q: Is my money safe?
+A: Yes. Deposits are federally insured by the National Credit Union Administration (NCUA) up to $250,000 per member, per account ownership category.
+
+Q: What is the difference between a credit union and a bank?
+A: Credit unions are not-for-profit cooperatives owned by their members. This means better rates, lower fees, and profits returned to members rather than shareholders.
+
+Q: How do I apply for a loan?
+A: Apply online through our website or mobile app, call us, or visit any branch. Most personal and auto loan decisions are made within 24 hours.
+
+Q: Can I use mobile deposit?
+A: Yes. Our mobile app supports check deposits up to $5,000/day for established accounts ($2,500 for new accounts).
+
+Q: Do you offer business accounts?
+A: Yes. We offer business checking, savings, and lending products. Contact our business banking team at (800) 555-2491.
+
+---
+
+## COMMUNITY INVOLVEMENT
+
+### Community Foundation
+- Annual giving: $2.5M+
+- Focus areas: Financial literacy, affordable housing, youth development, small business
+- Since 1952: $50M+ in total community investment
+
+### Scholars Program
+- Annual budget: $250,000
+- Number of scholarships: 50 awards of $5,000 each
+- Eligibility: Members or dependents, 3.0+ GPA, enrolled in accredited institution
+- Applications: January 1 - March 31 annually
+- Since 2005: $4M+ awarded to 800+ students
+
+### Volunteer Program
+- 850+ employees
+- 15,000+ volunteer hours annually
+- Matching gift program (up to $1,000/employee/year)
+
+---
+
+NOTE: This is a fictional credit union created for the Open Banking Platform demo.
+All rates, products, locations, and personnel are illustrative examples.
+For the summary version, see /llms.txt

@@ -1,0 +1,159 @@
+# =============================================================================
+# Docker Compose — Zero-to-Banking in One Command
+#
+# Usage:
+#   docker compose up              → Full stack: React + Supabase + Core Simulator
+#   docker compose up app          → React dev server only (demo mode)
+#   docker compose up core-sim     → Core simulator only (for adapter testing)
+#   docker compose down            → Stop all services
+#   docker compose down -v         → Stop and reset all data
+#
+#   docker compose --profile monitoring up  → Include Prometheus + Grafana
+#
+# Services:
+#   React App:          http://localhost:8080
+#   Supabase API:       http://localhost:54321
+#   Supabase Studio:    http://localhost:54323
+#   Core Simulator:     http://localhost:9090
+#   Sim Health Check:   http://localhost:9090/health
+#
+# Demo credentials:
+#   Email:    demo@fiducia.dev
+#   Password: demo1234
+#
+# Core Simulator — inject errors for resilience testing:
+#   curl -X POST http://localhost:9090/admin/config \
+#     -H 'Content-Type: application/json' \
+#     -d '{"latencyMs": 500, "coreBusyRate": 0.3}'
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # React Frontend (development server with hot reload)
+  # ---------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - VITE_SUPABASE_URL=http://localhost:54321
+      - VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+      - VITE_DEMO_MODE=true
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+      core-sim:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Supabase — Local PostgreSQL (with migrations + seed data)
+  # ---------------------------------------------------------------------------
+  supabase-db:
+    image: supabase/postgres:15.6.1.143
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d/01-migrations
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/00-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Supabase — API Gateway (PostgREST + GoTrue + Realtime + Studio)
+  # ---------------------------------------------------------------------------
+  supabase-api:
+    image: supabase/supabase-local:latest
+    ports:
+      - "54321:54321"  # API
+      - "54323:54323"  # Studio
+    environment:
+      SUPABASE_AUTH_EXTERNAL_GITHUB_ENABLED: "false"
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+    volumes:
+      - ./supabase/migrations:/docker-entrypoint-initdb.d
+
+  # ---------------------------------------------------------------------------
+  # Core Banking Simulator
+  #
+  # Mimics CU*Answers (It's Me 247), Symitar (SymXchange), and Fineract REST
+  # endpoints. Returns realistic mock data with configurable latency and errors.
+  #
+  # Endpoints:
+  #   CU*Answers:  /api/credit_unions/:cuId/membership/...
+  #   SymXchange:  /symxchange/accounts/...
+  #   Fineract:    /fineract-provider/api/v1/...
+  #   Admin:       POST /admin/config  (adjust latency/errors at runtime)
+  #   Health:      GET /health
+  # ---------------------------------------------------------------------------
+  core-sim:
+    build:
+      context: ./core-simulator
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      PORT: "9090"
+      SIMULATED_LATENCY_MS: "50"
+      LATENCY_JITTER_MS: "30"
+      ERROR_RATE: "0"
+      CORE_BUSY_RATE: "0"
+      # mTLS — disabled by default. To enable:
+      #   1. Run: cd core-simulator/certs && ./generate-certs.sh
+      #   2. Uncomment the lines below
+      MTLS_ENABLED: "${MTLS_ENABLED:-false}"
+      MTLS_CERT_DIR: "/certs"
+      MTLS_REJECT_UNAUTHORIZED: "${MTLS_REJECT_UNAUTHORIZED:-true}"
+    volumes:
+      - core-sim-certs:/certs
+    healthcheck:
+      test: ["CMD-SHELL", "if [ \"$MTLS_ENABLED\" = 'true' ]; then wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:9090/health || exit 1; else wget --no-verbose --tries=1 --spider http://localhost:9090/health || exit 1; fi"]
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+
+  # ---------------------------------------------------------------------------
+  # mTLS Certificate Generator (one-shot init container)
+  #
+  # Generates self-signed CA + server + client certs into the shared volume.
+  # Only runs once — subsequent `docker compose up` reuses existing certs.
+  #
+  # To regenerate: docker compose run --rm cert-init
+  # ---------------------------------------------------------------------------
+  cert-init:
+    build:
+      context: ./core-simulator
+      dockerfile: Dockerfile
+    entrypoint: /bin/sh
+    command: >
+      -c "
+        if [ -f /certs/ca.crt ] && [ -f /certs/server.crt ] && [ -f /certs/client.crt ]; then
+          echo 'Certs already exist in /certs — skipping generation.';
+          echo 'To regenerate: docker compose run --rm cert-init sh -c \"rm /certs/*.* && /app/certs/generate-certs.sh /certs\"';
+        else
+          echo 'Generating mTLS certificates...';
+          /app/certs/generate-certs.sh /certs;
+        fi
+      "
+    volumes:
+      - core-sim-certs:/certs
+    profiles:
+      - mtls
+
+volumes:
+  supabase-db-data:
+  core-sim-certs:

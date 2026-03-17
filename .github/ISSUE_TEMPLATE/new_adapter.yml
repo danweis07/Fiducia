@@ -1,0 +1,81 @@
+name: New Adapter
+description: Propose or contribute a new integration adapter
+title: "[Adapter]: "
+labels: ["adapter", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your interest in adding a new adapter! This template helps us track adapter contributions.
+
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Adapter domain
+      description: Which adapter domain does this belong to?
+      options:
+        - Core Banking
+        - RDC (Remote Deposit Capture)
+        - Bill Pay
+        - Cards
+        - Card Issuing
+        - Card Provisioning
+        - Card Offers
+        - KYC
+        - KYB
+        - Account Opening
+        - Loan Origination
+        - External Accounts
+        - Financial Data
+        - Enrichment
+        - Locations
+        - AI Services
+        - Fraud
+        - Instant Payments
+        - Treasury
+        - Direct Deposit
+        - Payment Operations
+        - Compliance Audit
+        - Notifications
+        - New Domain (describe below)
+    validations:
+      required: true
+
+  - type: input
+    id: provider
+    attributes:
+      label: Provider / vendor name
+      placeholder: "e.g., Symitar, DNA, Corelation KeyStone"
+    validations:
+      required: true
+
+  - type: textarea
+    id: api-info
+    attributes:
+      label: API details
+      description: What API does this provider expose? Include links to public documentation if available.
+      placeholder: |
+        - API type: REST / SOAP / gRPC
+        - Docs: https://...
+        - Auth: API key / OAuth / mTLS
+    validations:
+      required: false
+
+  - type: dropdown
+    id: intent
+    attributes:
+      label: Contribution intent
+      description: Are you planning to build this, or requesting someone else does?
+      options:
+        - I plan to build this adapter and submit a PR
+        - I'm requesting this adapter (not building it myself)
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other context — number of institutions using this provider, sandbox availability, etc.
+    validations:
+      required: false

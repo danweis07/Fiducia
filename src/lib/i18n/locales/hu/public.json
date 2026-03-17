@@ -1,0 +1,39 @@
+{
+  "notFound": {
+    "title": "Az oldal nem található",
+    "description": "A keresett oldal nem létezik vagy áthelyezték."
+  },
+  "home": {
+    "heroBadge": "Büszkén szolgáljuk a közösségeket országszerte 1952 óta",
+    "heroTitle": "Bankolás, ami",
+    "heroHighlight": "Önt helyezi előtérbe",
+    "heroDescription": "Csatlakozzon több mint 175 000 tagunkhoz, akik jobb kamatokat, alacsonyabb díjakat és személyes szolgáltatást élveznek. Nonprofit hitelszövetkezetként az Ön pénzügyi jóléte az egyetlen küldetésünk.",
+    "openAccount": "Számla nyitása",
+    "signIn": "Bejelentkezés a bankba",
+    "noMonthlyFees": "Nincsenek havi díjak",
+    "ncuaInsured": "NCUA biztosított",
+    "freeAtms": "Ingyenes ATM-ek",
+    "todaysTopRates": "Mai legjobb kamatok",
+    "viewAllRates": "Összes kamat megtekintése",
+    "productsTitle": "Termékek és szolgáltatások",
+    "productsDescription": "A mindennapi bankolástól az élet nagy mérföldköveiig — megvan a megfelelő megoldásunk az Ön számára.",
+    "whyChooseUsTitle": "Miért választ minket több mint 175 000 tag",
+    "whyChooseUsDescription": "Tagok tulajdonában lévő hitelszövetkezetként azokba az eszközökbe és szolgáltatásokba fektetünk, amelyek az Ön számára a legfontosabbak.",
+    "testimonialsTitle": "Mit mondanak tagjaink",
+    "ctaTitle": "Készen áll csatlakozni a hitelszövetkezet családjához?",
+    "ctaDescription": "Nyissa meg számláját percek alatt — online vagy bármely fiókunkban. A tagság közösségünk bármely tagja számára nyitva áll.",
+    "findBranch": "Fiók keresése",
+    "questionsCallUs": "Kérdése van? Hívjon minket: (800) 555-0199"
+  },
+  "terms": {
+    "rateLabel": "AER",
+    "loanRateLabel": "APR",
+    "checkingAccount": "Current Account",
+    "currentAccount": "Current Account",
+    "savingsAccount": "Savings",
+    "depositInsuranceBody": "DGSD",
+    "depositInsuranceLimit": "€100,000",
+    "atmCount": "50,000+",
+    "atmNetworks": "LINK and Mastercard"
+  }
+}

@@ -1,0 +1,25 @@
+# Open Banking Platform — Demo Credit Union
+
+> Open-source, multi-tenant digital banking platform. MIT licensed.
+
+This is a demo instance of the Open Banking Platform, showcasing features with a fictional "Demo Credit Union" tenant.
+
+## About Demo Credit Union (Sample Tenant)
+Demo Credit Union is a fictional credit union used to demonstrate platform capabilities. In production, all content on these pages is configured per-tenant through the admin CMS and branding editor.
+
+## Platform Features
+- Consumer banking portal (accounts, transfers, bill pay, RDC, cards, loans)
+- Admin console (user management, compliance, analytics, branding, CMS)
+- Mobile app (iOS & Android via Flutter)
+- AI-powered chat, insights, and automation
+- Multi-tenant with per-tenant branding and integrations
+- Adapter pattern for core banking, bill pay, RDC, cards, KYC, and more
+
+## Contact (Demo)
+- Email: support@example-cu.org
+- Phone: (800) 555-0199
+- Address: 100 Credit Union Way, Anytown, US 10001
+
+## Source Code
+This platform is open source under the MIT license.
+Repository: https://github.com/openbanking-platform/digital-banking
