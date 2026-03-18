@@ -22,4 +22,4 @@ Fiducia is an experimental software framework provided as-is for research and ed
 
 ## Contact
 
-For questions about licensing or commercial use, open an issue on the [GitHub repository](https://github.com/danweis07/Fiducia-).
+For questions about licensing or commercial use, open an issue on the [GitHub repository](https://github.com/danweis07/Fiducia).

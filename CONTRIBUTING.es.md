@@ -5,7 +5,7 @@ Gracias por tu interés en contribuir. Este documento cubre las convenciones y e
 ## Primeros Pasos
 
 ```bash
-git clone https://github.com/danweis07/Fiducia-.git && cd Fiducia-
+git clone https://github.com/danweis07/Fiducia.git && cd Fiducia
 ./scripts/setup.sh --demo
 npm run dev
 ```
@@ -88,11 +88,11 @@ Las migraciones están en `supabase/migrations/`. Para agregar una:
 
 ## Reportar Errores
 
-Usa la plantilla de issue [Bug Report](https://github.com/danweis07/Fiducia-/issues/new?template=bug_report.yml).
+Usa la plantilla de issue [Bug Report](https://github.com/danweis07/Fiducia/issues/new?template=bug_report.yml).
 
 ## Solicitar Funcionalidades
 
-Usa la plantilla de issue [Feature Request](https://github.com/danweis07/Fiducia-/issues/new?template=feature_request.yml).
+Usa la plantilla de issue [Feature Request](https://github.com/danweis07/Fiducia/issues/new?template=feature_request.yml).
 
 ## Vulnerabilidades de Seguridad
 

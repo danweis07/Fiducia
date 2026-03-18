@@ -8,7 +8,7 @@ What each geography needs to get up and running, and what's ready vs. what's not
 
 ```bash
 # 1. Clone and install (Node 20+ required)
-git clone <repo-url> && cd Fiducia-
+git clone <repo-url> && cd Fiducia
 ./scripts/setup.sh --demo    # 5 minutes, no backend needed
 
 # 2. Run locally

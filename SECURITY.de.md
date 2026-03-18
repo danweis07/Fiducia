@@ -8,7 +8,7 @@ Dies ist eine Finanzdienstleistungsplattform. Wir nehmen Sicherheit ernst und bi
 
 ### So melden Sie
 
-1. **Bevorzugt:** Verwenden Sie [GitHub Security Advisories](https://github.com/danweis07/Fiducia-/security/advisories/new), um privat zu melden.
+1. **Bevorzugt:** Verwenden Sie [GitHub Security Advisories](https://github.com/danweis07/Fiducia/security/advisories/new), um privat zu melden.
 2. **Alternative:** Senden Sie Sicherheitsbedenken per E-Mail an die in [CODEOWNERS](CODEOWNERS) aufgeführten Repository-Maintainer.
 
 ### Was Sie angeben sollten

@@ -23,7 +23,7 @@ Wir verpflichten uns, die Teilnahme an diesem Projekt zu einer belästigungsfrei
 
 ## Durchsetzung
 
-Fälle von missbräuchlichem, belästigendem oder anderweitig inakzeptablem Verhalten können gemeldet werden, indem Sie ein privates Gespräch mit den in [CODEOWNERS](CODEOWNERS) aufgeführten Maintainern eröffnen oder über [GitHub Discussions](https://github.com/danweis07/Fiducia-/discussions).
+Fälle von missbräuchlichem, belästigendem oder anderweitig inakzeptablem Verhalten können gemeldet werden, indem Sie ein privates Gespräch mit den in [CODEOWNERS](CODEOWNERS) aufgeführten Maintainern eröffnen oder über [GitHub Discussions](https://github.com/danweis07/Fiducia/discussions).
 
 Alle Beschwerden werden geprüft und untersucht und führen zu einer Reaktion, die als notwendig und den Umständen angemessen erachtet wird. Maintainer sind verpflichtet, die Vertraulichkeit des Meldenden zu wahren.
 

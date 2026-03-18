@@ -12,16 +12,16 @@ Looking for help with Fiducia? Here's where to go.
 
 ## Asking Questions
 
-**GitHub Discussions** — Use [Discussions](https://github.com/danweis07/Fiducia-/discussions) for:
+**GitHub Discussions** — Use [Discussions](https://github.com/danweis07/Fiducia/discussions) for:
 - Questions about setup, configuration, or usage
 - Architecture or design discussions
 - Adapter implementation guidance
 - Feature ideas and feedback
 
-**GitHub Issues** — Use [Issues](https://github.com/danweis07/Fiducia-/issues) for:
-- Bug reports (use the [bug report template](https://github.com/danweis07/Fiducia-/issues/new?template=bug_report.md))
-- Feature requests (use the [feature request template](https://github.com/danweis07/Fiducia-/issues/new?template=feature_request.md))
-- Adapter requests (use the [adapter request template](https://github.com/danweis07/Fiducia-/issues/new?template=adapter_request.md))
+**GitHub Issues** — Use [Issues](https://github.com/danweis07/Fiducia/issues) for:
+- Bug reports (use the [bug report template](https://github.com/danweis07/Fiducia/issues/new?template=bug_report.md))
+- Feature requests (use the [feature request template](https://github.com/danweis07/Fiducia/issues/new?template=feature_request.md))
+- Adapter requests (use the [adapter request template](https://github.com/danweis07/Fiducia/issues/new?template=adapter_request.md))
 
 ## Security Issues
 

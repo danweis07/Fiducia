@@ -160,6 +160,6 @@ Adapters auto-detect credentials via environment variables. If the real adapter 
 
 ## Still stuck?
 
-- Search [existing issues](https://github.com/danweis07/Fiducia-/issues) on GitHub
-- Open a [bug report](https://github.com/danweis07/Fiducia-/issues/new?template=bug_report.yml)
+- Search [existing issues](https://github.com/danweis07/Fiducia/issues) on GitHub
+- Open a [bug report](https://github.com/danweis07/Fiducia/issues/new?template=bug_report.yml)
 - Check [ARCHITECTURE.md](ARCHITECTURE.md) for system design context

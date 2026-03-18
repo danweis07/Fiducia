@@ -23,7 +23,7 @@ We are committed to making participation in this project a harassment-free exper
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by opening a private conversation with the maintainers listed in [CODEOWNERS](CODEOWNERS) or via [GitHub Discussions](https://github.com/danweis07/Fiducia-/discussions).
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by opening a private conversation with the maintainers listed in [CODEOWNERS](CODEOWNERS) or via [GitHub Discussions](https://github.com/danweis07/Fiducia/discussions).
 
 All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances. Maintainers are obligated to maintain confidentiality with regard to the reporter of an incident.
 

@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-REPO="danweis07/Fiducia-"
+REPO="danweis07/Fiducia"
 KEEP_BRANCHES="main"
 DRY_RUN=false
 

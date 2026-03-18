@@ -1,6 +1,6 @@
 [English](README.md) | [Français](README.fr.md) | [Español](README.es.md) | [Português](README.pt-BR.md) | [Deutsch](README.de.md)
 
-[![CI](https://github.com/danweis07/Fiducia-/actions/workflows/ci.yml/badge.svg)](https://github.com/danweis07/Fiducia-/actions/workflows/ci.yml)
+[![CI](https://github.com/danweis07/Fiducia/actions/workflows/ci.yml/badge.svg)](https://github.com/danweis07/Fiducia/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
@@ -16,7 +16,7 @@ Multi-tenant digital banking platform for credit unions and community banks. Rea
 ## Quick Start
 
 ```bash
-git clone https://github.com/danweis07/Fiducia-.git && cd Fiducia-
+git clone https://github.com/danweis07/Fiducia.git && cd Fiducia
 ./scripts/setup.sh --demo   # installs deps, creates .env.local, verifies build
 npm run dev                  # http://localhost:8080
 ```
@@ -72,7 +72,7 @@ Once the app is running, here's how to get oriented:
 ## Project Structure
 
 ```
-Fiducia-/
+Fiducia/
 ├── src/                    # React frontend
 │   ├── pages/              # Route page components (60+)
 │   ├── components/         # Reusable components (ui/, banking/, admin/, sdui/)
