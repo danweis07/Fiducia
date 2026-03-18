@@ -12,6 +12,10 @@
   "bugs": {
     "url": "https://github.com/danweis07/Fiducia-/issues"
   },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
