@@ -23,7 +23,7 @@ Nos comprometemos a hacer que la participación en este proyecto sea una experie
 
 ## Aplicación
 
-Los casos de comportamiento abusivo, acosador o de otro modo inaceptable pueden reportarse abriendo una conversación privada con los mantenedores listados en [CODEOWNERS](CODEOWNERS) o a través de [GitHub Discussions](https://github.com/danweis07/Fiducia-/discussions).
+Los casos de comportamiento abusivo, acosador o de otro modo inaceptable pueden reportarse abriendo una conversación privada con los mantenedores listados en [CODEOWNERS](CODEOWNERS) o a través de [GitHub Discussions](https://github.com/danweis07/Fiducia/discussions).
 
 Todas las quejas serán revisadas e investigadas y resultarán en una respuesta que se considere necesaria y apropiada según las circunstancias. Los mantenedores están obligados a mantener la confidencialidad con respecto a la persona que reporta un incidente.
 

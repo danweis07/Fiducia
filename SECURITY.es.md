@@ -8,7 +8,7 @@ Esta es una plataforma de servicios financieros. Nos tomamos la seguridad en ser
 
 ### Cómo Reportar
 
-1. **Preferido:** Usa [GitHub Security Advisories](https://github.com/danweis07/Fiducia-/security/advisories/new) para reportar de forma privada.
+1. **Preferido:** Usa [GitHub Security Advisories](https://github.com/danweis07/Fiducia/security/advisories/new) para reportar de forma privada.
 2. **Alternativa:** Envía las preocupaciones de seguridad por correo electrónico a los mantenedores del repositorio listados en [CODEOWNERS](CODEOWNERS).
 
 ### Qué Incluir

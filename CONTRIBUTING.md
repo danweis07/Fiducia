@@ -5,7 +5,7 @@ Thanks for your interest in contributing. This document covers the conventions a
 ## Getting Started
 
 ```bash
-git clone https://github.com/danweis07/Fiducia-.git && cd Fiducia-
+git clone https://github.com/danweis07/Fiducia.git && cd Fiducia
 ./scripts/setup.sh --demo
 npm run dev
 ```
@@ -88,11 +88,11 @@ Migrations are in `supabase/migrations/`. To add one:
 
 ## Reporting Bugs
 
-Use the [Bug Report](https://github.com/danweis07/Fiducia-/issues/new?template=bug_report.yml) issue template.
+Use the [Bug Report](https://github.com/danweis07/Fiducia/issues/new?template=bug_report.yml) issue template.
 
 ## Requesting Features
 
-Use the [Feature Request](https://github.com/danweis07/Fiducia-/issues/new?template=feature_request.yml) issue template.
+Use the [Feature Request](https://github.com/danweis07/Fiducia/issues/new?template=feature_request.yml) issue template.
 
 ## Security Vulnerabilities
 

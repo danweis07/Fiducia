@@ -8,7 +8,7 @@ Il s'agit d'une plateforme de services financiers. Nous prenons la sécurité au
 
 ### Comment Signaler
 
-1. **Méthode privilégiée :** Utilisez les [GitHub Security Advisories](https://github.com/danweis07/Fiducia-/security/advisories/new) pour signaler de manière privée.
+1. **Méthode privilégiée :** Utilisez les [GitHub Security Advisories](https://github.com/danweis07/Fiducia/security/advisories/new) pour signaler de manière privée.
 2. **Alternative :** Envoyez vos préoccupations de sécurité par e-mail aux mainteneurs du dépôt listés dans [CODEOWNERS](CODEOWNERS).
 
 ### Ce qu'il Faut Inclure

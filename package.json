@@ -6,11 +6,15 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/danweis07/Fiducia-.git"
+    "url": "https://github.com/danweis07/Fiducia.git"
   },
-  "homepage": "https://github.com/danweis07/Fiducia-#readme",
+  "homepage": "https://github.com/danweis07/Fiducia#readme",
   "bugs": {
-    "url": "https://github.com/danweis07/Fiducia-/issues"
+    "url": "https://github.com/danweis07/Fiducia/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
   },
   "type": "module",
   "scripts": {

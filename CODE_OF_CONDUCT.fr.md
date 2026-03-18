@@ -23,7 +23,7 @@ Nous nous engageons à faire de la participation à ce projet une expérience sa
 
 ## Application
 
-Les cas de comportement abusif, harcelant ou autrement inacceptable peuvent être signalés en ouvrant une conversation privée avec les mainteneurs listés dans [CODEOWNERS](CODEOWNERS) ou via les [GitHub Discussions](https://github.com/danweis07/Fiducia-/discussions).
+Les cas de comportement abusif, harcelant ou autrement inacceptable peuvent être signalés en ouvrant une conversation privée avec les mainteneurs listés dans [CODEOWNERS](CODEOWNERS) ou via les [GitHub Discussions](https://github.com/danweis07/Fiducia/discussions).
 
 Toutes les plaintes seront examinées et feront l'objet d'une enquête, et donneront lieu à une réponse jugée nécessaire et appropriée aux circonstances. Les mainteneurs sont tenus de respecter la confidentialité concernant la personne ayant signalé un incident.
 
