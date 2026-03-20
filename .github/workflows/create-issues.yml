@@ -1,0 +1,234 @@
+name: Create GitHub Issues
+
+on:
+  push:
+    branches:
+      - claude/create-github-issues-dA5jM
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  create-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = [
+              { name: 'region: uk', color: '1D76DB', description: 'United Kingdom regional feature' },
+              { name: 'region: brazil', color: '009B3A', description: 'Brazil regional feature' },
+              { name: 'region: mexico', color: 'CE1126', description: 'Mexico regional feature' },
+            ];
+            for (const label of labels) {
+              try {
+                await github.rest.issues.createLabel({ owner: context.repo.owner, repo: context.repo.repo, ...label });
+                console.log(`Created label: ${label.name}`);
+              } catch (e) {
+                if (e.status === 422) console.log(`Label already exists: ${label.name}`);
+                else throw e;
+              }
+            }
+
+      - name: Create Issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = [
+              {
+                title: 'Add JSDoc comments to all gateway action handlers in src/lib/gateway/',
+                labels: ['good first issue', 'documentation'],
+                body: `## Description
+
+            The gateway action handlers in \`src/lib/gateway/\` are currently undocumented. Each handler file needs JSDoc comments with parameter and return type descriptions.
+
+            ## Why
+
+            Better documentation helps new contributors understand the codebase and improves IDE intellisense support.
+
+            ## Scope
+
+            - Add JSDoc comments to every exported function in \`src/lib/gateway/\`
+            - Include \`@param\` and \`@returns\` annotations with type descriptions
+            - Document any side effects or error conditions
+
+            ## Notes
+
+            This is naturally parallelizable — a contributor can pick one file at a time. Each file can be a separate PR if preferred.`
+              },
+              {
+                title: 'Audit .env.example for missing or outdated variables',
+                labels: ['good first issue', 'documentation'],
+                body: `## Description
+
+            Cross-reference all \`VITE_*\` references in the codebase against \`.env.example\` and ensure every variable is listed with a description comment.
+
+            ## Steps
+
+            1. Search the codebase for all \`VITE_*\` and other environment variable references
+            2. Compare against the current \`.env.example\`
+            3. Add any missing variables with sensible defaults or placeholder values
+            4. Add a description comment above each variable explaining its purpose
+            5. Remove any variables that are no longer referenced
+
+            ## Why
+
+            A complete and accurate \`.env.example\` is essential for onboarding new developers and ensuring consistent local setup.`
+              },
+              {
+                title: 'Add a TROUBLESHOOTING entry for Windows dev setup',
+                labels: ['good first issue', 'documentation'],
+                body: `## Description
+
+            The current developer documentation assumes a Mac/Linux environment. Contributors on Windows encounter specific pain points that should be documented.
+
+            ## Scope
+
+            - Add a \`TROUBLESHOOTING.md\` or a section in existing docs covering Windows-specific issues
+            - Document known issues with path separators, line endings, and shell compatibility
+            - Include workarounds for common setup failures on Windows
+            - Cover WSL2 setup as a recommended alternative
+
+            ## Why
+
+            Lowering the barrier for Windows contributors expands the potential contributor base.`
+              },
+              {
+                title: 'Fix any broken links in the docs/ folder',
+                labels: ['good first issue', 'documentation'],
+                body: `## Description
+
+            Run a link checker across all markdown files in the \`docs/\` folder and fix any dead or broken references.
+
+            ## Steps
+
+            1. Use a markdown link checker tool (e.g., \`markdown-link-check\`) to scan all \`.md\` files in \`docs/\`
+            2. Identify broken internal links (wrong paths, renamed files)
+            3. Identify broken external links (404s, moved pages)
+            4. Fix or remove all broken links
+            5. Consider adding a CI check to prevent future broken links
+
+            ## Why
+
+            Broken links erode trust in documentation and waste contributor time. This is a pure find-and-fix task that requires no deep code knowledge.`
+              },
+              {
+                title: 'Add missing aria-label attributes to icon-only buttons',
+                labels: ['good first issue', 'enhancement'],
+                body: `## Description
+
+            Perform a quick accessibility audit to find icon-only buttons that are missing \`aria-label\` attributes, and add appropriate labels.
+
+            ## Steps
+
+            1. Search for \`<Button\` or \`<button\` elements that contain only an icon (no visible text)
+            2. Verify each has an \`aria-label\` or \`aria-labelledby\` attribute
+            3. Add descriptive \`aria-label\` values where missing
+            4. Run an accessibility linter (e.g., \`eslint-plugin-jsx-a11y\`) to catch any remaining issues
+
+            ## Why
+
+            Screen reader users cannot interact with icon-only buttons that lack accessible labels. This is a straightforward a11y improvement.`
+              },
+              {
+                title: '[UK] Implement sort code validation utility',
+                labels: ['good first issue', 'region: uk'],
+                body: `## Description
+
+            Implement a pure TypeScript utility function that validates UK bank sort codes.
+
+            ## Requirements
+
+            - Validate format: 6 digits, optionally formatted as \`XX-XX-XX\`
+            - Implement modulus weight check (standard modulus checking algorithm)
+            - Return a typed result indicating valid/invalid with error reason
+            - No backend dependency — pure client-side logic
+
+            ## Suggested location
+
+            \`src/lib/validation/sort-code.ts\`
+
+            ## Testing
+
+            - Add Vitest tests covering valid sort codes, invalid formats, and failed modulus checks
+            - Include edge cases: leading zeros, boundary values
+
+            ## References
+
+            - [Vocalink Modulus Checking Specification](https://www.vocalink.com/tools/modulus-checking/)`
+              },
+              {
+                title: '[Brazil] Implement CPF/CNPJ validation utility',
+                labels: ['good first issue', 'region: brazil'],
+                body: `## Description
+
+            Implement a TypeScript utility for validating Brazilian tax identification numbers: CPF (individuals, 11 digits) and CNPJ (companies, 14 digits).
+
+            ## Requirements
+
+            - \`validateCPF(value: string): ValidationResult\` — validate CPF with check digit algorithm
+            - \`validateCNPJ(value: string): ValidationResult\` — validate CNPJ with check digit algorithm
+            - Handle formatting (e.g., \`123.456.789-09\` for CPF, \`12.345.678/0001-95\` for CNPJ)
+            - Strip non-numeric characters before validation
+            - Reject known invalid sequences (e.g., all same digits)
+            - No backend dependency — pure client-side logic
+
+            ## Suggested location
+
+            \`src/lib/validation/brazil-tax-id.ts\`
+
+            ## Testing
+
+            - Full Vitest test coverage: valid IDs, invalid check digits, malformed input, edge cases
+            - Test both formatted and unformatted inputs`
+              },
+              {
+                title: '[Mexico] Implement CLABE validation',
+                labels: ['good first issue', 'region: mexico'],
+                body: `## Description
+
+            Implement a TypeScript utility for validating Mexican CLABE (Clave Bancaria Estandarizada) account numbers.
+
+            ## Requirements
+
+            - Validate the 18-digit CLABE format
+            - Implement the check digit algorithm (weighted sum modulo 10)
+            - Extract and validate the 3-digit bank code
+            - Extract and validate the 3-digit city code
+            - Return structured result with bank code, city code, account number, and validity
+            - No backend dependency — pure client-side logic
+
+            ## Suggested location
+
+            \`src/lib/validation/clabe.ts\`
+
+            ## Testing
+
+            - Vitest tests covering: valid CLABEs, invalid check digits, wrong length, non-numeric input
+            - Test extraction of bank/city codes
+
+            ## References
+
+            - [CLABE on Wikipedia](https://en.wikipedia.org/wiki/CLABE)`
+              },
+            ];
+
+            for (const issue of issues) {
+              try {
+                const created = await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: issue.title,
+                  body: issue.body,
+                  labels: issue.labels,
+                });
+                console.log(`Created issue #${created.data.number}: ${issue.title}`);
+              } catch (e) {
+                console.error(`Failed to create issue "${issue.title}": ${e.message}`);
+              }
+            }
+
+      - name: Summary
+        run: echo "All issues have been created. Check the Issues tab."
