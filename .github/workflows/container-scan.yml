@@ -19,6 +19,10 @@ on:
       - "Dockerfile.dev"
       - "package-lock.json"
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   scan:
     name: Trivy Container Scan

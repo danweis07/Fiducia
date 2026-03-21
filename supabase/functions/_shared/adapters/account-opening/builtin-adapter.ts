@@ -35,9 +35,10 @@
  * - SSN, DOB, full names, account numbers NEVER appear in logs
  */
 
-import type { DatabasePort, EnvProvider } from '../../platform/types.ts';
-import type { KYCAdapter, KYCApplicant } from '../kyc/types.ts';
-import type { ESignatureAdapter } from '../e-signature/types.ts';
+import type { DatabasePort, EnvProvider } from "../../platform/types.ts";
+import { secureRandomInt } from "../../secure-random.ts";
+import type { KYCAdapter, KYCApplicant } from "../kyc/types.ts";
+import type { ESignatureAdapter } from "../e-signature/types.ts";
 import type {
   AccountOpeningAdminAdapter,
   AccountOpeningConfig,
@@ -52,27 +53,27 @@ import type {
   ApplicationReviewAction,
   ApplicationAuditEntry,
   ApplicationStats,
-} from './types.ts';
+} from "./types.ts";
 
 // =============================================================================
 // PII MASKING UTILITIES
 // =============================================================================
 
 function maskEmail(email: string): string {
-  const [local, domain] = email.split('@');
-  if (!domain) return '****@****.***';
+  const [local, domain] = email.split("@");
+  if (!domain) return "****@****.***";
   return `${local.charAt(0)}***@${domain}`;
 }
 
 function maskSSN(ssn: string): string {
-  const digits = ssn.replace(/\D/g, '');
-  if (digits.length < 4) return '***-**-****';
+  const digits = ssn.replace(/\D/g, "");
+  if (digits.length < 4) return "***-**-****";
   return `***-**-${digits.slice(-4)}`;
 }
 
 function maskLastName(name: string): string {
-  if (name.length <= 1) return '*';
-  return name.charAt(0) + '*'.repeat(name.length - 1);
+  if (name.length <= 1) return "*";
+  return name.charAt(0) + "*".repeat(name.length - 1);
 }
 
 function maskAccountNumber(acctNum: string): string {
@@ -86,62 +87,62 @@ function maskAccountNumber(acctNum: string): string {
 
 const DEFAULT_PRODUCTS: ProductOption[] = [
   {
-    id: 'builtin_checking_free',
-    type: 'checking',
-    name: 'Free Checking',
-    description: 'No monthly fees or minimum balance. Free debit card included.',
+    id: "builtin_checking_free",
+    type: "checking",
+    name: "Free Checking",
+    description: "No monthly fees or minimum balance. Free debit card included.",
     apyBps: 1,
     minOpeningDepositCents: 2500,
     monthlyFeeCents: 0,
     isAvailable: true,
   },
   {
-    id: 'builtin_checking_rewards',
-    type: 'checking',
-    name: 'Rewards Checking',
-    description: 'Earn interest on your balance with cashback on debit purchases.',
+    id: "builtin_checking_rewards",
+    type: "checking",
+    name: "Rewards Checking",
+    description: "Earn interest on your balance with cashback on debit purchases.",
     apyBps: 100,
     minOpeningDepositCents: 10000,
     monthlyFeeCents: 800,
-    feeWaiverDescription: 'Waived with $1,500 minimum daily balance or direct deposit',
+    feeWaiverDescription: "Waived with $1,500 minimum daily balance or direct deposit",
     isAvailable: true,
   },
   {
-    id: 'builtin_savings_regular',
-    type: 'savings',
-    name: 'Regular Savings',
-    description: 'Start saving with as little as $5. Competitive rates.',
+    id: "builtin_savings_regular",
+    type: "savings",
+    name: "Regular Savings",
+    description: "Start saving with as little as $5. Competitive rates.",
     apyBps: 350,
     minOpeningDepositCents: 500,
     monthlyFeeCents: 0,
     isAvailable: true,
   },
   {
-    id: 'builtin_savings_high_yield',
-    type: 'savings',
-    name: 'High-Yield Savings',
-    description: 'Our best rate for building your emergency fund.',
+    id: "builtin_savings_high_yield",
+    type: "savings",
+    name: "High-Yield Savings",
+    description: "Our best rate for building your emergency fund.",
     apyBps: 475,
     minOpeningDepositCents: 50000,
     monthlyFeeCents: 0,
     isAvailable: true,
   },
   {
-    id: 'builtin_money_market',
-    type: 'money_market',
-    name: 'Money Market Account',
-    description: 'Higher rates with check-writing privileges and tiered interest.',
+    id: "builtin_money_market",
+    type: "money_market",
+    name: "Money Market Account",
+    description: "Higher rates with check-writing privileges and tiered interest.",
     apyBps: 425,
     minOpeningDepositCents: 100000,
     monthlyFeeCents: 500,
-    feeWaiverDescription: 'Waived with $5,000 minimum daily balance',
+    feeWaiverDescription: "Waived with $5,000 minimum daily balance",
     isAvailable: true,
   },
   {
-    id: 'builtin_cd_6mo',
-    type: 'cd',
-    name: '6-Month Certificate',
-    description: 'Lock in a great rate for 6 months.',
+    id: "builtin_cd_6mo",
+    type: "cd",
+    name: "6-Month Certificate",
+    description: "Lock in a great rate for 6 months.",
     apyBps: 490,
     minOpeningDepositCents: 100000,
     monthlyFeeCents: 0,
@@ -149,10 +150,10 @@ const DEFAULT_PRODUCTS: ProductOption[] = [
     isAvailable: true,
   },
   {
-    id: 'builtin_cd_12mo',
-    type: 'cd',
-    name: '12-Month Certificate',
-    description: 'Our most popular term with a competitive rate.',
+    id: "builtin_cd_12mo",
+    type: "cd",
+    name: "12-Month Certificate",
+    description: "Our most popular term with a competitive rate.",
     apyBps: 500,
     minOpeningDepositCents: 100000,
     monthlyFeeCents: 0,
@@ -166,17 +167,19 @@ const DEFAULT_PRODUCTS: ProductOption[] = [
 // =============================================================================
 
 function log(
-  level: 'info' | 'warn' | 'error',
+  level: "info" | "warn" | "error",
   action: string,
   extra: Record<string, unknown> = {},
 ): void {
-  console.warn(JSON.stringify({
-    level,
-    adapter: 'builtin-account-opening',
-    action,
-    timestamp: new Date().toISOString(),
-    ...extra,
-  }));
+  console.warn(
+    JSON.stringify({
+      level,
+      adapter: "builtin-account-opening",
+      action,
+      timestamp: new Date().toISOString(),
+      ...extra,
+    }),
+  );
 }
 
 // =============================================================================
@@ -190,11 +193,7 @@ export interface BuiltinAdapterDeps {
   kycAdapter: KYCAdapter;
   /** Optional fraud adapter for risk assessment at application time */
   fraudAdapter?: {
-    assessSession(request: {
-      tenantId: string;
-      customerId: string;
-      activity: string;
-    }): Promise<{
+    assessSession(request: { tenantId: string; customerId: string; activity: string }): Promise<{
       riskScore: number;
       riskLevel: string;
       recommendedAction: string;
@@ -205,11 +204,11 @@ export interface BuiltinAdapterDeps {
 }
 
 export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter {
-  readonly name = 'builtin';
+  readonly name = "builtin";
   private readonly db: DatabasePort;
   private readonly env: EnvProvider;
   private readonly kyc: KYCAdapter;
-  private readonly fraud?: BuiltinAdapterDeps['fraudAdapter'];
+  private readonly fraud?: BuiltinAdapterDeps["fraudAdapter"];
   private readonly eSig?: ESignatureAdapter;
 
   constructor(deps: BuiltinAdapterDeps) {
@@ -227,34 +226,38 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
   async getConfig(tenantId: string): Promise<AccountOpeningConfig> {
     // Try tenant-specific products from DB first
     const { data: tenantProducts } = await this.db
-      .from<ProductOption>('tenant_products')
-      .select('*')
-      .eq('tenant_id', tenantId)
-      .eq('is_available', true)
+      .from<ProductOption>("tenant_products")
+      .select("*")
+      .eq("tenant_id", tenantId)
+      .eq("is_available", true)
       .execute();
 
     const products = tenantProducts?.length ? tenantProducts : DEFAULT_PRODUCTS;
 
     // Load tenant-specific config or use defaults
     const { data: tenantConfig } = await this.db
-      .from('tenant_account_opening_config')
-      .select('*')
-      .eq('tenant_id', tenantId)
+      .from("tenant_account_opening_config")
+      .select("*")
+      .eq("tenant_id", tenantId)
       .maybeSingle();
 
     return {
       products,
-      allowedFundingMethods: tenantConfig?.allowed_funding_methods
-        ?? ['ach_transfer', 'debit_card', 'internal_transfer', 'none'],
+      allowedFundingMethods: tenantConfig?.allowed_funding_methods ?? [
+        "ach_transfer",
+        "debit_card",
+        "internal_transfer",
+        "none",
+      ],
       minimumAge: tenantConfig?.minimum_age ?? 18,
       maxApplicationsPerDay: tenantConfig?.max_applications_per_day ?? 10,
       applicationExpiryHours: tenantConfig?.application_expiry_hours ?? 72,
       allowJointApplications: tenantConfig?.allow_joint_applications ?? false,
       requiredDisclosures: tenantConfig?.required_disclosures ?? [
-        'digital_banking_agreement',
-        'electronic_disclosure',
-        'privacy_policy',
-        'truth_in_savings',
+        "digital_banking_agreement",
+        "electronic_disclosure",
+        "privacy_policy",
+        "truth_in_savings",
       ],
     };
   }
@@ -263,17 +266,12 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
   // USER-FACING: createApplication
   // ===========================================================================
 
-  async createApplication(
-    tenantId: string,
-    applicant: ApplicantInfo,
-  ): Promise<AccountApplication> {
+  async createApplication(tenantId: string, applicant: ApplicantInfo): Promise<AccountApplication> {
     const config = await this.getConfig(tenantId);
 
     // --- Age validation ---
     const dob = new Date(applicant.dateOfBirth);
-    const age = Math.floor(
-      (Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000),
-    );
+    const age = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
     if (age < config.minimumAge) {
       throw new Error(`Applicant must be at least ${config.minimumAge} years old`);
     }
@@ -282,14 +280,14 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const { data: todayApps } = await this.db
-      .from('account_applications')
-      .select('id', { count: 'exact', head: true })
-      .eq('tenant_id', tenantId)
-      .gte('created_at', todayStart.toISOString())
+      .from("account_applications")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
+      .gte("created_at", todayStart.toISOString())
       .execute();
     const todayCount = todayApps?.length ?? 0;
     if (todayCount >= config.maxApplicationsPerDay) {
-      throw new Error('Daily application limit reached. Please try again tomorrow.');
+      throw new Error("Daily application limit reached. Please try again tomorrow.");
     }
 
     // --- KYC evaluation ---
@@ -314,18 +312,18 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     // Map KYC status to application status
     let status: ApplicationStatus;
     switch (kycResult.status) {
-      case 'approved':
-        status = 'kyc_approved';
+      case "approved":
+        status = "kyc_approved";
         break;
-      case 'denied':
-        status = 'kyc_denied';
+      case "denied":
+        status = "kyc_denied";
         break;
-      case 'pending_review':
-      case 'manual_review':
-        status = 'kyc_review';
+      case "pending_review":
+      case "manual_review":
+        status = "kyc_review";
         break;
       default:
-        status = 'kyc_pending';
+        status = "kyc_pending";
     }
 
     // --- Optional fraud risk assessment ---
@@ -335,17 +333,17 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
         const fraudResult = await this.fraud.assessSession({
           tenantId,
           customerId: applicant.email, // Use email as identifier pre-account
-          activity: 'account_opening',
+          activity: "account_opening",
         });
         fraudRiskLevel = fraudResult.riskLevel;
 
         // High/critical fraud risk overrides KYC approval → force manual review
         if (
-          (fraudResult.riskLevel === 'high' || fraudResult.riskLevel === 'critical') &&
-          status === 'kyc_approved'
+          (fraudResult.riskLevel === "high" || fraudResult.riskLevel === "critical") &&
+          status === "kyc_approved"
         ) {
-          status = 'kyc_review';
-          log('warn', 'createApplication:fraud_escalation', {
+          status = "kyc_review";
+          log("warn", "createApplication:fraud_escalation", {
             tenantId,
             riskLevel: fraudResult.riskLevel,
             riskScore: fraudResult.riskScore,
@@ -353,9 +351,9 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
         }
       } catch (err) {
         // Fraud check is best-effort — don't block account opening
-        log('warn', 'createApplication:fraud_check_failed', {
+        log("warn", "createApplication:fraud_check_failed", {
           tenantId,
-          error: err instanceof Error ? err.message : 'Unknown error',
+          error: err instanceof Error ? err.message : "Unknown error",
         });
       }
     }
@@ -390,26 +388,26 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
       expires_at: expiresAt,
     };
 
-    await this.db.from('account_applications').insert(row).execute();
+    await this.db.from("account_applications").insert(row).execute();
 
     // --- Audit trail entry ---
     await this.appendAudit(applicationId, {
-      action: 'application_created',
+      action: "application_created",
       previousStatus: null,
       newStatus: status,
       actorId: applicant.email, // This is the applicant themselves
-      actorType: 'applicant',
+      actorType: "applicant",
       description: `Application created. KYC result: ${kycResult.status}.${
-        fraudRiskLevel ? ` Fraud risk: ${fraudRiskLevel}.` : ''
+        fraudRiskLevel ? ` Fraud risk: ${fraudRiskLevel}.` : ""
       }`,
     });
 
-    log('info', 'createApplication', {
+    log("info", "createApplication", {
       applicationId,
       tenantId,
       status,
       kycStatus: kycResult.status,
-      fraudRiskLevel: fraudRiskLevel ?? 'not_assessed',
+      fraudRiskLevel: fraudRiskLevel ?? "not_assessed",
     });
 
     return this.toAccountApplication(row);
@@ -424,9 +422,9 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
 
     // Load selected products
     const { data: products } = await this.db
-      .from('application_products')
-      .select('*')
-      .eq('application_id', applicationId)
+      .from("application_products")
+      .select("*")
+      .eq("application_id", applicationId)
       .execute();
 
     const app = this.toAccountApplication(row);
@@ -439,11 +437,11 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     }
 
     // Load created accounts if completed
-    if (row.status === 'completed') {
+    if (row.status === "completed") {
       const { data: accounts } = await this.db
-        .from('application_accounts')
-        .select('*')
-        .eq('application_id', applicationId)
+        .from("application_accounts")
+        .select("*")
+        .eq("application_id", applicationId)
         .execute();
       if (accounts?.length) {
         app.createdAccounts = accounts.map((a: Record<string, unknown>) => ({
@@ -461,12 +459,9 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
   // USER-FACING: selectProducts
   // ===========================================================================
 
-  async selectProducts(
-    applicationId: string,
-    productIds: string[],
-  ): Promise<AccountApplication> {
+  async selectProducts(applicationId: string, productIds: string[]): Promise<AccountApplication> {
     const row = await this.loadApplication(applicationId);
-    this.assertStatus(row, ['kyc_approved']);
+    this.assertStatus(row, ["kyc_approved"]);
 
     const config = await this.getConfig(row.tenant_id as string);
     const availableProducts = config.products.filter((p) => p.isAvailable);
@@ -479,14 +474,14 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     });
 
     if (selected.length === 0) {
-      throw new Error('At least one product must be selected');
+      throw new Error("At least one product must be selected");
     }
 
     // Clear old selections and insert new ones
     await this.db
-      .from('application_products')
+      .from("application_products")
       .delete()
-      .eq('application_id', applicationId)
+      .eq("application_id", applicationId)
       .execute();
 
     const productRows = selected.map((p) => ({
@@ -496,18 +491,18 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
       product_name: p.name,
       min_deposit_cents: p.minOpeningDepositCents,
     }));
-    await this.db.from('application_products').insert(productRows).execute();
+    await this.db.from("application_products").insert(productRows).execute();
 
     // Update status
-    await this.updateStatus(applicationId, 'products_selected');
+    await this.updateStatus(applicationId, "products_selected");
 
     await this.appendAudit(applicationId, {
-      action: 'products_selected',
+      action: "products_selected",
       previousStatus: row.status as ApplicationStatus,
-      newStatus: 'products_selected',
-      actorId: 'applicant',
-      actorType: 'applicant',
-      description: `Selected ${selected.length} product(s): ${selected.map((p) => p.name).join(', ')}`,
+      newStatus: "products_selected",
+      actorId: "applicant",
+      actorType: "applicant",
+      description: `Selected ${selected.length} product(s): ${selected.map((p) => p.name).join(", ")}`,
     });
 
     return this.getApplication(applicationId);
@@ -517,12 +512,9 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
   // USER-FACING: submitFunding
   // ===========================================================================
 
-  async submitFunding(
-    applicationId: string,
-    funding: FundingRequest,
-  ): Promise<AccountApplication> {
+  async submitFunding(applicationId: string, funding: FundingRequest): Promise<AccountApplication> {
     const row = await this.loadApplication(applicationId);
-    this.assertStatus(row, ['products_selected', 'funding_pending']);
+    this.assertStatus(row, ["products_selected", "funding_pending"]);
 
     // Validate funding method is allowed
     const config = await this.getConfig(row.tenant_id as string);
@@ -531,15 +523,17 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     }
 
     // Validate minimum deposit against selected products
-    if (funding.method !== 'none') {
+    if (funding.method !== "none") {
       const { data: products } = await this.db
-        .from('application_products')
-        .select('min_deposit_cents')
-        .eq('application_id', applicationId)
+        .from("application_products")
+        .select("min_deposit_cents")
+        .eq("application_id", applicationId)
         .execute();
 
       const maxMinDeposit = Math.max(
-        ...(products ?? []).map((p: Record<string, unknown>) => (p.min_deposit_cents as number) ?? 0),
+        ...(products ?? []).map(
+          (p: Record<string, unknown>) => (p.min_deposit_cents as number) ?? 0,
+        ),
       );
       if (funding.amountCents < maxMinDeposit) {
         throw new Error(
@@ -558,27 +552,27 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     };
 
     await this.db
-      .from('account_applications')
+      .from("account_applications")
       .update({
         funding_method: fundingData.method,
         funding_amount_cents: fundingData.amount_cents,
         funding_source_masked: fundingData.source_account_masked,
-        status: 'funded',
+        status: "funded",
         updated_at: new Date().toISOString(),
       })
-      .eq('id', applicationId)
+      .eq("id", applicationId)
       .execute();
 
     await this.appendAudit(applicationId, {
-      action: 'funding_submitted',
+      action: "funding_submitted",
       previousStatus: row.status as ApplicationStatus,
-      newStatus: 'funded',
-      actorId: 'applicant',
-      actorType: 'applicant',
+      newStatus: "funded",
+      actorId: "applicant",
+      actorType: "applicant",
       description: `Funding submitted via ${funding.method}: $${(funding.amountCents / 100).toFixed(2)}`,
     });
 
-    log('info', 'submitFunding', {
+    log("info", "submitFunding", {
       applicationId,
       method: funding.method,
       amountCents: funding.amountCents,
@@ -593,23 +587,23 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
 
   async completeApplication(applicationId: string): Promise<AccountApplication> {
     const row = await this.loadApplication(applicationId);
-    this.assertStatus(row, ['funded', 'approved']);
+    this.assertStatus(row, ["funded", "approved"]);
 
     // Load selected products
     const { data: products } = await this.db
-      .from('application_products')
-      .select('*')
-      .eq('application_id', applicationId)
+      .from("application_products")
+      .select("*")
+      .eq("application_id", applicationId)
       .execute();
 
     if (!products?.length) {
-      throw new Error('No products selected for this application');
+      throw new Error("No products selected for this application");
     }
 
     // Generate accounts for each selected product
     const createdAccounts = products.map((p: Record<string, unknown>) => {
       const acctId = `acct_${crypto.randomUUID()}`;
-      const acctNum = String(Math.floor(1000000000 + Math.random() * 9000000000));
+      const acctNum = String(secureRandomInt(1000000000, 10000000000));
       return {
         application_id: applicationId,
         account_id: acctId,
@@ -619,21 +613,21 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     });
 
     // Insert created accounts
-    await this.db.from('application_accounts').insert(createdAccounts).execute();
+    await this.db.from("application_accounts").insert(createdAccounts).execute();
 
     // Mark as completed
-    await this.updateStatus(applicationId, 'completed');
+    await this.updateStatus(applicationId, "completed");
 
     await this.appendAudit(applicationId, {
-      action: 'application_completed',
+      action: "application_completed",
       previousStatus: row.status as ApplicationStatus,
-      newStatus: 'completed',
-      actorId: 'system',
-      actorType: 'system',
+      newStatus: "completed",
+      actorId: "system",
+      actorType: "system",
       description: `Application completed. ${createdAccounts.length} account(s) created.`,
     });
 
-    log('info', 'completeApplication', {
+    log("info", "completeApplication", {
       applicationId,
       accountsCreated: createdAccounts.length,
     });
@@ -649,23 +643,23 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     const row = await this.loadApplication(applicationId);
 
     // Cannot cancel terminal states
-    const terminalStatuses: ApplicationStatus[] = ['completed', 'declined', 'expired', 'cancelled'];
+    const terminalStatuses: ApplicationStatus[] = ["completed", "declined", "expired", "cancelled"];
     if (terminalStatuses.includes(row.status as ApplicationStatus)) {
       throw new Error(`Cannot cancel application in status: ${row.status}`);
     }
 
-    await this.updateStatus(applicationId, 'cancelled');
+    await this.updateStatus(applicationId, "cancelled");
 
     await this.appendAudit(applicationId, {
-      action: 'application_cancelled',
+      action: "application_cancelled",
       previousStatus: row.status as ApplicationStatus,
-      newStatus: 'cancelled',
-      actorId: 'applicant',
-      actorType: 'applicant',
-      description: 'Application cancelled by applicant.',
+      newStatus: "cancelled",
+      actorId: "applicant",
+      actorType: "applicant",
+      description: "Application cancelled by applicant.",
     });
 
-    log('info', 'cancelApplication', { applicationId });
+    log("info", "cancelApplication", { applicationId });
   }
 
   // ===========================================================================
@@ -687,19 +681,22 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
   ): Promise<{ envelopeId: string; signingUrl?: string; sessionId?: string } | null> {
     if (!this.eSig) {
       // No e-signature provider — track acceptance via DB only
-      await this.db.from('application_disclosures').insert({
-        application_id: applicationId,
-        method: 'checkbox',
-        accepted_at: new Date().toISOString(),
-      }).execute();
+      await this.db
+        .from("application_disclosures")
+        .insert({
+          application_id: applicationId,
+          method: "checkbox",
+          accepted_at: new Date().toISOString(),
+        })
+        .execute();
 
       await this.appendAudit(applicationId, {
-        action: 'disclosures_accepted',
-        previousStatus: 'products_selected',
-        newStatus: 'products_selected',
-        actorId: 'applicant',
-        actorType: 'applicant',
-        description: 'Disclosures accepted via checkbox (no e-signature provider configured).',
+        action: "disclosures_accepted",
+        previousStatus: "products_selected",
+        newStatus: "products_selected",
+        actorId: "applicant",
+        actorType: "applicant",
+        description: "Disclosures accepted via checkbox (no e-signature provider configured).",
       });
 
       return null;
@@ -711,37 +708,42 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     // Create documents for each required disclosure
     const documents = config.requiredDisclosures.map((disclosure, i) => ({
       documentId: `disc_${i}`,
-      name: disclosure.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
+      name: disclosure.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()),
       source: {
-        type: 'template' as const,
+        type: "template" as const,
         templateId: disclosure, // Template ID matches disclosure name
       },
     }));
 
     const envelope = await this.eSig.createEnvelope({
       tenantId: row.tenant_id as string,
-      subject: 'Account Opening Disclosures',
-      message: 'Please review and sign the required disclosures to open your account.',
-      signers: [{
-        clientUserId: applicationId,
-        name: signerName,
-        email: signerEmail,
-      }],
+      subject: "Account Opening Disclosures",
+      message: "Please review and sign the required disclosures to open your account.",
+      signers: [
+        {
+          clientUserId: applicationId,
+          name: signerName,
+          email: signerEmail,
+        },
+      ],
       documents,
       referenceId: applicationId,
-      referenceType: 'account_application',
+      referenceType: "account_application",
       returnUrl,
     });
 
     // Store envelope reference
-    await this.db.from('application_disclosures').insert({
-      application_id: applicationId,
-      method: 'e_signature',
-      envelope_id: envelope.envelopeId,
-      provider: this.eSig.name,
-      status: envelope.status,
-      created_at: new Date().toISOString(),
-    }).execute();
+    await this.db
+      .from("application_disclosures")
+      .insert({
+        application_id: applicationId,
+        method: "e_signature",
+        envelope_id: envelope.envelopeId,
+        provider: this.eSig.name,
+        status: envelope.status,
+        created_at: new Date().toISOString(),
+      })
+      .execute();
 
     // Create embedded signing session
     const session = await this.eSig.createEmbeddedSigningSession({
@@ -751,15 +753,15 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     });
 
     await this.appendAudit(applicationId, {
-      action: 'disclosure_envelope_created',
+      action: "disclosure_envelope_created",
       previousStatus: row.status as ApplicationStatus,
       newStatus: row.status as ApplicationStatus,
-      actorId: 'system',
-      actorType: 'system',
+      actorId: "system",
+      actorType: "system",
       description: `Disclosure envelope created via ${this.eSig.name}. ${documents.length} document(s).`,
     });
 
-    log('info', 'createDisclosureEnvelope', {
+    log("info", "createDisclosureEnvelope", {
       applicationId,
       envelopeId: envelope.envelopeId,
       provider: this.eSig.name,
@@ -781,73 +783,72 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     applicationId: string,
   ): Promise<{ signed: boolean; method: string; envelopeId?: string }> {
     const { data } = await this.db
-      .from('application_disclosures')
-      .select('*')
-      .eq('application_id', applicationId)
+      .from("application_disclosures")
+      .select("*")
+      .eq("application_id", applicationId)
       .maybeSingle();
 
     if (!data) {
-      return { signed: false, method: 'none' };
+      return { signed: false, method: "none" };
     }
 
-    if ((data as Record<string, unknown>).method === 'checkbox') {
-      return { signed: true, method: 'checkbox' };
+    if ((data as Record<string, unknown>).method === "checkbox") {
+      return { signed: true, method: "checkbox" };
     }
 
     // Check e-signature status
     const envelopeId = (data as Record<string, unknown>).envelope_id as string;
     if (this.eSig && envelopeId) {
       const status = await this.eSig.getEnvelopeStatus(envelopeId);
-      const signed = status.status === 'signed';
+      const signed = status.status === "signed";
 
       if (signed) {
         // Update stored status
-        await this.db.from('application_disclosures')
-          .update({ status: 'signed', signed_at: new Date().toISOString() })
-          .eq('application_id', applicationId)
+        await this.db
+          .from("application_disclosures")
+          .update({ status: "signed", signed_at: new Date().toISOString() })
+          .eq("application_id", applicationId)
           .execute();
 
         await this.appendAudit(applicationId, {
-          action: 'disclosures_signed',
-          previousStatus: 'products_selected',
-          newStatus: 'products_selected',
-          actorId: 'applicant',
-          actorType: 'applicant',
+          action: "disclosures_signed",
+          previousStatus: "products_selected",
+          newStatus: "products_selected",
+          actorId: "applicant",
+          actorType: "applicant",
           description: `Disclosures signed via ${this.eSig.name}.`,
         });
       }
 
-      return { signed, method: 'e_signature', envelopeId };
+      return { signed, method: "e_signature", envelopeId };
     }
 
-    return { signed: false, method: 'e_signature', envelopeId };
+    return { signed: false, method: "e_signature", envelopeId };
   }
 
   // ===========================================================================
   // ADMIN: listApplications
   // ===========================================================================
 
-  async listApplications(
-    filter: ApplicationListFilter,
-  ): Promise<ApplicationListResult> {
+  async listApplications(filter: ApplicationListFilter): Promise<ApplicationListResult> {
     const limit = Math.min(filter.limit ?? 25, 100);
     const offset = filter.offset ?? 0;
 
     let query = this.db
-      .from('account_applications')
-      .select('*', { count: 'exact' })
-      .eq('tenant_id', filter.tenantId)
-      .order('created_at', { ascending: false })
+      .from("account_applications")
+      .select("*", { count: "exact" })
+      .eq("tenant_id", filter.tenantId)
+      .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (filter.statuses?.length) {
-      query = query.in('status', filter.statuses);
+      query = query.in("status", filter.statuses);
     }
     if (filter.createdAfter) {
-      query = query.gte('created_at', filter.createdAfter);
+      query = query.gte("created_at", filter.createdAfter);
     }
     if (filter.createdBefore) {
-      query = query.lte('created_at', filter.createdBefore);
+      query = query.lte("created_at", filter.createdBefore);
     }
 
     const result = await query.execute();
@@ -866,34 +867,30 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
   // ADMIN: reviewApplication
   // ===========================================================================
 
-  async reviewApplication(
-    action: ApplicationReviewAction,
-  ): Promise<AccountApplication> {
+  async reviewApplication(action: ApplicationReviewAction): Promise<AccountApplication> {
     const row = await this.loadApplication(action.applicationId);
 
     // Only allow review of applications in reviewable states
-    const reviewableStatuses: ApplicationStatus[] = [
-      'kyc_review', 'kyc_pending', 'submitted',
-    ];
+    const reviewableStatuses: ApplicationStatus[] = ["kyc_review", "kyc_pending", "submitted"];
     if (!reviewableStatuses.includes(row.status as ApplicationStatus)) {
       throw new Error(
-        `Cannot review application in status: ${row.status}. Must be in: ${reviewableStatuses.join(', ')}`,
+        `Cannot review application in status: ${row.status}. Must be in: ${reviewableStatuses.join(", ")}`,
       );
     }
 
     let newStatus: ApplicationStatus;
     switch (action.decision) {
-      case 'approve':
-        newStatus = 'kyc_approved';
+      case "approve":
+        newStatus = "kyc_approved";
         break;
-      case 'deny':
-        newStatus = 'declined';
+      case "deny":
+        newStatus = "declined";
         break;
-      case 'escalate':
-        newStatus = 'kyc_review'; // Keep in review queue
+      case "escalate":
+        newStatus = "kyc_review"; // Keep in review queue
         break;
-      case 'request_info':
-        newStatus = 'kyc_pending'; // Back to pending for more info
+      case "request_info":
+        newStatus = "kyc_pending"; // Back to pending for more info
         break;
       default:
         throw new Error(`Unknown review decision: ${action.decision}`);
@@ -908,9 +905,9 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     }
 
     await this.db
-      .from('account_applications')
+      .from("account_applications")
       .update(updates)
-      .eq('id', action.applicationId)
+      .eq("id", action.applicationId)
       .execute();
 
     await this.appendAudit(action.applicationId, {
@@ -918,11 +915,11 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
       previousStatus: row.status as ApplicationStatus,
       newStatus,
       actorId: action.reviewerId,
-      actorType: 'admin',
-      description: `Admin ${action.decision}${action.reason ? `: ${action.reason}` : ''}`,
+      actorType: "admin",
+      description: `Admin ${action.decision}${action.reason ? `: ${action.reason}` : ""}`,
     });
 
-    log('info', 'reviewApplication', {
+    log("info", "reviewApplication", {
       applicationId: action.applicationId,
       decision: action.decision,
       reviewerId: action.reviewerId,
@@ -939,10 +936,10 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
 
   async getAuditTrail(applicationId: string): Promise<ApplicationAuditEntry[]> {
     const { data } = await this.db
-      .from('application_audit_trail')
-      .select('*')
-      .eq('application_id', applicationId)
-      .order('timestamp', { ascending: true })
+      .from("application_audit_trail")
+      .select("*")
+      .eq("application_id", applicationId)
+      .order("timestamp", { ascending: true })
       .execute();
 
     return (data ?? []).map((row: Record<string, unknown>) => ({
@@ -952,7 +949,7 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
       previousStatus: (row.previous_status as ApplicationStatus) ?? null,
       newStatus: row.new_status as ApplicationStatus,
       actorId: row.actor_id as string,
-      actorType: row.actor_type as 'applicant' | 'admin' | 'system',
+      actorType: row.actor_type as "applicant" | "admin" | "system",
       description: row.description as string,
       timestamp: row.timestamp as string,
     }));
@@ -965,9 +962,9 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
   async getStats(tenantId: string): Promise<ApplicationStats> {
     // Get all applications for this tenant
     const { data: allApps } = await this.db
-      .from('account_applications')
-      .select('status, created_at, updated_at')
-      .eq('tenant_id', tenantId)
+      .from("account_applications")
+      .select("status, created_at, updated_at")
+      .eq("tenant_id", tenantId)
       .execute();
 
     const apps = allApps ?? [];
@@ -977,9 +974,20 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     // Count by status
     const byStatus: Record<string, number> = {};
     const allStatuses: ApplicationStatus[] = [
-      'draft', 'submitted', 'kyc_pending', 'kyc_approved', 'kyc_denied',
-      'kyc_review', 'products_selected', 'funding_pending', 'funded',
-      'approved', 'completed', 'declined', 'expired', 'cancelled',
+      "draft",
+      "submitted",
+      "kyc_pending",
+      "kyc_approved",
+      "kyc_denied",
+      "kyc_review",
+      "products_selected",
+      "funding_pending",
+      "funded",
+      "approved",
+      "completed",
+      "declined",
+      "expired",
+      "cancelled",
     ];
     for (const s of allStatuses) {
       byStatus[s] = 0;
@@ -999,33 +1007,35 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
       }
 
       // Track completion time for completed applications
-      if (status === 'completed' && app.created_at && app.updated_at) {
+      if (status === "completed" && app.created_at && app.updated_at) {
         const created = new Date(app.created_at as string).getTime();
         const updated = new Date(app.updated_at as string).getTime();
         completionTimes.push((updated - created) / (1000 * 60)); // minutes
       }
 
       // Track auto-decision rate (kyc_approved without manual review)
-      if (['kyc_approved', 'products_selected', 'funded', 'approved', 'completed'].includes(status)) {
+      if (
+        ["kyc_approved", "products_selected", "funded", "approved", "completed"].includes(status)
+      ) {
         autoDecisionCount++;
         totalDecisionCount++;
-      } else if (['kyc_denied', 'declined', 'kyc_review'].includes(status)) {
+      } else if (["kyc_denied", "declined", "kyc_review"].includes(status)) {
         totalDecisionCount++;
       }
     }
 
-    const avgCompletionMinutes = completionTimes.length > 0
-      ? Math.round(completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length)
-      : null;
+    const avgCompletionMinutes =
+      completionTimes.length > 0
+        ? Math.round(completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length)
+        : null;
 
-    const autoDecisionRate = totalDecisionCount > 0
-      ? Math.round((autoDecisionCount / totalDecisionCount) * 100)
-      : null;
+    const autoDecisionRate =
+      totalDecisionCount > 0 ? Math.round((autoDecisionCount / totalDecisionCount) * 100) : null;
 
     return {
       tenantId,
       byStatus: byStatus as Record<ApplicationStatus, number>,
-      pendingReviewCount: byStatus['kyc_review'] ?? 0,
+      pendingReviewCount: byStatus["kyc_review"] ?? 0,
       last24hCount,
       avgCompletionMinutes,
       autoDecisionRate,
@@ -1039,9 +1049,9 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
 
   private async loadApplication(applicationId: string): Promise<Record<string, unknown>> {
     const { data, error } = await this.db
-      .from('account_applications')
-      .select('*')
-      .eq('id', applicationId)
+      .from("account_applications")
+      .select("*")
+      .eq("id", applicationId)
       .single();
 
     if (error || !data) {
@@ -1051,53 +1061,52 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
     // Check for expiry
     if (data.expires_at && new Date(data.expires_at as string) < new Date()) {
       const currentStatus = data.status as ApplicationStatus;
-      const terminalStatuses: ApplicationStatus[] = ['completed', 'declined', 'cancelled', 'expired'];
+      const terminalStatuses: ApplicationStatus[] = [
+        "completed",
+        "declined",
+        "cancelled",
+        "expired",
+      ];
       if (!terminalStatuses.includes(currentStatus)) {
-        await this.updateStatus(applicationId, 'expired');
+        await this.updateStatus(applicationId, "expired");
         await this.appendAudit(applicationId, {
-          action: 'application_expired',
+          action: "application_expired",
           previousStatus: currentStatus,
-          newStatus: 'expired',
-          actorId: 'system',
-          actorType: 'system',
-          description: 'Application expired due to inactivity.',
+          newStatus: "expired",
+          actorId: "system",
+          actorType: "system",
+          description: "Application expired due to inactivity.",
         });
-        data.status = 'expired';
+        data.status = "expired";
       }
     }
 
     return data as Record<string, unknown>;
   }
 
-  private assertStatus(
-    row: Record<string, unknown>,
-    allowedStatuses: ApplicationStatus[],
-  ): void {
+  private assertStatus(row: Record<string, unknown>, allowedStatuses: ApplicationStatus[]): void {
     const status = row.status as ApplicationStatus;
     if (!allowedStatuses.includes(status)) {
       throw new Error(
-        `Invalid application status: ${status}. Expected: ${allowedStatuses.join(', ')}`,
+        `Invalid application status: ${status}. Expected: ${allowedStatuses.join(", ")}`,
       );
     }
   }
 
-  private async updateStatus(
-    applicationId: string,
-    status: ApplicationStatus,
-  ): Promise<void> {
+  private async updateStatus(applicationId: string, status: ApplicationStatus): Promise<void> {
     await this.db
-      .from('account_applications')
+      .from("account_applications")
       .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', applicationId)
+      .eq("id", applicationId)
       .execute();
   }
 
   private async appendAudit(
     applicationId: string,
-    entry: Omit<ApplicationAuditEntry, 'id' | 'applicationId' | 'timestamp'>,
+    entry: Omit<ApplicationAuditEntry, "id" | "applicationId" | "timestamp">,
   ): Promise<void> {
     await this.db
-      .from('application_audit_trail')
+      .from("application_audit_trail")
       .insert({
         id: `audit_${crypto.randomUUID()}`,
         application_id: applicationId,
@@ -1115,27 +1124,29 @@ export class BuiltinAccountOpeningAdapter implements AccountOpeningAdminAdapter 
   private toAccountApplication(row: Record<string, unknown>): AccountApplication {
     return {
       id: row.id as string,
-      tenantId: (row.tenant_id as string) ?? '',
+      tenantId: (row.tenant_id as string) ?? "",
       status: row.status as ApplicationStatus,
       applicant: {
-        firstNameInitial: (row.first_name_initial as string) ?? '',
-        lastNameMasked: (row.last_name_masked as string) ?? '',
-        emailMasked: (row.email_masked as string) ?? '',
-        ssnMasked: (row.ssn_masked as string) ?? '',
+        firstNameInitial: (row.first_name_initial as string) ?? "",
+        lastNameMasked: (row.last_name_masked as string) ?? "",
+        emailMasked: (row.email_masked as string) ?? "",
+        ssnMasked: (row.ssn_masked as string) ?? "",
       },
       selectedProducts: [],
       funding: row.funding_method
         ? {
-            method: row.funding_method as AccountApplication['funding'] extends { method: infer M } ? M : never,
+            method: row.funding_method as AccountApplication["funding"] extends { method: infer M }
+              ? M
+              : never,
             amountCents: (row.funding_amount_cents as number) ?? 0,
             sourceAccountMasked: (row.funding_source_masked as string) ?? undefined,
           }
         : undefined,
       kycToken: (row.kyc_token as string) ?? undefined,
       reason: (row.reason as string) ?? undefined,
-      createdAt: (row.created_at as string) ?? '',
-      updatedAt: (row.updated_at as string) ?? '',
-      expiresAt: (row.expires_at as string) ?? '',
+      createdAt: (row.created_at as string) ?? "",
+      updatedAt: (row.updated_at as string) ?? "",
+      expiresAt: (row.expires_at as string) ?? "",
     };
   }
 }

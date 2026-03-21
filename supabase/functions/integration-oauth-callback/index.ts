@@ -1,8 +1,8 @@
 // Integration OAuth Callback
 // Handles OAuth callback, exchanges code for tokens, stores credentials
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.47.10';
-import { fetchWithRetry } from '../_shared/retry.ts';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.47.10";
+import { fetchWithRetry } from "../_shared/retry.ts";
 
 interface OAuthConfig {
   authorize_url: string;
@@ -18,66 +18,66 @@ interface TokenResponse {
   token_type?: string;
   scope?: string;
   // Provider-specific fields
-  instance_url?: string;  // Salesforce
-  id?: string;            // Salesforce user ID
-  team?: { id: string; name: string };  // Slack
-  authed_user?: { id: string };  // Slack
+  instance_url?: string; // Salesforce
+  id?: string; // Salesforce user ID
+  team?: { id: string; name: string }; // Slack
+  authed_user?: { id: string }; // Slack
 }
 
 Deno.serve(async (req) => {
   // OAuth callbacks come as GET requests with query params
-  if (req.method !== 'GET') {
-    return new Response('Method not allowed', { status: 405 });
+  if (req.method !== "GET") {
+    return new Response("Method not allowed", { status: 405 });
   }
 
   const url = new URL(req.url);
-  const code = url.searchParams.get('code');
-  const state = url.searchParams.get('state');
-  const error = url.searchParams.get('error');
-  const errorDescription = url.searchParams.get('error_description');
+  const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
+  const error = url.searchParams.get("error");
+  const errorDescription = url.searchParams.get("error_description");
 
   // Handle OAuth errors
   if (error) {
-    console.error('OAuth error:', error, errorDescription);
+    console.error("OAuth error:", error, errorDescription);
     return redirectWithError(errorDescription || error);
   }
 
   if (!code || !state) {
-    return redirectWithError('Missing code or state parameter');
+    return redirectWithError("Missing code or state parameter");
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Verify state and get stored OAuth request
     const { data: oauthState, error: stateError } = await supabase
-      .from('integration_oauth_state')
-      .select('*')
-      .eq('state', state)
+      .from("integration_oauth_state")
+      .select("*")
+      .eq("state", state)
       .single();
 
     if (stateError || !oauthState) {
-      console.error('Invalid OAuth state:', state);
-      return redirectWithError('Invalid or expired OAuth state');
+      console.error("Invalid OAuth state:", state);
+      return redirectWithError("Invalid or expired OAuth state");
     }
 
     // Check if state is expired
     if (new Date(oauthState.expires_at) < new Date()) {
-      await supabase.from('integration_oauth_state').delete().eq('state', state);
-      return redirectWithError('OAuth session expired. Please try again.');
+      await supabase.from("integration_oauth_state").delete().eq("state", state);
+      return redirectWithError("OAuth session expired. Please try again.");
     }
 
     // Get provider configuration
     const { data: provider } = await supabase
-      .from('integration_providers')
-      .select('*')
-      .eq('id', oauthState.provider_id)
+      .from("integration_providers")
+      .select("*")
+      .eq("id", oauthState.provider_id)
       .single();
 
     if (!provider) {
-      return redirectWithError('Provider not found');
+      return redirectWithError("Provider not found");
     }
 
     const oauthConfig = provider.oauth_config as OAuthConfig;
@@ -87,14 +87,14 @@ Deno.serve(async (req) => {
     const clientSecret = Deno.env.get(`${oauthState.provider_id.toUpperCase()}_CLIENT_SECRET`);
 
     if (!clientId || !clientSecret) {
-      return redirectWithError('OAuth not properly configured');
+      return redirectWithError("OAuth not properly configured");
     }
 
     const callbackUrl = `${supabaseUrl}/functions/v1/integration-oauth-callback`;
 
     // Exchange code for tokens
     const tokenParams = new URLSearchParams({
-      grant_type: 'authorization_code',
+      grant_type: "authorization_code",
       code,
       redirect_uri: callbackUrl,
       client_id: clientId,
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
 
     // Add PKCE verifier if we stored one
     if (oauthState.code_verifier) {
-      tokenParams.set('code_verifier', oauthState.code_verifier);
+      tokenParams.set("code_verifier", oauthState.code_verifier);
     }
 
     // Exchange code for tokens (with retry for transient failures)
@@ -112,24 +112,24 @@ Deno.serve(async (req) => {
       tokenResponse = await fetchWithRetry(
         oauthConfig.token_url,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json',
+            "Content-Type": "application/x-www-form-urlencoded",
+            Accept: "application/json",
           },
           body: tokenParams.toString(),
         },
-        { context: `Token exchange for ${oauthState.provider_id}` }
+        { context: `Token exchange for ${oauthState.provider_id}` },
       );
     } catch (retryError) {
-      console.error('Token exchange failed after retries:', retryError);
-      return redirectWithError('Failed to complete authorization. Please try again.');
+      console.error("Token exchange failed after retries");
+      return redirectWithError("Failed to complete authorization. Please try again.");
     }
 
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
-      console.error('Token exchange failed:', errorText);
-      return redirectWithError('Failed to complete authorization');
+      console.error("Token exchange failed with non-OK response");
+      return redirectWithError("Failed to complete authorization");
     }
 
     const tokens: TokenResponse = await tokenResponse.json();
@@ -144,13 +144,13 @@ Deno.serve(async (req) => {
         oauthState.provider_id,
         tokens.access_token,
         tokens,
-        provider.base_url
+        provider.base_url,
       );
       externalAccountId = accountInfo.accountId;
       externalAccountName = accountInfo.accountName;
       externalWorkspaceId = accountInfo.workspaceId;
     } catch (accountError) {
-      console.warn('Failed to fetch account info:', accountError);
+      console.warn("Failed to fetch account info for provider");
     }
 
     // Calculate token expiration
@@ -159,45 +159,46 @@ Deno.serve(async (req) => {
       : null;
 
     // Store/update firm integration
-    const { error: upsertError } = await supabase
-      .from('firm_integrations')
-      .upsert({
+    const { error: upsertError } = await supabase.from("firm_integrations").upsert(
+      {
         firm_id: oauthState.firm_id,
         provider_id: oauthState.provider_id,
-        status: 'connected',
+        status: "connected",
         status_message: null,
-        access_token_encrypted: tokens.access_token,  // Will be encrypted by Supabase Vault
+        access_token_encrypted: tokens.access_token, // Will be encrypted by Supabase Vault
         refresh_token_encrypted: tokens.refresh_token || null,
         token_expires_at: tokenExpiresAt,
-        token_scopes: tokens.scope?.split(' ') || oauthConfig.scopes,
+        token_scopes: tokens.scope?.split(" ") || oauthConfig.scopes,
         external_account_id: externalAccountId,
         external_account_name: externalAccountName,
         external_workspace_id: externalWorkspaceId,
         connected_at: new Date().toISOString(),
         connected_by: oauthState.user_id,
-      }, {
-        onConflict: 'firm_id,provider_id',
-      });
+      },
+      {
+        onConflict: "firm_id,provider_id",
+      },
+    );
 
     if (upsertError) {
-      console.error('Failed to store integration:', upsertError);
-      return redirectWithError('Failed to save connection');
+      console.error("Failed to store integration record");
+      return redirectWithError("Failed to save connection");
     }
 
     // Clean up OAuth state
-    await supabase.from('integration_oauth_state').delete().eq('state', state);
+    await supabase.from("integration_oauth_state").delete().eq("state", state);
 
-    console.warn(`Successfully connected ${oauthState.provider_id} for firm ${oauthState.firm_id}`);
+    console.warn("Integration connection completed successfully");
 
     // Redirect back to app with success
     const redirectUrl = new URL(oauthState.redirect_uri);
-    redirectUrl.searchParams.set('integration', oauthState.provider_id);
-    redirectUrl.searchParams.set('status', 'connected');
+    redirectUrl.searchParams.set("integration", oauthState.provider_id);
+    redirectUrl.searchParams.set("status", "connected");
 
     return Response.redirect(redirectUrl.toString(), 302);
   } catch (error: unknown) {
-    console.error('Error in integration-oauth-callback:', error);
-    return redirectWithError('An unexpected error occurred');
+    console.error("Error in integration-oauth-callback:", error);
+    return redirectWithError("An unexpected error occurred");
   }
 });
 
@@ -205,9 +206,9 @@ Deno.serve(async (req) => {
  * Redirect to app with error message
  */
 function redirectWithError(message: string): Response {
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
   const redirectUrl = new URL(`${supabaseUrl}/settings/integrations`);
-  redirectUrl.searchParams.set('error', message);
+  redirectUrl.searchParams.set("error", message);
   return Response.redirect(redirectUrl.toString(), 302);
 }
 
@@ -218,7 +219,7 @@ async function fetchAccountInfo(
   providerId: string,
   accessToken: string,
   tokens: TokenResponse,
-  _baseUrl: string | null
+  _baseUrl: string | null,
 ): Promise<{
   accountId: string | null;
   accountName: string | null;
@@ -229,9 +230,9 @@ async function fetchAccountInfo(
   let workspaceId: string | null = null;
 
   switch (providerId) {
-    case 'docusign': {
-      const response = await fetch('https://account-d.docusign.com/oauth/userinfo', {
-        headers: { 'Authorization': `Bearer ${accessToken}` },
+    case "docusign": {
+      const response = await fetch("https://account-d.docusign.com/oauth/userinfo", {
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (response.ok) {
         const data = await response.json();
@@ -245,11 +246,11 @@ async function fetchAccountInfo(
       break;
     }
 
-    case 'salesforce': {
+    case "salesforce": {
       // Salesforce includes instance_url and id in token response
       if (tokens.instance_url && tokens.id) {
         const response = await fetch(tokens.id, {
-          headers: { 'Authorization': `Bearer ${accessToken}` },
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
         if (response.ok) {
           const data = await response.json();
@@ -261,8 +262,8 @@ async function fetchAccountInfo(
       break;
     }
 
-    case 'hubspot': {
-      const response = await fetch('https://api.hubapi.com/oauth/v1/access-tokens/' + accessToken);
+    case "hubspot": {
+      const response = await fetch("https://api.hubapi.com/oauth/v1/access-tokens/" + accessToken);
       if (response.ok) {
         const data = await response.json();
         accountId = data.user_id?.toString();
@@ -272,7 +273,7 @@ async function fetchAccountInfo(
       break;
     }
 
-    case 'slack': {
+    case "slack": {
       // Slack includes team info in token response
       if (tokens.team) {
         workspaceId = tokens.team.id;
@@ -284,14 +285,15 @@ async function fetchAccountInfo(
       break;
     }
 
-    case 'gmail':
-    case 'outlook': {
+    case "gmail":
+    case "outlook": {
       // For Google/Microsoft, get user profile
-      const profileUrl = providerId === 'gmail'
-        ? 'https://www.googleapis.com/oauth2/v2/userinfo'
-        : 'https://graph.microsoft.com/v1.0/me';
+      const profileUrl =
+        providerId === "gmail"
+          ? "https://www.googleapis.com/oauth2/v2/userinfo"
+          : "https://graph.microsoft.com/v1.0/me";
       const response = await fetch(profileUrl, {
-        headers: { 'Authorization': `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (response.ok) {
         const data = await response.json();

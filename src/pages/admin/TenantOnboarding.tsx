@@ -59,7 +59,15 @@ export default function TenantOnboarding() {
 
   const statusQuery = useQuery({
     queryKey: ["onboarding-status"],
-    queryFn: () => gateway.request<{ onboarding: { currentStep: string; stepsCompleted: string[]; stepData: Record<string, unknown>; isComplete: boolean } }>("onboarding.status", {}),
+    queryFn: () =>
+      gateway.request<{
+        onboarding: {
+          currentStep: string;
+          stepsCompleted: string[];
+          stepData: Record<string, unknown>;
+          isComplete: boolean;
+        };
+      }>("onboarding.status", {}),
   });
 
   const updateStep = useMutation({
@@ -80,7 +88,7 @@ export default function TenantOnboarding() {
   useEffect(() => {
     const data = statusQuery.data?.onboarding;
     if (!data) return;
-    const idx = STEPS.findIndex(s => s.id === data.currentStep);
+    const idx = STEPS.findIndex((s) => s.id === data.currentStep);
     if (idx >= 0) setActiveStep(idx);
     const sd = data.stepData;
     if (sd.institution_profile) {
@@ -103,7 +111,8 @@ export default function TenantOnboarding() {
     }
   }, [statusQuery.data]);
 
-  const progress = ((statusQuery.data?.onboarding?.stepsCompleted?.length ?? 0) / STEPS.length) * 100;
+  const progress =
+    ((statusQuery.data?.onboarding?.stepsCompleted?.length ?? 0) / STEPS.length) * 100;
 
   function saveCurrentStep() {
     const step = STEPS[activeStep].id;
@@ -122,18 +131,26 @@ export default function TenantOnboarding() {
         data = { kycRequired, mfaRequired, dataRetentionYears: Number(dataRetention) };
         break;
       case "users":
-        data = { adminEmails: adminEmails.split(",").map(e => e.trim()).filter(Boolean) };
+        data = {
+          adminEmails: adminEmails
+            .split(",")
+            .map((e) => e.trim())
+            .filter(Boolean),
+        };
         break;
       case "review":
         break;
     }
-    updateStep.mutate({ step, data }, {
-      onSuccess: () => {
-        if (activeStep < STEPS.length - 1) {
-          setActiveStep(prev => prev + 1);
-        }
+    updateStep.mutate(
+      { step, data },
+      {
+        onSuccess: () => {
+          if (activeStep < STEPS.length - 1) {
+            setActiveStep((prev) => prev + 1);
+          }
+        },
       },
-    });
+    );
   }
 
   return (
@@ -158,8 +175,8 @@ export default function TenantOnboarding() {
                 idx === activeStep
                   ? "bg-primary text-primary-foreground"
                   : completed
-                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                  : "bg-muted text-muted-foreground"
+                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                    : "bg-muted text-muted-foreground"
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -175,7 +192,8 @@ export default function TenantOnboarding() {
         <CardHeader>
           <CardTitle>{STEPS[activeStep].label}</CardTitle>
           <CardDescription>
-            {activeStep === 0 && "Basic information about your credit union or financial institution."}
+            {activeStep === 0 &&
+              "Basic information about your credit union or financial institution."}
             {activeStep === 1 && "Customize the look and feel of your banking portal."}
             {activeStep === 2 && "Connect your core banking and service providers."}
             {activeStep === 3 && "Configure compliance and security requirements."}
@@ -188,22 +206,36 @@ export default function TenantOnboarding() {
             <>
               <div className="grid gap-2">
                 <Label>Institution Name</Label>
-                <Input value={institutionName} onChange={e => setInstitutionName(e.target.value)} placeholder="Acme Federal Credit Union" />
+                <Input
+                  value={institutionName}
+                  onChange={(e) => setInstitutionName(e.target.value)}
+                  placeholder="Acme Federal Credit Union"
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>Charter Number</Label>
-                  <Input value={charterNumber} onChange={e => setCharterNumber(e.target.value)} placeholder="12345" />
+                  <Input
+                    value={charterNumber}
+                    onChange={(e) => setCharterNumber(e.target.value)}
+                    placeholder="12345"
+                  />
                 </div>
                 <div className="grid gap-2">
                   <Label>Routing Number</Label>
-                  <Input value={routingNumber} onChange={e => setRoutingNumber(e.target.value)} placeholder="021000021" />
+                  <Input
+                    value={routingNumber}
+                    onChange={(e) => setRoutingNumber(e.target.value)}
+                    placeholder="021000021"
+                  />
                 </div>
               </div>
               <div className="grid gap-2">
                 <Label>Timezone</Label>
                 <Select value={timezone} onValueChange={setTimezone}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="America/New_York">Eastern</SelectItem>
                     <SelectItem value="America/Chicago">Central</SelectItem>
@@ -221,19 +253,48 @@ export default function TenantOnboarding() {
               <div className="grid gap-2">
                 <Label>Primary Brand Color</Label>
                 <div className="flex items-center gap-3">
-                  <input type="color" value={primaryColor} onChange={e => setPrimaryColor(e.target.value)} className="h-10 w-16 rounded border cursor-pointer" />
-                  <Input value={primaryColor} onChange={e => setPrimaryColor(e.target.value)} className="w-32" />
+                  <input
+                    type="color"
+                    value={primaryColor}
+                    onChange={(e) => setPrimaryColor(e.target.value)}
+                    className="h-10 w-16 rounded border cursor-pointer"
+                  />
+                  <Input
+                    value={primaryColor}
+                    onChange={(e) => setPrimaryColor(e.target.value)}
+                    className="w-32"
+                  />
                 </div>
               </div>
               <div className="grid gap-2">
                 <Label>Logo URL</Label>
-                <Input value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://..." />
+                <Input
+                  value={logoUrl}
+                  onChange={(e) => setLogoUrl(e.target.value)}
+                  placeholder="https://..."
+                />
               </div>
               <div className="rounded-lg border p-6 text-center">
                 <p className="text-sm text-muted-foreground mb-2">Preview</p>
-                <div className="inline-flex items-center gap-2 rounded-lg px-4 py-2" style={{ backgroundColor: primaryColor }}>
-                  {logoUrl ? <img src={logoUrl} alt="Logo" className="h-8" /> : <Building2 className="h-5 w-5 text-white" />}
-                  <span className="font-semibold text-white">{institutionName || "Your Institution"}</span>
+                <div
+                  className="inline-flex items-center gap-2 rounded-lg px-4 py-2"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  {logoUrl &&
+                  (() => {
+                    try {
+                      return new URL(logoUrl).protocol === "https:";
+                    } catch {
+                      return false;
+                    }
+                  })() ? (
+                    <img src={logoUrl} alt="Logo" className="h-8" />
+                  ) : (
+                    <Building2 className="h-5 w-5 text-white" />
+                  )}
+                  <span className="font-semibold text-white">
+                    {institutionName || "Your Institution"}
+                  </span>
                 </div>
               </div>
             </>
@@ -245,7 +306,9 @@ export default function TenantOnboarding() {
                 <div className="grid gap-2">
                   <Label>Core Banking Provider</Label>
                   <Select value={coreProvider} onValueChange={setCoreProvider}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="fineract">Apache Fineract</SelectItem>
                       <SelectItem value="mock">Mock (Development)</SelectItem>
@@ -255,7 +318,9 @@ export default function TenantOnboarding() {
                 <div className="grid gap-2">
                   <Label>Remote Deposit Capture</Label>
                   <Select value={rdcProvider} onValueChange={setRdcProvider}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="mitek">Mitek</SelectItem>
                       <SelectItem value="synctera">Synctera</SelectItem>
@@ -267,7 +332,9 @@ export default function TenantOnboarding() {
                 <div className="grid gap-2">
                   <Label>Bill Pay Provider</Label>
                   <Select value={billPayProvider} onValueChange={setBillPayProvider}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="fiserv">Fiserv</SelectItem>
                       <SelectItem value="fis">FIS</SelectItem>
@@ -284,21 +351,27 @@ export default function TenantOnboarding() {
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div>
                   <p className="font-medium">KYC Verification Required</p>
-                  <p className="text-sm text-muted-foreground">Require identity verification for new accounts</p>
+                  <p className="text-sm text-muted-foreground">
+                    Require identity verification for new accounts
+                  </p>
                 </div>
                 <Switch checked={kycRequired} onCheckedChange={setKycRequired} />
               </div>
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div>
                   <p className="font-medium">MFA Required</p>
-                  <p className="text-sm text-muted-foreground">Require multi-factor authentication for all users</p>
+                  <p className="text-sm text-muted-foreground">
+                    Require multi-factor authentication for all users
+                  </p>
                 </div>
                 <Switch checked={mfaRequired} onCheckedChange={setMfaRequired} />
               </div>
               <div className="grid gap-2">
                 <Label>Data Retention (years)</Label>
                 <Select value={dataRetention} onValueChange={setDataRetention}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="5">5 years</SelectItem>
                     <SelectItem value="7">7 years (recommended)</SelectItem>
@@ -315,16 +388,24 @@ export default function TenantOnboarding() {
                 <Label>Admin Email Addresses</Label>
                 <Input
                   value={adminEmails}
-                  onChange={e => setAdminEmails(e.target.value)}
+                  onChange={(e) => setAdminEmails(e.target.value)}
                   placeholder="admin@example.com, cto@example.com"
                 />
-                <p className="text-xs text-muted-foreground">Comma-separated list of email addresses to invite as admins.</p>
+                <p className="text-xs text-muted-foreground">
+                  Comma-separated list of email addresses to invite as admins.
+                </p>
               </div>
               {adminEmails && (
                 <div className="flex flex-wrap gap-2">
-                  {adminEmails.split(",").map(e => e.trim()).filter(Boolean).map((email, i) => (
-                    <Badge key={i} variant="secondary">{email}</Badge>
-                  ))}
+                  {adminEmails
+                    .split(",")
+                    .map((e) => e.trim())
+                    .filter(Boolean)
+                    .map((email, i) => (
+                      <Badge key={i} variant="secondary">
+                        {email}
+                      </Badge>
+                    ))}
                 </div>
               )}
             </>
@@ -355,11 +436,15 @@ export default function TenantOnboarding() {
                 </div>
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-muted-foreground">KYC Required</span>
-                  <Badge variant={kycRequired ? "default" : "outline"}>{kycRequired ? "Yes" : "No"}</Badge>
+                  <Badge variant={kycRequired ? "default" : "outline"}>
+                    {kycRequired ? "Yes" : "No"}
+                  </Badge>
                 </div>
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-muted-foreground">MFA Required</span>
-                  <Badge variant={mfaRequired ? "default" : "outline"}>{mfaRequired ? "Yes" : "No"}</Badge>
+                  <Badge variant={mfaRequired ? "default" : "outline"}>
+                    {mfaRequired ? "Yes" : "No"}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -369,7 +454,11 @@ export default function TenantOnboarding() {
 
       {/* Navigation */}
       <div className="flex justify-between">
-        <Button variant="outline" onClick={() => setActiveStep(prev => Math.max(0, prev - 1))} disabled={activeStep === 0}>
+        <Button
+          variant="outline"
+          onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
+          disabled={activeStep === 0}
+        >
           <ChevronLeft className="mr-2 h-4 w-4" /> Back
         </Button>
         {activeStep < STEPS.length - 1 ? (

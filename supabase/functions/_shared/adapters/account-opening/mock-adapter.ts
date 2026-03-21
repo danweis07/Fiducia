@@ -11,6 +11,7 @@
  * - lastName starting with "DECLINE" → application declined
  */
 
+import { secureRandomInt } from "../../secure-random.ts";
 import type {
   AccountOpeningAdapter,
   AccountOpeningConfig,
@@ -19,7 +20,7 @@ import type {
   FundingRequest,
   ProductOption,
   ApplicationStatus,
-} from './types.ts';
+} from "./types.ts";
 
 // =============================================================================
 // MOCK DATA
@@ -27,74 +28,74 @@ import type {
 
 const MOCK_PRODUCTS: ProductOption[] = [
   {
-    id: 'prod_checking_free',
-    type: 'checking',
-    name: 'Free Checking',
-    description: 'No monthly fees, no minimum balance. Free debit card included.',
-    apyBps: 1,    // 0.01%
-    minOpeningDepositCents: 2500,  // $25
+    id: "prod_checking_free",
+    type: "checking",
+    name: "Free Checking",
+    description: "No monthly fees, no minimum balance. Free debit card included.",
+    apyBps: 1, // 0.01%
+    minOpeningDepositCents: 2500, // $25
     monthlyFeeCents: 0,
     isAvailable: true,
   },
   {
-    id: 'prod_checking_premium',
-    type: 'checking',
-    name: 'Premium Checking',
-    description: 'Earn interest on your checking balance. Free checks and cashier\'s checks.',
-    apyBps: 50,   // 0.50%
+    id: "prod_checking_premium",
+    type: "checking",
+    name: "Premium Checking",
+    description: "Earn interest on your checking balance. Free checks and cashier's checks.",
+    apyBps: 50, // 0.50%
     minOpeningDepositCents: 10000, // $100
-    monthlyFeeCents: 1200,         // $12
-    feeWaiverDescription: 'Waived with $2,500 minimum daily balance',
+    monthlyFeeCents: 1200, // $12
+    feeWaiverDescription: "Waived with $2,500 minimum daily balance",
     isAvailable: true,
   },
   {
-    id: 'prod_savings_basic',
-    type: 'savings',
-    name: 'Regular Savings',
-    description: 'Start saving with as little as $5. Earn competitive interest.',
-    apyBps: 350,  // 3.50%
-    minOpeningDepositCents: 500,   // $5
+    id: "prod_savings_basic",
+    type: "savings",
+    name: "Regular Savings",
+    description: "Start saving with as little as $5. Earn competitive interest.",
+    apyBps: 350, // 3.50%
+    minOpeningDepositCents: 500, // $5
     monthlyFeeCents: 0,
     isAvailable: true,
   },
   {
-    id: 'prod_savings_high_yield',
-    type: 'savings',
-    name: 'High-Yield Savings',
-    description: 'Our best savings rate. Perfect for building your emergency fund.',
-    apyBps: 475,  // 4.75%
+    id: "prod_savings_high_yield",
+    type: "savings",
+    name: "High-Yield Savings",
+    description: "Our best savings rate. Perfect for building your emergency fund.",
+    apyBps: 475, // 4.75%
     minOpeningDepositCents: 50000, // $500
     monthlyFeeCents: 0,
     isAvailable: true,
   },
   {
-    id: 'prod_money_market',
-    type: 'money_market',
-    name: 'Money Market Account',
-    description: 'Higher rates with check-writing privileges. Tiered interest rates.',
-    apyBps: 425,  // 4.25%
+    id: "prod_money_market",
+    type: "money_market",
+    name: "Money Market Account",
+    description: "Higher rates with check-writing privileges. Tiered interest rates.",
+    apyBps: 425, // 4.25%
     minOpeningDepositCents: 100000, // $1,000
     monthlyFeeCents: 500,
-    feeWaiverDescription: 'Waived with $5,000 minimum daily balance',
+    feeWaiverDescription: "Waived with $5,000 minimum daily balance",
     isAvailable: true,
   },
   {
-    id: 'prod_cd_6mo',
-    type: 'cd',
-    name: '6-Month CD',
-    description: 'Lock in a great rate for 6 months.',
-    apyBps: 490,  // 4.90%
+    id: "prod_cd_6mo",
+    type: "cd",
+    name: "6-Month CD",
+    description: "Lock in a great rate for 6 months.",
+    apyBps: 490, // 4.90%
     minOpeningDepositCents: 100000, // $1,000
     monthlyFeeCents: 0,
     termMonths: 6,
     isAvailable: true,
   },
   {
-    id: 'prod_cd_12mo',
-    type: 'cd',
-    name: '12-Month CD',
-    description: 'Our most popular CD term with a competitive rate.',
-    apyBps: 500,  // 5.00%
+    id: "prod_cd_12mo",
+    type: "cd",
+    name: "12-Month CD",
+    description: "Our most popular CD term with a competitive rate.",
+    apyBps: 500, // 5.00%
     minOpeningDepositCents: 100000, // $1,000
     monthlyFeeCents: 0,
     termMonths: 12,
@@ -106,21 +107,21 @@ const MOCK_PRODUCTS: ProductOption[] = [
 const applicationStore = new Map<string, AccountApplication>();
 
 function maskEmail(email: string): string {
-  const [local, domain] = email.split('@');
-  if (!domain) return '****@****.***';
-  const maskedLocal = local.charAt(0) + '***';
+  const [local, domain] = email.split("@");
+  if (!domain) return "****@****.***";
+  const maskedLocal = local.charAt(0) + "***";
   return `${maskedLocal}@${domain}`;
 }
 
 function maskSSN(ssn: string): string {
-  const digits = ssn.replace(/\D/g, '');
-  if (digits.length < 4) return '***-**-****';
+  const digits = ssn.replace(/\D/g, "");
+  if (digits.length < 4) return "***-**-****";
   return `***-**-${digits.slice(-4)}`;
 }
 
 function maskLastName(name: string): string {
-  if (name.length <= 1) return '*';
-  return name.charAt(0) + '*'.repeat(name.length - 1);
+  if (name.length <= 1) return "*";
+  return name.charAt(0) + "*".repeat(name.length - 1);
 }
 
 function maskAccountNumber(acctNum: string): string {
@@ -133,44 +134,37 @@ function maskAccountNumber(acctNum: string): string {
 // =============================================================================
 
 export class MockAccountOpeningAdapter implements AccountOpeningAdapter {
-  readonly name = 'mock';
+  readonly name = "mock";
 
   async getConfig(_tenantId: string): Promise<AccountOpeningConfig> {
     return {
       products: MOCK_PRODUCTS,
-      allowedFundingMethods: ['ach_transfer', 'debit_card', 'internal_transfer', 'none'],
+      allowedFundingMethods: ["ach_transfer", "debit_card", "internal_transfer", "none"],
       minimumAge: 18,
       maxApplicationsPerDay: 5,
       applicationExpiryHours: 72,
       allowJointApplications: false,
-      requiredDisclosures: [
-        'digital_banking_agreement',
-        'electronic_disclosure',
-        'privacy_policy',
-      ],
+      requiredDisclosures: ["digital_banking_agreement", "electronic_disclosure", "privacy_policy"],
     };
   }
 
-  async createApplication(
-    tenantId: string,
-    applicant: ApplicantInfo,
-  ): Promise<AccountApplication> {
+  async createApplication(tenantId: string, applicant: ApplicantInfo): Promise<AccountApplication> {
     const id = `app_${crypto.randomUUID()}`;
     const now = new Date().toISOString();
     const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString();
 
     // Determine KYC outcome based on SSN
-    const ssnDigits = applicant.ssn.replace(/\D/g, '');
-    let status: ApplicationStatus = 'kyc_approved';
-    if (ssnDigits.endsWith('0000')) {
-      status = 'kyc_denied';
-    } else if (ssnDigits.endsWith('9999')) {
-      status = 'kyc_review';
+    const ssnDigits = applicant.ssn.replace(/\D/g, "");
+    let status: ApplicationStatus = "kyc_approved";
+    if (ssnDigits.endsWith("0000")) {
+      status = "kyc_denied";
+    } else if (ssnDigits.endsWith("9999")) {
+      status = "kyc_review";
     }
 
     // Check for decline trigger
-    if (applicant.lastName.toUpperCase().startsWith('DECLINE')) {
-      status = 'declined';
+    if (applicant.lastName.toUpperCase().startsWith("DECLINE")) {
+      status = "declined";
     }
 
     const application: AccountApplication = {
@@ -192,15 +186,17 @@ export class MockAccountOpeningAdapter implements AccountOpeningAdapter {
     applicationStore.set(id, application);
 
     // Log WITHOUT PII
-    console.warn(JSON.stringify({
-      level: 'info',
-      adapter: 'mock-account-opening',
-      action: 'createApplication',
-      applicationId: id,
-      tenantId,
-      status,
-      timestamp: now,
-    }));
+    console.warn(
+      JSON.stringify({
+        level: "info",
+        adapter: "mock-account-opening",
+        action: "createApplication",
+        applicationId: id,
+        tenantId,
+        status,
+        timestamp: now,
+      }),
+    );
 
     return application;
   }
@@ -213,10 +209,7 @@ export class MockAccountOpeningAdapter implements AccountOpeningAdapter {
     return app;
   }
 
-  async selectProducts(
-    applicationId: string,
-    productIds: string[],
-  ): Promise<AccountApplication> {
+  async selectProducts(applicationId: string, productIds: string[]): Promise<AccountApplication> {
     const app = applicationStore.get(applicationId);
     if (!app) {
       throw new Error(`Application not found: ${applicationId}`);
@@ -233,17 +226,14 @@ export class MockAccountOpeningAdapter implements AccountOpeningAdapter {
     });
 
     app.selectedProducts = selectedProducts;
-    app.status = 'products_selected';
+    app.status = "products_selected";
     app.updatedAt = new Date().toISOString();
     applicationStore.set(applicationId, app);
 
     return app;
   }
 
-  async submitFunding(
-    applicationId: string,
-    funding: FundingRequest,
-  ): Promise<AccountApplication> {
+  async submitFunding(applicationId: string, funding: FundingRequest): Promise<AccountApplication> {
     const app = applicationStore.get(applicationId);
     if (!app) {
       throw new Error(`Application not found: ${applicationId}`);
@@ -256,7 +246,7 @@ export class MockAccountOpeningAdapter implements AccountOpeningAdapter {
         ? maskAccountNumber(funding.sourceAccountNumber)
         : undefined,
     };
-    app.status = 'funded';
+    app.status = "funded";
     app.updatedAt = new Date().toISOString();
     applicationStore.set(applicationId, app);
 
@@ -272,22 +262,24 @@ export class MockAccountOpeningAdapter implements AccountOpeningAdapter {
     // Generate mock accounts
     app.createdAccounts = app.selectedProducts.map((p) => ({
       accountId: `acct_${crypto.randomUUID()}`,
-      accountNumberMasked: `****${Math.floor(1000 + Math.random() * 9000)}`,
+      accountNumberMasked: `****${secureRandomInt(1000, 10000)}`,
       type: p.productType,
     }));
 
-    app.status = 'completed';
+    app.status = "completed";
     app.updatedAt = new Date().toISOString();
     applicationStore.set(applicationId, app);
 
-    console.warn(JSON.stringify({
-      level: 'info',
-      adapter: 'mock-account-opening',
-      action: 'completeApplication',
-      applicationId,
-      accountsCreated: app.createdAccounts.length,
-      timestamp: app.updatedAt,
-    }));
+    console.warn(
+      JSON.stringify({
+        level: "info",
+        adapter: "mock-account-opening",
+        action: "completeApplication",
+        applicationId,
+        accountsCreated: app.createdAccounts.length,
+        timestamp: app.updatedAt,
+      }),
+    );
 
     return app;
   }
@@ -298,7 +290,7 @@ export class MockAccountOpeningAdapter implements AccountOpeningAdapter {
       throw new Error(`Application not found: ${applicationId}`);
     }
 
-    app.status = 'cancelled';
+    app.status = "cancelled";
     app.updatedAt = new Date().toISOString();
     applicationStore.set(applicationId, app);
   }

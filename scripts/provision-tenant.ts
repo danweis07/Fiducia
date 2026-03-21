@@ -20,7 +20,7 @@
  */
 
 import { parseArgs } from "node:util";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 // ---------------------------------------------------------------------------
 // CLI Arguments
@@ -39,6 +39,29 @@ const { values: args } = parseArgs({
     "dry-run": { type: "boolean", default: false },
   },
 });
+
+// ---------------------------------------------------------------------------
+// Input Validation
+// ---------------------------------------------------------------------------
+
+const VALID_PROJECT_REF = /^[a-z0-9][a-z0-9-]{0,58}[a-z0-9]$/;
+const VALID_TIERS = ["trial", "starter", "professional", "enterprise"] as const;
+const VALID_CURRENCIES = ["USD", "GBP", "EUR", "CAD", "AUD", "BRL", "MXN"] as const;
+const VALID_COUNTRIES = ["US", "GB", "EU", "CA", "AU", "BR", "MX"] as const;
+
+function validateProjectRef(ref: string): string {
+  if (!VALID_PROJECT_REF.test(ref)) {
+    throw new Error(`Invalid project ref format: must be lowercase alphanumeric with hyphens`);
+  }
+  return ref;
+}
+
+function validateEnum<T extends string>(value: string, allowed: readonly T[], label: string): T {
+  if (!(allowed as readonly string[]).includes(value)) {
+    throw new Error(`Invalid ${label}: "${value}". Allowed: ${allowed.join(", ")}`);
+  }
+  return value as T;
+}
 
 // ---------------------------------------------------------------------------
 // Tenant Templates
@@ -192,9 +215,7 @@ const CONTROL_PLANE_KEY = process.env.CONTROL_PLANE_SERVICE_KEY;
 
 if (!SUPABASE_ACCESS_TOKEN) {
   console.error("Missing SUPABASE_ACCESS_TOKEN environment variable");
-  console.error(
-    "Generate one at: https://supabase.com/dashboard/account/tokens"
-  );
+  console.error("Generate one at: https://supabase.com/dashboard/account/tokens");
   process.exit(1);
 }
 
@@ -204,10 +225,7 @@ const MGMT_API = "https://api.supabase.com/v1";
 // Helpers
 // ---------------------------------------------------------------------------
 
-async function mgmtApi(
-  path: string,
-  options: RequestInit = {}
-): Promise<Response> {
+async function mgmtApi(path: string, options: RequestInit = {}): Promise<Response> {
   const res = await fetch(`${MGMT_API}${path}`, {
     ...options,
     headers: {
@@ -324,9 +342,10 @@ async function runMigrations(projectRef: string) {
   }
 
   try {
-    execSync(
-      `npx supabase db push --project-ref ${projectRef}`,
-      { stdio: "inherit", cwd: process.cwd() }
+    execFileSync(
+      "npx",
+      ["supabase", "db", "push", "--project-ref", validateProjectRef(projectRef)],
+      { stdio: "inherit", cwd: process.cwd() },
     );
     log("2/5", "All migrations applied successfully");
   } catch (error) {
@@ -347,9 +366,10 @@ async function deployFunctions(projectRef: string) {
   }
 
   try {
-    execSync(
-      `npx supabase functions deploy --project-ref ${projectRef}`,
-      { stdio: "inherit", cwd: process.cwd() }
+    execFileSync(
+      "npx",
+      ["supabase", "functions", "deploy", "--project-ref", validateProjectRef(projectRef)],
+      { stdio: "inherit", cwd: process.cwd() },
     );
     log("3/5", "Edge functions deployed");
   } catch (error) {
@@ -372,21 +392,24 @@ async function configureTenant(projectRef: string) {
   // Get project API keys
   const keysRes = await mgmtApi(`/projects/${projectRef}/api-keys`);
   const keys = await keysRes.json();
-  const anonKey = keys.find(
-    (k: { name: string }) => k.name === "anon"
-  )?.api_key;
-  const serviceKey = keys.find(
-    (k: { name: string }) => k.name === "service_role"
-  )?.api_key;
+  const anonKey = keys.find((k: { name: string }) => k.name === "anon")?.api_key;
+  const serviceKey = keys.find((k: { name: string }) => k.name === "service_role")?.api_key;
 
   // Resolve template configuration
   const template = args.template ? TEMPLATES[args.template] : undefined;
   if (args.template && !template) {
-    console.warn(`Warning: Unknown template "${args.template}". Available: ${Object.keys(TEMPLATES).join(", ")}`);
+    console.warn(
+      `Warning: Unknown template "${args.template}". Available: ${Object.keys(TEMPLATES).join(", ")}`,
+    );
   }
 
-  const country = args.country ?? template?.country ?? "US";
-  const currency = template?.currency ?? "USD";
+  const country = validateEnum(
+    args.country ?? template?.country ?? "US",
+    VALID_COUNTRIES,
+    "country",
+  );
+  const currency = validateEnum(template?.currency ?? "USD", VALID_CURRENCIES, "currency");
+  const tier = validateEnum(args.tier ?? "starter", VALID_TIERS, "tier");
   const features = template?.features ?? {};
 
   // Seed the firms table with this tenant's info
@@ -396,15 +419,15 @@ async function configureTenant(projectRef: string) {
     VALUES (
       '${args.name!.replace(/'/g, "''")}',
       '${args.subdomain!.replace(/'/g, "''")}',
-      '${args.tier}',
-      CASE '${args.tier}'
+      '${tier}',
+      CASE '${tier}'
         WHEN 'trial' THEN 3
         WHEN 'starter' THEN 5
         WHEN 'professional' THEN 25
         WHEN 'enterprise' THEN 999999
         ELSE 3
       END,
-      CASE '${args.tier}'
+      CASE '${tier}'
         WHEN 'trial' THEN 100
         WHEN 'starter' THEN 500
         WHEN 'professional' THEN 5000
@@ -418,9 +441,18 @@ async function configureTenant(projectRef: string) {
     ON CONFLICT DO NOTHING;
   `;
 
-  execSync(
-    `npx supabase db execute --project-ref ${projectRef} --sql "${seedSql.replace(/"/g, '\\"')}"`,
-    { stdio: "inherit" }
+  execFileSync(
+    "npx",
+    [
+      "supabase",
+      "db",
+      "execute",
+      "--project-ref",
+      validateProjectRef(projectRef),
+      "--sql",
+      seedSql,
+    ],
+    { stdio: "inherit" },
   );
 
   // Register in control plane (if configured)
@@ -466,9 +498,7 @@ async function inviteAdmin(projectRef: string) {
   // Use Supabase Auth Admin API to invite the admin user
   const keysRes = await mgmtApi(`/projects/${projectRef}/api-keys`);
   const keys = await keysRes.json();
-  const serviceKey = keys.find(
-    (k: { name: string }) => k.name === "service_role"
-  )?.api_key;
+  const serviceKey = keys.find((k: { name: string }) => k.name === "service_role")?.api_key;
 
   const supabaseUrl = `https://${projectRef}.supabase.co`;
   const inviteRes = await fetch(`${supabaseUrl}/auth/v1/invite`, {
@@ -530,17 +560,13 @@ async function main() {
   console.warn();
   console.warn("  Next steps:");
   console.warn("  1. Set tenant secrets (AI keys, integration keys):");
-  console.warn(
-    `     npx supabase secrets set --project-ref ${project.id} VERTEX_PROJECT_ID=...`
-  );
+  console.warn(`     npx supabase secrets set --project-ref ${project.id} VERTEX_PROJECT_ID=...`);
   console.warn("  2. Configure custom domain:");
   console.warn(
-    `     npx supabase domains create --project-ref ${project.id} --custom-hostname api.${args.subdomain}.com`
+    `     npx supabase domains create --project-ref ${project.id} --custom-hostname api.${args.subdomain}.com`,
   );
   console.warn("  3. Deploy frontend with tenant config:");
-  console.warn(
-    `     VITE_SUPABASE_URL=${config?.supabaseUrl ?? "https://<ref>.supabase.co"}`
-  );
+  console.warn(`     VITE_SUPABASE_URL=${config?.supabaseUrl ?? "https://<ref>.supabase.co"}`);
 
   if (template) {
     console.warn();
