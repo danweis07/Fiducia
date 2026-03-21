@@ -18,6 +18,19 @@ npm run typecheck        # TypeScript strict check
 npm run i18n:check       # Verify translation completeness (33 languages)
 ```
 
+### Demo & Scaffolding
+
+```bash
+./scripts/setup.sh --demo                     # Full app with mock data, no backend
+./scripts/generate-app.sh <template> [Name]   # Scaffold a new page from template
+npx tsx scripts/recipes/list-all-actions.ts    # List all gateway actions
+npx tsx scripts/recipes/accounts-overview.ts   # See account data shapes
+```
+
+Templates: `account-dashboard`, `payment-form`, `card-manager`, `loan-calculator`, `spending-dashboard`, `custom`
+
+See `docs/QUICKSTART-DEMO.md` for the full 5-minute guide.
+
 ## Directory Map
 
 ```
@@ -79,7 +92,7 @@ mobile/                 # Flutter iOS/Android app
 
 - **Unit tests:** Vitest + Testing Library. Place in `__tests__/` dirs or colocate as `*.test.ts(x)`
 - **E2E tests:** Playwright specs in `e2e/`. Runs Chromium, Firefox, WebKit, mobile Chrome
-- **Coverage thresholds:** 30% statements/lines, 25% branches/functions
+- **Coverage thresholds:** 50% statements/lines, 40% branches/functions
 - **Load tests:** k6 scripts in `tests/load/` and `load-tests/k6/`
 
 ## Common Tasks

@@ -189,7 +189,7 @@ See [docs/DEVELOPER-SETUP-BY-REGION.md](docs/DEVELOPER-SETUP-BY-REGION.md) for r
 - **Unit tests:** 169 test files using Vitest + Testing Library (`npm test`)
 - **E2E tests:** 7 Playwright specs — auth, accounts, dashboard, navigation, i18n, accessibility, performance (`npm run test:e2e`)
 - **Load tests:** k6 scripts for smoke, load, stress, and soak testing (`tests/load/`, `load-tests/k6/`)
-- **Coverage:** `npm run test:coverage` (thresholds: 30% statements/lines, 25% branches/functions)
+- **Coverage:** `npm run test:coverage` (thresholds: 50% statements/lines, 40% branches/functions)
 
 ## API
 
@@ -222,8 +222,8 @@ Full API specification: [`openapi.yaml`](openapi.yaml)
 | [API Guide](docs/API-GUIDE.md)                                 | Gateway API examples with curl                      |
 | [Production Checklist](docs/PRODUCTION-CHECKLIST.md)           | Pre- and post-deployment verification               |
 | [Legal Disclaimer](LEGAL.md)                                   | Regulatory, liability, and usage disclaimers        |
-| [Governance](GOVERNANCE.md)                                     | Maintainer roles, decision process, releases        |
-| [Support](SUPPORT.md)                                           | How to get help and where to ask questions           |
+| [Governance](GOVERNANCE.md)                                    | Maintainer roles, decision process, releases        |
+| [Support](SUPPORT.md)                                          | How to get help and where to ask questions          |
 
 ## Disclaimer
 

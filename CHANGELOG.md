@@ -4,14 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Developer Experience
+
+- Add `docs/QUICKSTART-DEMO.md` — 5-minute guide to running the full banking app with zero backend
+- Add `scripts/generate-app.sh` — scaffold functional pages from 6 templates (account-dashboard, payment-form, card-manager, loan-calculator, spending-dashboard, custom)
+- Add `scripts/recipes/` — standalone scripts that print exact gateway response shapes for each domain
+- Add `docs/GETTING_STARTED.md` — step-by-step developer setup guide
+- Add `.vscode/extensions.json` — recommended VS Code extensions for the project
+- Add `.devcontainer/devcontainer.json` — GitHub Codespaces / Dev Container support
+
+### Testing
+
+- Add `docs/TESTING_PATTERNS.md` — documented testing conventions, hook/component/E2E patterns, and coverage expectations
+- Coverage thresholds increased: 50% statements/lines, 40% branches/functions (configured in `vitest.config.ts`)
+- Excluded `scripts/recipes/` and `scripts/templates/` from ESLint (CLI scripts and code-gen templates)
+
 ## [1.0.0] - 2026-03-17
 
 ### Added
 
 - Multi-tenant digital banking platform with React 19, Vite, TypeScript, and Tailwind CSS
 - Supabase backend with 41 database migrations, RLS policies, and 11 edge functions
-- Adapter-based core banking integrations: CU*Answers, Symitar SymXchange, Apache Fineract
-- Core banking simulator (Express.js) mimicking CU*Answers, Symitar, and Fineract APIs
+- Adapter-based core banking integrations: CU\*Answers, Symitar SymXchange, Apache Fineract
+- Core banking simulator (Express.js) mimicking CU\*Answers, Symitar, and Fineract APIs
 - Demo mode with comprehensive fixture data — works with zero backend configuration
 - Consumer banking: accounts, transfers, bill pay, cards, loans, RDC, statements, P2P, wires
 - Business banking: treasury, invoicing, payroll, cash sweeps, liquidity dashboard

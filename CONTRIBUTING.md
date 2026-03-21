@@ -26,7 +26,7 @@ See the [README](README.md) for full setup options (demo mode, Docker full stack
 ## Pull Request Guidelines
 
 - Keep PRs small and focused. One feature or fix per PR.
-- Write a clear title and description. Explain *what* changed and *why*.
+- Write a clear title and description. Explain _what_ changed and _why_.
 - Include screenshots for UI changes.
 - Add or update tests for new functionality.
 - Make sure CI passes (lint, typecheck, unit tests, build).
@@ -54,6 +54,46 @@ Prefix with the area if helpful: `[adapters]`, `[i18n]`, `[admin]`, `[mobile]`, 
 - **Imports** — use the `@/` path alias (e.g., `import { Button } from "@/components/ui/button"`).
 - **Formatting** — ESLint enforces style. Run `npm run lint:fix` to auto-fix.
 - **Tests** — Vitest for unit tests, Playwright for E2E. Place unit tests in `__tests__/` directories or colocate as `*.test.ts(x)`.
+
+## Testing Requirements
+
+All PRs must pass `npm run validate` which includes tests. Coverage thresholds are enforced:
+
+| Metric     | Threshold |
+| ---------- | --------- |
+| Statements | 50%       |
+| Lines      | 50%       |
+| Branches   | 40%       |
+| Functions  | 40%       |
+
+These thresholds are configured in `vitest.config.ts`. `src/components/ui/**` (shadcn primitives) is excluded from coverage.
+
+**What to test:**
+
+- New hooks: test with `renderHook` + mocked gateway (see `src/hooks/__tests__/useAccounts.test.ts`)
+- New pages/components: test rendering and key interactions with Testing Library
+- New gateway actions: add mock data in `src/lib/demo-data/` and verify with a recipe script
+- Bug fixes: add a regression test that would have caught the bug
+
+See `docs/TESTING_PATTERNS.md` for detailed patterns and examples.
+
+## Demo Mode & Scaffolding
+
+The fastest way to develop new features is in demo mode:
+
+```bash
+# Scaffold a new page wired to mock data
+./scripts/generate-app.sh <template> [PageName]
+
+# Available templates: account-dashboard, payment-form, card-manager,
+# loan-calculator, spending-dashboard, custom
+
+# Explore available gateway actions and data shapes
+npx tsx scripts/recipes/list-all-actions.ts
+npx tsx scripts/recipes/accounts-overview.ts
+```
+
+See `docs/QUICKSTART-DEMO.md` for the full guide.
 
 ## Adding a New Integration Adapter
 
