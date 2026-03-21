@@ -21,7 +21,7 @@ const DEFAULT_OPTIONS = {
  * Sleep for a specified duration
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -30,7 +30,7 @@ export function sleep(ms: number): Promise<void> {
 export function calculateDelay(
   attempt: number,
   initialDelayMs = DEFAULT_OPTIONS.initialDelayMs,
-  maxDelayMs = DEFAULT_OPTIONS.maxDelayMs
+  maxDelayMs = DEFAULT_OPTIONS.maxDelayMs,
 ): number {
   const exponentialDelay = initialDelayMs * Math.pow(2, attempt - 1);
   const jitter = exponentialDelay * 0.25 * (Math.random() * 2 - 1);
@@ -50,13 +50,13 @@ export function isRetryableStatus(status: number): boolean {
 export async function fetchWithRetry(
   url: string,
   options: RequestInit,
-  retryOptions: RetryOptions = {}
+  retryOptions: RetryOptions = {},
 ): Promise<Response> {
   const {
     maxRetries = DEFAULT_OPTIONS.maxRetries,
     initialDelayMs = DEFAULT_OPTIONS.initialDelayMs,
     maxDelayMs = DEFAULT_OPTIONS.maxDelayMs,
-    context = 'fetch',
+    context = "fetch",
   } = retryOptions;
 
   let lastError: Error | null = null;
@@ -73,18 +73,19 @@ export async function fetchWithRetry(
       // Retryable HTTP error
       const errorText = await response.text();
       lastError = new Error(`HTTP ${response.status}: ${errorText}`);
-      console.warn(`${context}: Attempt ${attempt}/${maxRetries} failed with status ${response.status}`);
-
+      console.warn(`Retry attempt ${attempt}/${maxRetries} failed with status ${response.status}`);
     } catch (error) {
       // Network error
       lastError = error instanceof Error ? error : new Error(String(error));
-      console.warn(`${context}: Attempt ${attempt}/${maxRetries} failed: ${lastError.message}`);
+      console.warn(`Retry attempt ${attempt}/${maxRetries} failed with network error`);
     }
 
     // Wait before retry (unless this was the last attempt)
     if (attempt < maxRetries) {
       const delayMs = calculateDelay(attempt, initialDelayMs, maxDelayMs);
-      console.warn(`${context}: Waiting ${Math.round(delayMs)}ms before retry...`);
+      console.warn(
+        `Waiting ${Math.round(delayMs)}ms before retry attempt ${attempt + 1}/${maxRetries}`,
+      );
       await sleep(delayMs);
     }
   }
@@ -97,13 +98,13 @@ export async function fetchWithRetry(
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  retryOptions: RetryOptions = {}
+  retryOptions: RetryOptions = {},
 ): Promise<T> {
   const {
     maxRetries = DEFAULT_OPTIONS.maxRetries,
     initialDelayMs = DEFAULT_OPTIONS.initialDelayMs,
     maxDelayMs = DEFAULT_OPTIONS.maxDelayMs,
-    context = 'operation',
+    context = "operation",
   } = retryOptions;
 
   let lastError: Error | null = null;
@@ -113,11 +114,13 @@ export async function withRetry<T>(
       return await fn();
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
-      console.warn(`${context}: Attempt ${attempt}/${maxRetries} failed: ${lastError.message}`);
+      console.warn(`Retry attempt ${attempt}/${maxRetries} failed with error`);
 
       if (attempt < maxRetries) {
         const delayMs = calculateDelay(attempt, initialDelayMs, maxDelayMs);
-        console.warn(`${context}: Waiting ${Math.round(delayMs)}ms before retry...`);
+        console.warn(
+          `Waiting ${Math.round(delayMs)}ms before retry attempt ${attempt + 1}/${maxRetries}`,
+        );
         await sleep(delayMs);
       }
     }

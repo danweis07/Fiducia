@@ -1187,7 +1187,7 @@ function startServer() {
     // Validate that cert files exist before starting
     for (const f of [caCert, serverCert, serverKey]) {
       if (!fs.existsSync(f)) {
-        console.error(`mTLS error: certificate file not found: ${f}`);
+        console.error('mTLS error: required certificate file not found');
         console.error('Generate certs with: ./certs/generate-certs.sh /certs');
         process.exit(1);
       }
