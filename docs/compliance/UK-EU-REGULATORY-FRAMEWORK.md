@@ -29,23 +29,23 @@ Fiducia operates within the overlapping jurisdictions of UK and EU financial reg
 
 ### 1.1 United Kingdom
 
-| Authority | Scope | Relevance to Fiducia |
-|-----------|-------|----------------------|
-| **Financial Conduct Authority (FCA)** | Conduct regulation, consumer protection, market integrity | Conduct rules, operational resilience, consumer duty |
-| **Prudential Regulation Authority (PRA)** | Prudential supervision of banks, building societies, credit unions | Capital adequacy reporting, outsourcing expectations |
-| **Bank of England** | Financial stability, payment systems oversight | Systemic resilience, settlement finality |
-| **Information Commissioner's Office (ICO)** | Data protection enforcement (UK GDPR) | Personal data processing, breach notification |
-| **Payment Systems Regulator (PSR)** | Payment systems access and competition | Open banking access, interchange fee compliance |
+| Authority                                   | Scope                                                              | Relevance to Fiducia                                 |
+| ------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------- |
+| **Financial Conduct Authority (FCA)**       | Conduct regulation, consumer protection, market integrity          | Conduct rules, operational resilience, consumer duty |
+| **Prudential Regulation Authority (PRA)**   | Prudential supervision of banks, building societies, credit unions | Capital adequacy reporting, outsourcing expectations |
+| **Bank of England**                         | Financial stability, payment systems oversight                     | Systemic resilience, settlement finality             |
+| **Information Commissioner's Office (ICO)** | Data protection enforcement (UK GDPR)                              | Personal data processing, breach notification        |
+| **Payment Systems Regulator (PSR)**         | Payment systems access and competition                             | Open banking access, interchange fee compliance      |
 
 ### 1.2 European Union
 
-| Authority | Scope | Relevance to Fiducia |
-|-----------|-------|----------------------|
-| **European Banking Authority (EBA)** | Prudential standards, ICT risk, outsourcing guidelines | ICT risk management framework, cloud outsourcing |
-| **European Central Bank (ECB)** | Monetary policy, banking supervision (SSM) | Supervisory expectations for digital banking |
-| **European Data Protection Board (EDPB)** | GDPR guidance and enforcement coordination | Cross-border data transfer, consent standards |
-| **National Competent Authorities** | Member-state-level banking supervision | Local licensing, conduct requirements per jurisdiction |
-| **European Securities and Markets Authority (ESMA)** | Securities and markets regulation | Relevant where platform supports investment services |
+| Authority                                            | Scope                                                  | Relevance to Fiducia                                   |
+| ---------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| **European Banking Authority (EBA)**                 | Prudential standards, ICT risk, outsourcing guidelines | ICT risk management framework, cloud outsourcing       |
+| **European Central Bank (ECB)**                      | Monetary policy, banking supervision (SSM)             | Supervisory expectations for digital banking           |
+| **European Data Protection Board (EDPB)**            | GDPR guidance and enforcement coordination             | Cross-border data transfer, consent standards          |
+| **National Competent Authorities**                   | Member-state-level banking supervision                 | Local licensing, conduct requirements per jurisdiction |
+| **European Securities and Markets Authority (ESMA)** | Securities and markets regulation                      | Relevant where platform supports investment services   |
 
 Fiducia's compliance architecture is designed so that tenant institutions can satisfy the requirements of all applicable authorities simultaneously, without requiring separate platform configurations per jurisdiction.
 
@@ -95,11 +95,11 @@ Fiducia implements SCA in accordance with the Regulatory Technical Standards (RT
 
 Authentication enforces at least two of the three prescribed factors:
 
-| Factor | Implementation |
-|--------|---------------|
-| **Knowledge** (something the user knows) | Password, PIN, security questions |
-| **Possession** (something the user has) | TOTP authenticator app, hardware security key (WebAuthn/FIDO2) |
-| **Inherence** (something the user is) | Biometric verification (delegated to device-native APIs on mobile) |
+| Factor                                   | Implementation                                                     |
+| ---------------------------------------- | ------------------------------------------------------------------ |
+| **Knowledge** (something the user knows) | Password, PIN, security questions                                  |
+| **Possession** (something the user has)  | TOTP authenticator app, hardware security key (WebAuthn/FIDO2)     |
+| **Inherence** (something the user is)    | Biometric verification (delegated to device-native APIs on mobile) |
 
 SCA is triggered for all remote electronic payment transactions, account information access by third parties, and any action that may create a risk of payment fraud. Exemptions (low-value transactions, trusted beneficiaries, recurring payments of the same amount) are applied in accordance with Article 10-18 of the RTS.
 
@@ -139,13 +139,13 @@ PostgreSQL Row Level Security (RLS), enforced at the database engine level, is a
 
 ### 4.3 Data Subject Rights
 
-| Right | Platform Implementation |
-|-------|------------------------|
-| **Right of access (Art. 15)** | Data Export page (`src/pages/admin/DataExport.tsx`) enables authorised personnel to generate structured exports of a data subject's personal data in machine-readable format. |
-| **Right to erasure (Art. 17)** | Data Export module supports erasure request workflows. Cascading foreign key constraints (`ON DELETE CASCADE`) ensure referential integrity during deletion. |
-| **Right to data portability (Art. 20)** | Export functionality produces data in JSON format, satisfying the "structured, commonly used, machine-readable" requirement. |
-| **Right to restriction (Art. 18)** | Account suspension capabilities allow processing to be restricted while a dispute is resolved. |
-| **Consent withdrawal (Art. 7(3))** | Open banking consent revocation is effective immediately; withdrawal is as easy as granting consent. |
+| Right                                   | Platform Implementation                                                                                                                                                       |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Right of access (Art. 15)**           | Data Export page (`src/pages/admin/DataExport.tsx`) enables authorised personnel to generate structured exports of a data subject's personal data in machine-readable format. |
+| **Right to erasure (Art. 17)**          | Data Export module supports erasure request workflows. Cascading foreign key constraints (`ON DELETE CASCADE`) ensure referential integrity during deletion.                  |
+| **Right to data portability (Art. 20)** | Export functionality produces data in JSON format, satisfying the "structured, commonly used, machine-readable" requirement.                                                  |
+| **Right to restriction (Art. 18)**      | Account suspension capabilities allow processing to be restricted while a dispute is resolved.                                                                                |
+| **Consent withdrawal (Art. 7(3))**      | Open banking consent revocation is effective immediately; withdrawal is as easy as granting consent.                                                                          |
 
 ### 4.4 Data Protection Impact Assessments (DPIAs)
 
@@ -193,7 +193,7 @@ The Incident Manager directly satisfies DORA's incident management requirements:
 
 ### 5.3 Pillar III — Digital Operational Resilience Testing (Articles 24-27)
 
-- **Continuous testing** — The platform's test suite (`npm run validate`) executes linting, type-checking, unit tests, and build verification. Coverage thresholds (30% statements/lines, 25% branches/functions) are enforced.
+- **Continuous testing** — The platform's test suite (`npm run validate`) executes linting, type-checking, unit tests, and build verification. Coverage thresholds (50% statements/lines, 40% branches/functions) are enforced.
 - **E2E scenario testing** — Playwright tests (`npm run test:e2e`) simulate end-to-end user journeys across multiple browser engines and device profiles.
 - **Load testing** — k6 scripts (`tests/load/`, `load-tests/k6/`) support Threat-Led Penetration Testing (TLPT) and capacity planning under stress conditions.
 - **Rollback verification** — Pre- and post-rollback health checks validate system integrity after recovery operations.
@@ -217,15 +217,15 @@ The platform's audit logging and incident management infrastructure produces str
 
 ### 6.1 EBA Guidelines on ICT and Security Risk Management (EBA/GL/2019/04)
 
-| EBA Requirement | Fiducia Control |
-|-----------------|-----------------|
-| ICT governance and strategy | Control Tower provides board-level visibility into ICT operational status |
-| ICT risk management framework | Structured incident lifecycle, severity classification, and resolution tracking |
-| Information security | RLS-enforced data isolation, RBAC, SCA, encryption at rest and in transit |
-| ICT operations management | Deployment tracking, change approval workflows, health monitoring |
-| ICT project and change management | Dual-authorisation deployment approvals, pre-deployment test gates |
-| Business continuity management | Automated rollback, multi-region deployment support, health check monitoring |
-| Payment service user relationship management | Transparent consent management, multi-language consumer communications |
+| EBA Requirement                              | Fiducia Control                                                                 |
+| -------------------------------------------- | ------------------------------------------------------------------------------- |
+| ICT governance and strategy                  | Control Tower provides board-level visibility into ICT operational status       |
+| ICT risk management framework                | Structured incident lifecycle, severity classification, and resolution tracking |
+| Information security                         | RLS-enforced data isolation, RBAC, SCA, encryption at rest and in transit       |
+| ICT operations management                    | Deployment tracking, change approval workflows, health monitoring               |
+| ICT project and change management            | Dual-authorisation deployment approvals, pre-deployment test gates              |
+| Business continuity management               | Automated rollback, multi-region deployment support, health check monitoring    |
+| Payment service user relationship management | Transparent consent management, multi-language consumer communications          |
 
 ### 6.2 EBA Guidelines on Outsourcing Arrangements (EBA/GL/2019/02)
 
@@ -298,12 +298,12 @@ All personal data is processed and stored within the EU deployment region. No pe
 
 Where data transfers outside the EU/EEA or UK are required (e.g., integration with a third-party service hosted outside the region), the following safeguards apply:
 
-| Transfer Mechanism | Application |
-|---------------------|-------------|
-| **Standard Contractual Clauses (SCCs)** | Incorporated into all processor and sub-processor agreements where the recipient is outside the EU/EEA. Module 2 (controller-to-processor) and Module 3 (processor-to-processor) clauses are used as applicable. |
-| **UK International Data Transfer Agreement (IDTA)** | Applied for transfers from the UK to jurisdictions without adequacy decisions, in accordance with ICO guidance. |
-| **Supplementary measures** | Encryption in transit (TLS 1.3), encryption at rest (AES-256), pseudonymisation of identifiers, and contractual prohibitions on onward transfer without authorisation. |
-| **Transfer Impact Assessments (TIAs)** | Conducted for each cross-border data flow, assessing the legal framework in the recipient country and the effectiveness of supplementary measures. |
+| Transfer Mechanism                                  | Application                                                                                                                                                                                                      |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Standard Contractual Clauses (SCCs)**             | Incorporated into all processor and sub-processor agreements where the recipient is outside the EU/EEA. Module 2 (controller-to-processor) and Module 3 (processor-to-processor) clauses are used as applicable. |
+| **UK International Data Transfer Agreement (IDTA)** | Applied for transfers from the UK to jurisdictions without adequacy decisions, in accordance with ICO guidance.                                                                                                  |
+| **Supplementary measures**                          | Encryption in transit (TLS 1.3), encryption at rest (AES-256), pseudonymisation of identifiers, and contractual prohibitions on onward transfer without authorisation.                                           |
+| **Transfer Impact Assessments (TIAs)**              | Conducted for each cross-border data flow, assessing the legal framework in the recipient country and the effectiveness of supplementary measures.                                                               |
 
 ### 8.3 Third-Party Data Flows
 
@@ -328,24 +328,24 @@ All third-party data flows are logged in `open_banking_access_logs` with provide
 
 The following table maps Fiducia platform features to specific UK/EU regulatory requirements.
 
-| Fiducia Feature | FCA | PRA | PSD2/PSR | GDPR/UK GDPR | DORA | EBA GL |
-|-----------------|-----|-----|----------|---------------|------|--------|
-| Row Level Security (tenant isolation) | — | — | — | Art. 25, 32 | Art. 9 | GL/2019/04 §4 |
-| Role-based access control | SMCR | — | Art. 97 | Art. 32 | Art. 9 | GL/2019/04 §4 |
-| Strong Customer Authentication | Consumer Duty | — | Art. 97, RTS | — | — | GL/2019/04 §4 |
-| Open banking consent management | — | — | Art. 64-67 | Art. 6-7 | — | — |
-| TPP access logging | — | — | Art. 66-67 | Art. 30 | Art. 17 | — |
-| Incident Manager | PS21/3 | PS6/21 | — | Art. 33-34 | Art. 17-23 | GL/2019/04 §7 |
-| Control Tower | PS21/3 | PS6/21 | — | — | Art. 5-16 | GL/2019/04 §3 |
-| Automated rollback | PS21/3 | PS6/21 | — | — | Art. 12 | GL/2019/04 §7 |
-| Data Export / erasure | Consumer Duty | — | — | Art. 15-17, 20 | — | — |
-| Multi-language support (33 locales) | Consumer Duty | — | — | Art. 12 | — | GL/2019/04 §8 |
-| Adapter pattern (third-party abstraction) | — | SS2/21 | — | Art. 28 | Art. 28-44 | GL/2019/02 |
-| Audit logging | SMCR, SYSC | — | Art. 72 | Art. 30 | Art. 12 | GL/2019/04 §5 |
-| Infrastructure-as-code | — | — | — | — | Art. 9 | GL Cloud §3 |
-| Automated testing (unit, E2E, load) | PS21/3 | PS6/21 | — | — | Art. 24-27 | GL/2019/04 §6 |
-| Stakeholder notification workflow | PS21/3 | PS6/21 | — | Art. 33-34 | Art. 19 | GL/2019/04 §7 |
-| Health monitoring | PS21/3 | PS6/21 | — | — | Art. 10 | GL/2019/04 §5 |
+| Fiducia Feature                           | FCA           | PRA    | PSD2/PSR     | GDPR/UK GDPR   | DORA       | EBA GL        |
+| ----------------------------------------- | ------------- | ------ | ------------ | -------------- | ---------- | ------------- |
+| Row Level Security (tenant isolation)     | —             | —      | —            | Art. 25, 32    | Art. 9     | GL/2019/04 §4 |
+| Role-based access control                 | SMCR          | —      | Art. 97      | Art. 32        | Art. 9     | GL/2019/04 §4 |
+| Strong Customer Authentication            | Consumer Duty | —      | Art. 97, RTS | —              | —          | GL/2019/04 §4 |
+| Open banking consent management           | —             | —      | Art. 64-67   | Art. 6-7       | —          | —             |
+| TPP access logging                        | —             | —      | Art. 66-67   | Art. 30        | Art. 17    | —             |
+| Incident Manager                          | PS21/3        | PS6/21 | —            | Art. 33-34     | Art. 17-23 | GL/2019/04 §7 |
+| Control Tower                             | PS21/3        | PS6/21 | —            | —              | Art. 5-16  | GL/2019/04 §3 |
+| Automated rollback                        | PS21/3        | PS6/21 | —            | —              | Art. 12    | GL/2019/04 §7 |
+| Data Export / erasure                     | Consumer Duty | —      | —            | Art. 15-17, 20 | —          | —             |
+| Multi-language support (33 locales)       | Consumer Duty | —      | —            | Art. 12        | —          | GL/2019/04 §8 |
+| Adapter pattern (third-party abstraction) | —             | SS2/21 | —            | Art. 28        | Art. 28-44 | GL/2019/02    |
+| Audit logging                             | SMCR, SYSC    | —      | Art. 72      | Art. 30        | Art. 12    | GL/2019/04 §5 |
+| Infrastructure-as-code                    | —             | —      | —            | —              | Art. 9     | GL Cloud §3   |
+| Automated testing (unit, E2E, load)       | PS21/3        | PS6/21 | —            | —              | Art. 24-27 | GL/2019/04 §6 |
+| Stakeholder notification workflow         | PS21/3        | PS6/21 | —            | Art. 33-34     | Art. 19    | GL/2019/04 §7 |
+| Health monitoring                         | PS21/3        | PS6/21 | —            | —              | Art. 10    | GL/2019/04 §5 |
 
 ---
 
@@ -402,4 +402,4 @@ Ensure the following individuals are available for skilled person interviews:
 
 ---
 
-*This document is reviewed quarterly and updated following material regulatory changes, platform architecture modifications, or supervisory feedback. The next scheduled review is 2026-06-17.*
+_This document is reviewed quarterly and updated following material regulatory changes, platform architecture modifications, or supervisory feedback. The next scheduled review is 2026-06-17._

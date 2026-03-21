@@ -189,7 +189,7 @@ Consulte [docs/DEVELOPER-SETUP-BY-REGION.md](docs/DEVELOPER-SETUP-BY-REGION.md) 
 - **Testes unitários:** 169 arquivos de teste usando Vitest + Testing Library (`npm test`)
 - **Testes E2E:** 7 specs Playwright — autenticação, contas, dashboard, navegação, i18n, acessibilidade, performance (`npm run test:e2e`)
 - **Testes de carga:** scripts k6 para testes smoke, load, stress e soak (`tests/load/`, `load-tests/k6/`)
-- **Cobertura:** `npm run test:coverage` (limites: 30% statements/lines, 25% branches/functions)
+- **Cobertura:** `npm run test:coverage` (limites: 50% statements/lines, 40% branches/functions)
 
 ## API
 

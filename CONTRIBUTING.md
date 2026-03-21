@@ -61,10 +61,10 @@ All PRs must pass `npm run validate` which includes tests. Coverage thresholds a
 
 | Metric     | Threshold |
 | ---------- | --------- |
-| Statements | 30%       |
-| Lines      | 30%       |
-| Branches   | 25%       |
-| Functions  | 25%       |
+| Statements | 50%       |
+| Lines      | 50%       |
+| Branches   | 40%       |
+| Functions  | 40%       |
 
 These thresholds are configured in `vitest.config.ts`. `src/components/ui/**` (shadcn primitives) is excluded from coverage.
 

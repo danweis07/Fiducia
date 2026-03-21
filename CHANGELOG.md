@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Testing
 
 - Add `docs/TESTING_PATTERNS.md` — documented testing conventions, hook/component/E2E patterns, and coverage expectations
-- Coverage thresholds enforced in CI: 30% statements/lines, 25% branches/functions (configured in `vitest.config.ts`)
+- Coverage thresholds increased: 50% statements/lines, 40% branches/functions (configured in `vitest.config.ts`)
 - Excluded `scripts/recipes/` and `scripts/templates/` from ESLint (CLI scripts and code-gen templates)
 
 ## [1.0.0] - 2026-03-17

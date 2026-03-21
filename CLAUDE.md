@@ -92,7 +92,7 @@ mobile/                 # Flutter iOS/Android app
 
 - **Unit tests:** Vitest + Testing Library. Place in `__tests__/` dirs or colocate as `*.test.ts(x)`
 - **E2E tests:** Playwright specs in `e2e/`. Runs Chromium, Firefox, WebKit, mobile Chrome
-- **Coverage thresholds:** 30% statements/lines, 25% branches/functions
+- **Coverage thresholds:** 50% statements/lines, 40% branches/functions
 - **Load tests:** k6 scripts in `tests/load/` and `load-tests/k6/`
 
 ## Common Tasks

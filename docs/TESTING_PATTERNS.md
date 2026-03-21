@@ -32,7 +32,7 @@ src/hooks/
 
 Thresholds (from `vitest.config.ts`):
 
-- Statements: 30%, Lines: 30%, Branches: 25%, Functions: 25%
+- Statements: 50%, Lines: 50%, Branches: 40%, Functions: 40%
 - `src/components/ui/**` is excluded (shadcn primitives)
 
 ## Unit Test Patterns
