@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Building2,
   Palette,
@@ -49,6 +49,14 @@ export default function TenantOnboarding() {
   const [timezone, setTimezone] = useState("America/New_York");
   const [primaryColor, setPrimaryColor] = useState("#1e40af");
   const [logoUrl, setLogoUrl] = useState("");
+  const sanitizedLogoUrl = useMemo(() => {
+    try {
+      const parsed = new URL(logoUrl);
+      return parsed.protocol === "https:" ? parsed.href : null;
+    } catch {
+      return null;
+    }
+  }, [logoUrl]);
   const [coreProvider, setCoreProvider] = useState("fineract");
   const [rdcProvider, setRdcProvider] = useState("mitek");
   const [billPayProvider, setBillPayProvider] = useState("fiserv");
@@ -280,15 +288,8 @@ export default function TenantOnboarding() {
                   className="inline-flex items-center gap-2 rounded-lg px-4 py-2"
                   style={{ backgroundColor: primaryColor }}
                 >
-                  {logoUrl &&
-                  (() => {
-                    try {
-                      return new URL(logoUrl).protocol === "https:";
-                    } catch {
-                      return false;
-                    }
-                  })() ? (
-                    <img src={logoUrl} alt="Logo" className="h-8" />
+                  {sanitizedLogoUrl ? (
+                    <img src={sanitizedLogoUrl} alt="Logo" className="h-8" />
                   ) : (
                     <Building2 className="h-5 w-5 text-white" />
                   )}
