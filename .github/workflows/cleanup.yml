@@ -27,6 +27,19 @@ on:
         options:
           - 'true'
           - 'false'
+      workflow_run_filter:
+        description: 'Which workflow runs to delete'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'failed-only'
+      workflow_run_before_date:
+        description: 'Only delete runs created before this date (YYYY-MM-DD, blank = no date filter)'
+        required: false
+        default: ''
+        type: string
       protected_branches:
         description: 'Comma-separated branches to keep (main is always kept)'
         required: false
@@ -105,14 +118,21 @@ jobs:
     permissions:
       actions: write
     steps:
-      - name: Delete all workflow runs
+      - name: Delete workflow runs
         uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const dryRun = '${{ inputs.dry_run }}' === 'true';
+            const filter = '${{ inputs.workflow_run_filter }}' || 'all';
+            const beforeDate = '${{ inputs.workflow_run_before_date }}'.trim();
+            const beforeTimestamp = beforeDate ? new Date(`${beforeDate}T00:00:00Z`).getTime() : null;
 
             console.log(`Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}`);
+            console.log(`Filter: ${filter}`);
+            console.log(`Before date: ${beforeDate || '(none)'}`);
+
+            const failedConclusions = new Set(['failure', 'timed_out', 'cancelled']);
 
             // Get all workflows
             const { data: workflows } = await github.rest.actions.listRepoWorkflows({
@@ -121,6 +141,7 @@ jobs:
             });
 
             let totalDeleted = 0;
+            let totalSkipped = 0;
 
             for (const wf of workflows.workflows) {
               console.log(`\n--- ${wf.name} (id: ${wf.id}) ---`);
@@ -145,8 +166,23 @@ jobs:
                     continue;
                   }
 
+                  // Apply failed-only filter
+                  if (filter === 'failed-only' && !failedConclusions.has(run.conclusion)) {
+                    totalSkipped++;
+                    continue;
+                  }
+
+                  // Apply date filter
+                  if (beforeTimestamp) {
+                    const runDate = new Date(run.created_at).getTime();
+                    if (runDate >= beforeTimestamp) {
+                      totalSkipped++;
+                      continue;
+                    }
+                  }
+
                   if (dryRun) {
-                    console.log(`  WOULD DELETE: run ${run.id} (${run.created_at})`);
+                    console.log(`  WOULD DELETE: run ${run.id} (${run.conclusion}, ${run.created_at})`);
                     wfDeleted++;
                   } else {
                     try {
@@ -155,7 +191,7 @@ jobs:
                         repo: context.repo.repo,
                         run_id: run.id,
                       });
-                      console.log(`  DELETED: run ${run.id}`);
+                      console.log(`  DELETED: run ${run.id} (${run.conclusion}, ${run.created_at})`);
                       wfDeleted++;
                     } catch (err) {
                       console.log(`  FAILED: run ${run.id} - ${err.message}`);
@@ -170,4 +206,4 @@ jobs:
               totalDeleted += wfDeleted;
             }
 
-            console.log(`\nTotal workflow runs deleted: ${totalDeleted}`);
+            console.log(`\nTotal deleted: ${totalDeleted}, Total skipped: ${totalSkipped}`);
