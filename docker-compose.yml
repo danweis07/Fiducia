@@ -33,12 +33,12 @@ services:
   # ---------------------------------------------------------------------------
   app:
     build:
-      context: .
+      context: ./apps/web
       dockerfile: Dockerfile.dev
     ports:
       - "8080:8080"
     volumes:
-      - .:/app
+      - ./apps/web:/app
       - /app/node_modules
     environment:
       - VITE_SUPABASE_URL=http://localhost:54321
@@ -76,8 +76,8 @@ services:
   supabase-api:
     image: supabase/supabase-local:latest
     ports:
-      - "54321:54321"  # API
-      - "54323:54323"  # Studio
+      - "54321:54321" # API
+      - "54323:54323" # Studio
     environment:
       SUPABASE_AUTH_EXTERNAL_GITHUB_ENABLED: "false"
     depends_on:
@@ -120,7 +120,11 @@ services:
     volumes:
       - core-sim-certs:/certs
     healthcheck:
-      test: ["CMD-SHELL", "if [ \"$MTLS_ENABLED\" = 'true' ]; then wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:9090/health || exit 1; else wget --no-verbose --tries=1 --spider http://localhost:9090/health || exit 1; fi"]
+      test:
+        [
+          "CMD-SHELL",
+          'if [ "$MTLS_ENABLED" = ''true'' ]; then wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:9090/health || exit 1; else wget --no-verbose --tries=1 --spider http://localhost:9090/health || exit 1; fi',
+        ]
       interval: 10s
       timeout: 3s
       start_period: 5s

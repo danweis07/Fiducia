@@ -1,0 +1,147 @@
+{
+  "AUTH_REQUIRED": {
+    "title": "Inloggning krävs",
+    "message": "Din session har avslutats. Logga in för att fortsätta.",
+    "action": "Logga in"
+  },
+  "AUTH_EXPIRED": {
+    "title": "Sessionen har gått ut",
+    "message": "Din session har gått ut av säkerhetsskäl. Logga in igen.",
+    "action": "Logga in igen"
+  },
+  "AUTH_MFA_REQUIRED": {
+    "title": "Verifiering krävs",
+    "message": "Slutför flerfaktorsautentisering för att fortsätta.",
+    "action": "Verifiera identitet"
+  },
+  "AUTH_FORBIDDEN": {
+    "title": "Åtkomst nekad",
+    "message": "Du har inte behörighet att utföra denna åtgärd.",
+    "action": "Kontakta support"
+  },
+  "ACCOUNT_NOT_FOUND": {
+    "title": "Konto hittades inte",
+    "message": "Kontot du letar efter kunde inte hittas.",
+    "action": "Gå till konton"
+  },
+  "ACCOUNT_FROZEN": {
+    "title": "Konto fryst",
+    "message": "Detta konto har frysts och kan inte bearbeta transaktioner just nu.",
+    "action": "Kontakta support"
+  },
+  "ACCOUNT_CLOSED": {
+    "title": "Konto stängt",
+    "message": "Detta konto har stängts och är inte längre aktivt.",
+    "action": "Gå till konton"
+  },
+  "INSUFFICIENT_FUNDS": {
+    "title": "Otillräckligt saldo",
+    "message": "Det finns inte tillräckligt med pengar på detta konto för att slutföra transaktionen.",
+    "action": "Kontrollera saldo"
+  },
+  "TRANSFER_LIMIT_EXCEEDED": {
+    "title": "Överföringsgräns överskriden",
+    "message": "Denna överföring överskrider din dagliga eller per-transaktionsgräns.",
+    "action": "Prova ett lägre belopp"
+  },
+  "TRANSFER_INVALID_AMOUNT": {
+    "title": "Ogiltigt belopp",
+    "message": "Ange ett giltigt överföringsbelopp större än noll.",
+    "action": "Ange ett giltigt belopp"
+  },
+  "TRANSFER_SAME_ACCOUNT": {
+    "title": "Samma konto valt",
+    "message": "Käll- och målkontot måste vara olika.",
+    "action": "Välj ett annat konto"
+  },
+  "TRANSFER_CUTOFF_PASSED": {
+    "title": "Stopptid passerad",
+    "message": "Dagens bearbetningsstopptid har passerat. Din överföring bearbetas nästa bankdag.",
+    "action": "Schemalägg för imorgon"
+  },
+  "TRANSFER_NOT_FOUND": {
+    "title": "Överföring hittades inte",
+    "message": "Överföringen du letar efter kunde inte hittas.",
+    "action": "Visa överföringar"
+  },
+  "BILL_NOT_FOUND": {
+    "title": "Faktura hittades inte",
+    "message": "Fakturan eller mottagaren du letar efter kunde inte hittas.",
+    "action": "Visa mottagare"
+  },
+  "BILL_ALREADY_PAID": {
+    "title": "Redan betald",
+    "message": "Denna faktura har redan betalats.",
+    "action": "Visa betalningshistorik"
+  },
+  "BILL_PAST_DUE": {
+    "title": "Faktura förfallen",
+    "message": "Denna faktura har passerat förfallodatum. Förseningsavgifter kan tillkomma.",
+    "action": "Betala nu"
+  },
+  "CARD_NOT_FOUND": {
+    "title": "Kort hittades inte",
+    "message": "Kortet du letar efter kunde inte hittas.",
+    "action": "Visa kort"
+  },
+  "CARD_ALREADY_LOCKED": {
+    "title": "Kort redan låst",
+    "message": "Detta kort är redan låst.",
+    "action": "Lås upp kort"
+  },
+  "CARD_LIMIT_INVALID": {
+    "title": "Ogiltig kortgräns",
+    "message": "Den angivna utgiftsgränsen är inte giltig. Kontrollera tillåtet minimum och maximum.",
+    "action": "Justera gräns"
+  },
+  "RDC_IMAGE_QUALITY": {
+    "title": "Problem med bildkvalitet",
+    "message": "Checkbilden kunde inte läsas tydligt. Ta en ny bild med bra belysning.",
+    "action": "Ta ny bild"
+  },
+  "RDC_AMOUNT_EXCEEDED": {
+    "title": "Insättningsgräns överskriden",
+    "message": "Denna check överskrider din gräns för mobilinsättning.",
+    "action": "Besök ett kontor"
+  },
+  "RDC_DUPLICATE_CHECK": {
+    "title": "Dubblettcheck upptäckt",
+    "message": "Denna check verkar redan ha satts in.",
+    "action": "Kontrollera insättningshistorik"
+  },
+  "VALIDATION_ERROR": {
+    "title": "Valideringsfel",
+    "message": "Vissa fält innehåller ogiltiga uppgifter. Granska och korrigera dem.",
+    "action": "Granska formulär"
+  },
+  "INVALID_INPUT": {
+    "title": "Ogiltig inmatning",
+    "message": "Kontrollera din inmatning och försök igen.",
+    "action": "Korrigera inmatning"
+  },
+  "RATE_LIMITED": {
+    "title": "För många förfrågningar",
+    "message": "Du har gjort för många förfrågningar. Vänta en stund och försök igen.",
+    "action": "Vänta och försök igen"
+  },
+  "INTERNAL_ERROR": {
+    "title": "Något gick fel",
+    "message": "Ett oväntat fel uppstod. Vårt team har meddelats.",
+    "action": "Försök igen"
+  },
+  "SERVICE_UNAVAILABLE": {
+    "title": "Tjänsten är inte tillgänglig",
+    "message": "Denna tjänst är tillfälligt otillgänglig. Försök igen om några minuter.",
+    "action": "Försök igen senare"
+  },
+  "GATEWAY_ERROR": {
+    "title": "Anslutningsfel",
+    "message": "Kunde inte ansluta till banktjänsten. Kontrollera din anslutning och försök igen.",
+    "action": "Försök igen"
+  },
+  "fallback": {
+    "title": "Något gick fel",
+    "message": "Ett oväntat fel uppstod. Försök igen.",
+    "action": "Försök igen"
+  }
+}

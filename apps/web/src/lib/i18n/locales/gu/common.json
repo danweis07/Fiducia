@@ -1,0 +1,114 @@
+{
+  "common": {
+    "loading": "લોડ થઈ રહ્યું છે...",
+    "error": "એક ભૂલ આવી",
+    "errorMessage": "કંઈક ખોટું થયું. કૃપા કરીને ફરીથી પ્રયાસ કરો.",
+    "success": "સફળ",
+    "cancel": "રદ કરો",
+    "confirm": "પુષ્ટિ કરો",
+    "save": "સાચવો",
+    "back": "પાછળ",
+    "next": "આગળ",
+    "submit": "સબમિટ કરો",
+    "close": "બંધ કરો",
+    "edit": "સંપાદન",
+    "delete": "કાઢી નાખો",
+    "search": "શોધો",
+    "noResults": "કોઈ પરિણામ મળ્યાં નથી",
+    "retry": "ફરીથી પ્રયાસ કરો",
+    "learnMore": "વધુ જાણો",
+    "viewDetails": "વિગતો જુઓ",
+    "showMore": "વધુ બતાવો",
+    "showLess": "ઓછું બતાવો",
+    "required": "આવશ્યક",
+    "optional": "વૈકલ્પિક",
+    "yes": "હા",
+    "no": "ના",
+    "or": "અથવા",
+    "and": "અને"
+  },
+  "a11y": {
+    "skipToContent": "મુખ્ય સામગ્રી પર જાઓ",
+    "openMenu": "મેનૂ ખોલો",
+    "closeMenu": "મેનૂ બંધ કરો",
+    "openNavigation": "નેવિગેશન ખોલો",
+    "closeNavigation": "નેવિગેશન બંધ કરો",
+    "toggleDarkMode": "ડાર્ક મોડ ટોગલ કરો",
+    "selectLanguage": "ભાષા પસંદ કરો",
+    "expandSection": "વિભાગ વિસ્તૃત કરો",
+    "collapseSection": "વિભાગ સંકુચિત કરો",
+    "loading": "સામગ્રી લોડ થઈ રહી છે",
+    "notification": "સૂચના",
+    "required": "આ ફીલ્ડ આવશ્યક છે",
+    "showPassword": "પાસવર્ડ બતાવો",
+    "hidePassword": "પાસવર્ડ છુપાવો",
+    "externalLink": "નવી વિન્ડોમાં ખુલે છે",
+    "pagination": "પૃષ્ઠ ક્રમાંકન",
+    "previousPage": "પાછલું પૃષ્ઠ",
+    "nextPage": "આગળનું પૃષ્ઠ",
+    "page": "પૃષ્ઠ {{number}}"
+  },
+  "auth": {
+    "brandName": "Vantage",
+    "brandTagline": "ડિજિટલ બેંકિંગ પ્લેટફોર્મ",
+    "signIn": "સાઇન ઇન",
+    "signUp": "સાઇન અપ",
+    "email": "ઇમેઇલ",
+    "emailPlaceholder": "you@company.com",
+    "password": "પાસવર્ડ",
+    "confirmPassword": "પાસવર્ડની પુષ્ટિ કરો",
+    "forgotPassword": "પાસવર્ડ ભૂલી ગયા?",
+    "resetPassword": "પાસવર્ડ રીસેટ કરો",
+    "sendResetLink": "રીસેટ લિંક મોકલો",
+    "backToSignIn": "સાઇન ઇન પર પાછા જાઓ",
+    "signInWithSSO": "SSO વડે સાઇન ઇન કરો",
+    "createAccount": "ખાતું બનાવો",
+    "firmName": "ફર્મનું નામ",
+    "firmNamePlaceholder": "તમારી કંપની",
+    "minCharacters": "ન્યૂનતમ ૮ અક્ષરો",
+    "signInFailed": "સાઇન ઇન નિષ્ફળ",
+    "signUpFailed": "સાઇન અપ નિષ્ફળ",
+    "checkYourEmail": "તમારો ઇમેઇલ તપાસો",
+    "confirmationLinkSent": "અમે તમને એક પુષ્ટિ લિંક મોકલી છે. કૃપા કરીને તમારું ઇનબોક્સ તપાસો.",
+    "resetFailed": "રીસેટ નિષ્ફળ",
+    "resetLinkSent": "અમે તમને પાસવર્ડ રીસેટ લિંક મોકલી છે. કૃપા કરીને તમારું ઇનબોક્સ તપાસો.",
+    "alreadyHaveAccount": "પહેલેથી ખાતું છે?",
+    "noAccount": "ખાતું નથી?"
+  },
+  "currency": {
+    "amount": "{{value, number}}",
+    "usd": "${{value}}"
+  },
+  "notFound": {
+    "title": "અરે! પૃષ્ઠ મળ્યું નથી",
+    "returnHome": "હોમ પર પાછા જાઓ"
+  },
+  "resetPassword": {
+    "invalidLink": "અમાન્ય લિંક",
+    "invalidLinkDesc": "આ પાસવર્ડ રીસેટ લિંક અમાન્ય છે અથવા સમાપ્ત થઈ ગઈ છે.",
+    "goToSignIn": "સાઇન ઇન પર જાઓ",
+    "setNewPassword": "નવો પાસવર્ડ સેટ કરો",
+    "setNewPasswordDesc": "નીચે તમારો નવો પાસવર્ડ દાખલ કરો.",
+    "newPassword": "નવો પાસવર્ડ",
+    "confirmPassword": "પાસવર્ડની પુષ્ટિ કરો",
+    "minCharacters": "ન્યૂનતમ ૮ અક્ષરો",
+    "updatePassword": "પાસવર્ડ અપડેટ કરો",
+    "updateFailed": "અપડેટ નિષ્ફળ",
+    "passwordUpdated": "પાસવર્ડ અપડેટ થયો",
+    "passwordUpdatedDesc": "તમે હવે તમારા નવા પાસવર્ડ વડે સાઇન ઇન કરી શકો છો."
+  },
+  "demoSelector": {
+    "title": "ડેમો પસંદ કરો",
+    "subtitle": "નમૂના ડેટા સાથે પ્લેટફોર્મ અન્વેષણ કરો — કોઈ ખાતાની જરૂર નથી.",
+    "demos": {
+      "banking": {
+        "title": "ડિજિટલ બેંકિંગ",
+        "description": "ખાતાઓ, ટ્રાન્સફર, બિલ ચૂકવણી, રિમોટ ડિપોઝિટ, કાર્ડ નિયંત્રણ અને વધુ."
+      },
+      "admin": {
+        "title": "એડમિન પોર્ટલ",
+        "description": "ટેનન્ટ મેનેજમેન્ટ, બ્રાન્ડિંગ, કમ્પ્લાયન્સ, એનાલિટિક્સ અને ઓડિટ લોગ."
+      }
+    }
+  }
+}

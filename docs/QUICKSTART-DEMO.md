@@ -77,7 +77,7 @@ npm run dev
 
 The generator:
 
-1. Copies a template to `src/pages/YourPage.tsx`
+1. Copies a template to `apps/web/src/pages/YourPage.tsx`
 2. Registers the route in `bankingRoutes.tsx`
 3. Ensures demo mode is enabled
 
@@ -94,7 +94,7 @@ ProtectedRoute checks isDemoMode()
 Page calls gateway.accounts.list() (or any action)
     ↓
 callGateway() checks isDemoMode()
-    → true → imports src/lib/demo-data/
+    → true → imports apps/web/src/lib/demo-data/
     → returns mock JSON matching production shape
     ↓
 Page renders with realistic data

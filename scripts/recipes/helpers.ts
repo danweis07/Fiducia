@@ -7,7 +7,7 @@
 
 // Inline the handler registry — we import the merged map directly so
 // there is no need for Vite, i18n, or a running dev server.
-import { getDemoResponse } from "../../src/lib/demo-data/index";
+import { getDemoResponse } from "../../apps/web/src/lib/demo-data/index";
 
 /** Simulate a gateway call against demo data. */
 export function call<T = unknown>(action: string, params: Record<string, unknown> = {}): T {

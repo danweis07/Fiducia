@@ -12,7 +12,7 @@
  *   npm run i18n:types
  *
  * Output:
- *   src/lib/i18n/i18n-resources.d.ts
+ *   apps/web/src/lib/i18n/i18n-resources.d.ts
  */
 
 import * as fs from 'fs';
@@ -22,8 +22,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const EN_DIR = path.resolve(__dirname, '../src/lib/i18n/locales/en');
-const OUT_FILE = path.resolve(__dirname, '../src/lib/i18n/i18n-resources.d.ts');
+const EN_DIR = path.resolve(__dirname, '../apps/web/src/lib/i18n/locales/en');
+const OUT_FILE = path.resolve(__dirname, '../apps/web/src/lib/i18n/i18n-resources.d.ts');
 
 const NAMESPACES = ['common', 'banking', 'settings', 'errors', 'admin', 'public'] as const;
 

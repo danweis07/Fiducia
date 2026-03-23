@@ -25,7 +25,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const LOCALES_DIR = path.resolve(__dirname, '../src/lib/i18n/locales');
+const LOCALES_DIR = path.resolve(__dirname, '../apps/web/src/lib/i18n/locales');
 const NAMESPACES = ['common', 'banking', 'settings', 'errors', 'admin', 'public'] as const;
 type Namespace = (typeof NAMESPACES)[number];
 
@@ -33,7 +33,7 @@ type Namespace = (typeof NAMESPACES)[number];
 // We read index.ts and extract the language codes via a lightweight regex so
 // this script works with plain Node/tsx without bundling the React app.
 function getSupportedLanguageCodes(): string[] {
-  const indexPath = path.resolve(__dirname, '../src/lib/i18n/index.ts');
+  const indexPath = path.resolve(__dirname, '../apps/web/src/lib/i18n/index.ts');
   const src = fs.readFileSync(indexPath, 'utf-8');
   const codes: string[] = [];
   const re = /code:\s*['"]([^'"]+)['"]/g;

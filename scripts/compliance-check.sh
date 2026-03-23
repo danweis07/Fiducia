@@ -44,7 +44,7 @@ info "Check 1: No PII in log statements"
 # Look for console.log/warn/error with account/ssn/password patterns
 PII_IN_LOGS=$(grep -rn --include="*.ts" --include="*.tsx" \
   -E 'console\.(log|warn|error|info)\(.*\b(ssn|socialSecurity|accountNumber|password|pin|cardNumber|dateOfBirth|dob)\b' \
-  src/ supabase/ 2>/dev/null || true)
+  apps/web/src/ supabase/ 2>/dev/null || true)
 
 if [ -z "$PII_IN_LOGS" ]; then
   pass "No PII field names found in console.log statements"
@@ -58,7 +58,7 @@ fi
 # Check for raw account numbers in log strings (4+ consecutive digits without masking)
 RAW_ACCT_LOGS=$(grep -rn --include="*.ts" --include="*.tsx" \
   -E 'console\.(log|warn|error).*\$\{.*account.*\}' \
-  src/ supabase/ 2>/dev/null | grep -v 'mask\|****\|slice(-4)' || true)
+  apps/web/src/ supabase/ 2>/dev/null | grep -v 'mask\|****\|slice(-4)' || true)
 
 if [ -z "$RAW_ACCT_LOGS" ]; then
   pass "No unmasked account references in log statements"
@@ -77,7 +77,7 @@ info "Check 2: Monetary values in integer cents (no floats)"
 # Look for suspicious float math on money-like variables
 FLOAT_MONEY=$(grep -rn --include="*.ts" --include="*.tsx" \
   -E '(amount|balance|price|total|payment|fee|interest)\s*[*/]\s*100\b' \
-  src/ supabase/ 2>/dev/null | grep -v 'test\|spec\|__tests__\|\.test\.' || true)
+  apps/web/src/ supabase/ 2>/dev/null | grep -v 'test\|spec\|__tests__\|\.test\.' || true)
 
 if [ -z "$FLOAT_MONEY" ]; then
   pass "No suspicious float-to-cents conversion found"
@@ -91,7 +91,7 @@ fi
 # Check for parseFloat on monetary values
 PARSE_FLOAT_MONEY=$(grep -rn --include="*.ts" --include="*.tsx" \
   -E 'parseFloat\(.*\b(amount|balance|price|total|payment)\b' \
-  src/ supabase/ 2>/dev/null | grep -v 'test\|spec\|__tests__' || true)
+  apps/web/src/ supabase/ 2>/dev/null | grep -v 'test\|spec\|__tests__' || true)
 
 if [ -z "$PARSE_FLOAT_MONEY" ]; then
   pass "No parseFloat on monetary variables"
@@ -184,7 +184,7 @@ info "Check 6: Account number masking"
 # Verify that masking utilities exist and are imported
 MASK_IMPORTS=$(grep -rln --include="*.ts" --include="*.tsx" \
   'maskAccountNumber\|maskSSN\|maskCardNumber' \
-  src/ 2>/dev/null | wc -l)
+  apps/web/src/ 2>/dev/null | wc -l)
 
 if [ "$MASK_IMPORTS" -ge 3 ]; then
   pass "Masking utilities are used in ${MASK_IMPORTS} files"
@@ -214,7 +214,7 @@ info "Check 7: No hardcoded secrets"
 
 HARDCODED_SECRETS=$(grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
   -E "(api[_-]?key|secret|token|password)\s*[:=]\s*[\"'][a-zA-Z0-9]{20,}[\"']" \
-  src/ supabase/ 2>/dev/null | grep -v 'test\|spec\|mock\|example\|placeholder\|demo\|__tests__\|\.env\|type\|interface' || true)
+  apps/web/src/ supabase/ 2>/dev/null | grep -v 'test\|spec\|mock\|example\|placeholder\|demo\|__tests__\|\.env\|type\|interface' || true)
 
 if [ -z "$HARDCODED_SECRETS" ]; then
   pass "No hardcoded secrets detected"

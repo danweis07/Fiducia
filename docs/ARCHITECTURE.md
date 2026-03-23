@@ -99,19 +99,19 @@ The backend uses a single RPC-style edge function (`/functions/v1/gateway`) rath
 }
 ```
 
-Actions are routed to modular handler files in `src/lib/gateway/`:
+Actions are routed to modular handler files in `apps/web/src/lib/gateway/`:
 
-| Module | Actions |
-|--------|---------|
-| `accounts.ts` | `accounts.list`, `accounts.get`, `accounts.create` |
-| `payments.ts` | `payments.transfer`, `payments.billpay`, `payments.p2p` |
-| `financial.ts` | `financial.statements`, `financial.analytics` |
-| `compliance.ts` | `compliance.kyc`, `compliance.audit` |
-| `international.ts` | `international.wire`, `international.fx` |
+| Module             | Actions                                                 |
+| ------------------ | ------------------------------------------------------- |
+| `accounts.ts`      | `accounts.list`, `accounts.get`, `accounts.create`      |
+| `payments.ts`      | `payments.transfer`, `payments.billpay`, `payments.p2p` |
+| `financial.ts`     | `financial.statements`, `financial.analytics`           |
+| `compliance.ts`    | `compliance.kyc`, `compliance.audit`                    |
+| `international.ts` | `international.wire`, `international.fx`                |
 
 ### Backend Provider Abstraction
 
-The frontend doesn't talk to Supabase directly. A backend provider abstraction (`src/lib/backend/`) allows swapping the entire backend:
+The frontend doesn't talk to Supabase directly. A backend provider abstraction (`apps/web/src/lib/backend/`) allows swapping the entire backend:
 
 - **Supabase provider** (default) — talks to Supabase client SDK
 - **REST provider** — talks to any REST API matching the OpenAPI spec
@@ -121,7 +121,7 @@ Set `VITE_BACKEND_PROVIDER=rest` and `VITE_API_BASE_URL` to point at a custom ba
 
 ### Server-Driven UI (SDUI)
 
-Screen layouts can be defined server-side in the `sdui_screen_manifests` table and rendered dynamically by the SDUI components in `src/components/sdui/`. This allows updating UI without deploying new frontend code — useful for A/B tests and per-tenant customization.
+Screen layouts can be defined server-side in the `sdui_screen_manifests` table and rendered dynamically by the SDUI components in `apps/web/src/components/sdui/`. This allows updating UI without deploying new frontend code — useful for A/B tests and per-tenant customization.
 
 ## Data Flow
 
@@ -168,28 +168,28 @@ React form ──▶ Zod validation (client-side)
 
 ### State Management
 
-| Concern | Solution |
-|---------|----------|
-| Server state (accounts, transactions) | TanStack React Query with 5-minute stale time |
-| Auth state | `AuthProvider` context (`src/contexts/TenantContext.tsx`) |
-| Theme (dark/light) | `ThemeProvider` context (`src/contexts/ThemeContext.tsx`) |
-| Form state | react-hook-form + Zod schemas |
-| URL state | React Router v6 |
+| Concern                               | Solution                                                           |
+| ------------------------------------- | ------------------------------------------------------------------ |
+| Server state (accounts, transactions) | TanStack React Query with 5-minute stale time                      |
+| Auth state                            | `AuthProvider` context (`apps/web/src/contexts/TenantContext.tsx`) |
+| Theme (dark/light)                    | `ThemeProvider` context (`apps/web/src/contexts/ThemeContext.tsx`) |
+| Form state                            | react-hook-form + Zod schemas                                      |
+| URL state                             | React Router v6                                                    |
 
 ### Route Organization
 
 Routes are split into three groups, loaded in `App.tsx`:
 
-- **Public routes** (`src/routes/publicRoutes.tsx`) — marketing pages, auth, no login required
-- **Banking routes** (`src/routes/bankingRoutes.tsx`) — consumer/business banking, wrapped in `ProtectedRoute`
-- **Admin routes** (`src/routes/adminRoutes.tsx`) — admin portal, requires admin role
+- **Public routes** (`apps/web/src/routes/publicRoutes.tsx`) — marketing pages, auth, no login required
+- **Banking routes** (`apps/web/src/routes/bankingRoutes.tsx`) — consumer/business banking, wrapped in `ProtectedRoute`
+- **Admin routes** (`apps/web/src/routes/adminRoutes.tsx`) — admin portal, requires admin role
 
 All page components are lazy-loaded with `React.lazy()` and wrapped in `Suspense` with a spinner fallback.
 
 ### Component Organization
 
 ```
-src/components/
+apps/web/src/components/
 ├── ui/          # Radix-based primitives (button, dialog, form, etc.) — shadcn/ui pattern
 ├── banking/     # Domain components (account cards, transaction lists, etc.)
 ├── admin/       # Admin-specific components
@@ -202,19 +202,19 @@ src/components/
 
 Key table groups (41 migrations total):
 
-| Group | Tables | Purpose |
-|-------|--------|---------|
-| Multi-tenancy | `tenants`, `tenant_registry`, `tenant_settings` | Tenant isolation and config |
-| Auth | `auth_settings`, `password_policies`, `sso_providers` | Authentication policies |
-| Banking | `banking_accounts`, `banking_account_products`, `banking_transactions` | Core banking data |
-| Loans | `banking_loans`, `banking_loan_products`, `banking_loan_schedule` | Lending |
-| Cards | `card_services`, `card_devices` | Card management |
-| Compliance | `audit_logs`, `kyc_records`, `open_banking_consent` | Regulatory |
-| Messaging | `secure_messages`, `notification_preferences` | Communication |
-| Content | `cms_channels`, `cms_content`, `sdui_screen_manifests` | CMS and SDUI |
-| AI | `ai_knowledge_base`, `ai_embeddings` | RAG and vector search |
-| Integrations | `integration_configs`, `adapter_cache` | Adapter state |
-| Experiments | `experiments`, `experiment_variants` | A/B testing |
+| Group         | Tables                                                                 | Purpose                     |
+| ------------- | ---------------------------------------------------------------------- | --------------------------- |
+| Multi-tenancy | `tenants`, `tenant_registry`, `tenant_settings`                        | Tenant isolation and config |
+| Auth          | `auth_settings`, `password_policies`, `sso_providers`                  | Authentication policies     |
+| Banking       | `banking_accounts`, `banking_account_products`, `banking_transactions` | Core banking data           |
+| Loans         | `banking_loans`, `banking_loan_products`, `banking_loan_schedule`      | Lending                     |
+| Cards         | `card_services`, `card_devices`                                        | Card management             |
+| Compliance    | `audit_logs`, `kyc_records`, `open_banking_consent`                    | Regulatory                  |
+| Messaging     | `secure_messages`, `notification_preferences`                          | Communication               |
+| Content       | `cms_channels`, `cms_content`, `sdui_screen_manifests`                 | CMS and SDUI                |
+| AI            | `ai_knowledge_base`, `ai_embeddings`                                   | RAG and vector search       |
+| Integrations  | `integration_configs`, `adapter_cache`                                 | Adapter state               |
+| Experiments   | `experiments`, `experiment_variants`                                   | A/B testing                 |
 
 ## Deployment Architecture
 
@@ -243,6 +243,7 @@ Core Banking ──▶ VPN (Tailscale/WireGuard) ──▶ On-prem core systems
 ```
 
 The Helm chart (`helm/banking-platform/`) includes:
+
 - Horizontal Pod Autoscaler (HPA)
 - Network policies for pod-to-pod isolation
 - RBAC and security contexts

@@ -1,0 +1,147 @@
+{
+  "AUTH_REQUIRED": {
+    "title": "A nílò ìwọlé",
+    "message": "Àkókò rẹ ti parí. Jọ̀wọ́ wọlé láti tẹ̀síwájú.",
+    "action": "Wọlé"
+  },
+  "AUTH_EXPIRED": {
+    "title": "Àkókò ti parí",
+    "message": "Àkókò rẹ ti parí fún ààbò. Jọ̀wọ́ tún wọlé.",
+    "action": "Tún wọlé"
+  },
+  "AUTH_MFA_REQUIRED": {
+    "title": "A nílò ìfìdímúlẹ̀",
+    "message": "Jọ̀wọ́ parí ìfìdímúlẹ̀ oníṣẹ̀lẹ̀ púpọ̀ láti tẹ̀síwájú.",
+    "action": "Fìdí ìdánimọ̀ múlẹ̀"
+  },
+  "AUTH_FORBIDDEN": {
+    "title": "A kọ àǹfààní",
+    "message": "O kò ní àṣẹ láti ṣe iṣẹ́ yìí.",
+    "action": "Kàn sí ìrànlọ́wọ́"
+  },
+  "ACCOUNT_NOT_FOUND": {
+    "title": "A kò rí àkáǹtì",
+    "message": "A kò rí àkáǹtì tí o ń wá.",
+    "action": "Lọ sí àwọn àkáǹtì"
+  },
+  "ACCOUNT_FROZEN": {
+    "title": "A ti dí àkáǹtì",
+    "message": "A ti dí àkáǹtì yìí, kò lè ṣe àṣàyàn lọ́wọ́lọ́wọ́.",
+    "action": "Kàn sí ìrànlọ́wọ́"
+  },
+  "ACCOUNT_CLOSED": {
+    "title": "A ti pa àkáǹtì",
+    "message": "A ti pa àkáǹtì yìí, kò sì ṣiṣẹ́ mọ́.",
+    "action": "Lọ sí àwọn àkáǹtì"
+  },
+  "INSUFFICIENT_FUNDS": {
+    "title": "Owó kò tó",
+    "message": "Owó kò tó nínú àkáǹtì yìí láti parí àṣàyàn náà.",
+    "action": "Ṣàyẹ̀wò ìyókù"
+  },
+  "TRANSFER_LIMIT_EXCEEDED": {
+    "title": "Ìgbéowósí ti kọjá àyè",
+    "message": "Ìgbéowósí yìí ti kọjá ìwọ̀n ọjọ́ tàbí ìwọ̀n àṣàyàn rẹ.",
+    "action": "Gbìyànjú iye kékeré"
+  },
+  "TRANSFER_INVALID_AMOUNT": {
+    "title": "Iye tí kò tọ́",
+    "message": "Jọ̀wọ́ tẹ iye ìgbéowósí tó tọ́ tó ju ofo lọ.",
+    "action": "Tẹ iye tó tọ́"
+  },
+  "TRANSFER_SAME_ACCOUNT": {
+    "title": "Àkáǹtì kan náà ni a yan",
+    "message": "Àkáǹtì ibẹ̀rẹ̀ àti ti opin gbọdọ̀ yàtọ̀.",
+    "action": "Yan àkáǹtì mìíràn"
+  },
+  "TRANSFER_CUTOFF_PASSED": {
+    "title": "Àkókò ìpínyà ti kọjá",
+    "message": "Àkókò ìṣàmúlò ọjọ́ ti kọjá. A óò ṣe ìgbéowósí rẹ ní ọjọ́ iṣẹ́ tó kàn.",
+    "action": "Ṣètò fún ọ̀la"
+  },
+  "TRANSFER_NOT_FOUND": {
+    "title": "A kò rí ìgbéowósí",
+    "message": "A kò rí ìgbéowósí tí o ń wá.",
+    "action": "Wo àwọn ìgbéowósí"
+  },
+  "BILL_NOT_FOUND": {
+    "title": "A kò rí owó ìsanwó",
+    "message": "A kò rí owó ìsanwó tàbí olùgba tí o ń wá.",
+    "action": "Wo àwọn olùgba"
+  },
+  "BILL_ALREADY_PAID": {
+    "title": "A ti san tẹ́lẹ̀",
+    "message": "A ti san owó ìsanwó yìí tẹ́lẹ̀.",
+    "action": "Wo ìtàn ìsanwó"
+  },
+  "BILL_PAST_DUE": {
+    "title": "Owó ìsanwó ti kọjá",
+    "message": "Owó ìsanwó yìí ti kọjá ọjọ́ rẹ̀. Owó ìtànwálẹ̀ lè wáyé.",
+    "action": "San ní báyìí"
+  },
+  "CARD_NOT_FOUND": {
+    "title": "A kò rí káàdì",
+    "message": "A kò rí káàdì tí o ń wá.",
+    "action": "Wo àwọn káàdì"
+  },
+  "CARD_ALREADY_LOCKED": {
+    "title": "A ti tì káàdì tẹ́lẹ̀",
+    "message": "A ti tì káàdì yìí tẹ́lẹ̀.",
+    "action": "Ṣí káàdì"
+  },
+  "CARD_LIMIT_INVALID": {
+    "title": "Ìwọ̀n káàdì tí kò tọ́",
+    "message": "Ìwọ̀n ìnáwó tí o tẹ̀ kò tọ́. Jọ̀wọ́ ṣàyẹ̀wò ìwọ̀n tó kéré jù àti tó pọ̀ jù.",
+    "action": "Ṣàtúnṣe ìwọ̀n"
+  },
+  "RDC_IMAGE_QUALITY": {
+    "title": "Ìṣòro àgbàyanu àwòrán",
+    "message": "A kò lè ka àwòrán ìṣẹ̀kú dáadáa. Jọ̀wọ́ tún ya àwòrán nínú ìmọ́lẹ̀ tó dára.",
+    "action": "Tún ya àwòrán"
+  },
+  "RDC_AMOUNT_EXCEEDED": {
+    "title": "Ìwọ̀n ìfipamọ́ ti kọjá",
+    "message": "Ìṣẹ̀kú yìí ti kọjá ìwọ̀n ìfipamọ́ fóònù rẹ.",
+    "action": "Ṣèbẹ̀wò sí ẹ̀ka"
+  },
+  "RDC_DUPLICATE_CHECK": {
+    "title": "A rí ìṣẹ̀kú méjì",
+    "message": "Ó dàbí pé a ti fi ìṣẹ̀kú yìí pamọ́ tẹ́lẹ̀.",
+    "action": "Ṣàyẹ̀wò ìtàn ìfipamọ́"
+  },
+  "VALIDATION_ERROR": {
+    "title": "Àṣìṣe ìfìdímúlẹ̀",
+    "message": "Àwọn àyè kan ní dátà tí kò tọ́. Jọ̀wọ́ ṣàyẹ̀wò kí o sì ṣàtúnṣe.",
+    "action": "Ṣàyẹ̀wò fọ́ọ̀mù"
+  },
+  "INVALID_INPUT": {
+    "title": "Ìtẹ̀wé tí kò tọ́",
+    "message": "Jọ̀wọ́ ṣàyẹ̀wò ìtẹ̀wé rẹ kí o sì gbìyànjú lẹ́ẹ̀kan sí i.",
+    "action": "Ṣàtúnṣe ìtẹ̀wé"
+  },
+  "RATE_LIMITED": {
+    "title": "Ìbéèrè pọ̀ jù",
+    "message": "O ti ṣe ìbéèrè pọ̀ jù. Jọ̀wọ́ dúró díẹ̀ kí o sì gbìyànjú lẹ́ẹ̀kan sí i.",
+    "action": "Dúró kí o sì gbìyànjú"
+  },
+  "INTERNAL_ERROR": {
+    "title": "Nkan kan kò lọ dáadáa",
+    "message": "Àṣìṣe aláìtẹ̀mọ́ ṣẹlẹ̀. A ti sọ fún ẹgbẹ́ wa.",
+    "action": "Gbìyànjú lẹ́ẹ̀kan sí i"
+  },
+  "SERVICE_UNAVAILABLE": {
+    "title": "Iṣẹ́ kò sí",
+    "message": "Iṣẹ́ yìí kò sí fún ìgbà díẹ̀. Jọ̀wọ́ gbìyànjú lẹ́yìn ìṣẹ́jú díẹ̀.",
+    "action": "Gbìyànjú lẹ́yìn náà"
+  },
+  "GATEWAY_ERROR": {
+    "title": "Àṣìṣe ìsopọ̀",
+    "message": "A kò lè sopọ̀ mọ́ iṣẹ́ ìfowópamọ́. Jọ̀wọ́ ṣàyẹ̀wò ìsopọ̀ rẹ kí o sì gbìyànjú lẹ́ẹ̀kan sí i.",
+    "action": "Gbìyànjú lẹ́ẹ̀kan sí i"
+  },
+  "fallback": {
+    "title": "Nkan kan kò lọ dáadáa",
+    "message": "Àṣìṣe aláìtẹ̀mọ́ ṣẹlẹ̀. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i.",
+    "action": "Gbìyànjú lẹ́ẹ̀kan sí i"
+  }
+}

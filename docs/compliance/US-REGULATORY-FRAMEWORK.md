@@ -10,15 +10,15 @@
 
 Fiducia serves federally insured credit unions and state-chartered community banks. The following agencies have direct supervisory authority over institutions running on the platform:
 
-| Agency | Jurisdiction | Relevance to Fiducia |
-|--------|-------------|----------------------|
-| **NCUA** | Federal credit unions, federally insured state-chartered CUs | Primary examiner for most Fiducia tenants; AIRES exam methodology |
-| **CFPB** | Consumer financial protection (assets > $10B direct; all via rulemaking) | Reg E, Reg Z, UDAAP — enforced through platform transaction workflows |
-| **FFIEC** | Interagency IT examination standards | IT Handbook booklets govern information security, audit, BCP, operations |
-| **FinCEN** | BSA/AML enforcement | SAR/CTR filing, CDD, beneficial ownership — supported via compliance adapter |
-| **FDIC** | State-chartered non-Fed-member banks | Examination standards parallel to NCUA for bank tenants |
-| **State regulators** | State-chartered CUs and banks | Varying requirements; Fiducia's configurable compliance profiles accommodate state-specific rules |
-| **OCC** | National banks (if applicable) | Heightened standards for third-party risk; Fiducia provides SOC 2 Type II artifacts |
+| Agency               | Jurisdiction                                                             | Relevance to Fiducia                                                                              |
+| -------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| **NCUA**             | Federal credit unions, federally insured state-chartered CUs             | Primary examiner for most Fiducia tenants; AIRES exam methodology                                 |
+| **CFPB**             | Consumer financial protection (assets > $10B direct; all via rulemaking) | Reg E, Reg Z, UDAAP — enforced through platform transaction workflows                             |
+| **FFIEC**            | Interagency IT examination standards                                     | IT Handbook booklets govern information security, audit, BCP, operations                          |
+| **FinCEN**           | BSA/AML enforcement                                                      | SAR/CTR filing, CDD, beneficial ownership — supported via compliance adapter                      |
+| **FDIC**             | State-chartered non-Fed-member banks                                     | Examination standards parallel to NCUA for bank tenants                                           |
+| **State regulators** | State-chartered CUs and banks                                            | Varying requirements; Fiducia's configurable compliance profiles accommodate state-specific rules |
+| **OCC**              | National banks (if applicable)                                           | Heightened standards for third-party risk; Fiducia provides SOC 2 Type II artifacts               |
 
 Fiducia is classified as a Technology Service Provider (TSP) under FFIEC guidelines. The platform maintains examination-ready documentation and supports examiner access to audit logs, system descriptions, and control evidence.
 
@@ -30,19 +30,19 @@ Fiducia is classified as a Technology Service Provider (TSP) under FFIEC guideli
 
 The Automated Integrated Regulatory Examination System (AIRES) structures NCUA exams around risk categories. The following table maps AIRES focus areas to Fiducia platform capabilities:
 
-| AIRES Focus Area | Examiner Expectation | Fiducia Control | Evidence Location |
-|-----------------|---------------------|-----------------|-------------------|
-| Information Security | Access controls, encryption, vulnerability management | RLS tenant isolation, AES-256 encryption at rest/in transit, JWT auth | `supabase/migrations/*.sql`, infrastructure config |
-| Transaction Risk | Authorization controls, fraud detection | Approval workflows, MFA escalation for high-value transactions | `src/hooks/useApprovals.ts`, `src/pages/admin/TenantSettings.tsx` |
-| BSA/AML | SAR/CTR processes, suspicious activity monitoring | ComplianceCenter with AML alerts, transaction monitoring adapter | `src/pages/admin/ComplianceCenter.tsx` |
-| Vendor Management | TSP oversight, contract review | SOC 2 Type II report, penetration test results, SLA dashboards | `docs/security/CONTROLS-MATRIX.md` |
-| Business Continuity | Disaster recovery, backup testing | Encrypted backups (AES-256-CBC), deployment rollback, health snapshots | `scripts/backup/`, `deployment_rollbacks` table |
-| Change Management | Software change controls, testing | Change request workflow with approval gates, deployment log with git SHA | `change_requests` table, `tenant_deployment_log` table |
-| Audit Trail | Comprehensive logging, log integrity | 49+ audited action types, append-only audit log, searchable admin UI | `src/services/auditLogger.ts`, `src/pages/admin/AuditLog.tsx` |
+| AIRES Focus Area     | Examiner Expectation                                  | Fiducia Control                                                          | Evidence Location                                                                   |
+| -------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Information Security | Access controls, encryption, vulnerability management | RLS tenant isolation, AES-256 encryption at rest/in transit, JWT auth    | `supabase/migrations/*.sql`, infrastructure config                                  |
+| Transaction Risk     | Authorization controls, fraud detection               | Approval workflows, MFA escalation for high-value transactions           | `apps/web/src/hooks/useApprovals.ts`, `apps/web/src/pages/admin/TenantSettings.tsx` |
+| BSA/AML              | SAR/CTR processes, suspicious activity monitoring     | ComplianceCenter with AML alerts, transaction monitoring adapter         | `apps/web/src/pages/admin/ComplianceCenter.tsx`                                     |
+| Vendor Management    | TSP oversight, contract review                        | SOC 2 Type II report, penetration test results, SLA dashboards           | `docs/security/CONTROLS-MATRIX.md`                                                  |
+| Business Continuity  | Disaster recovery, backup testing                     | Encrypted backups (AES-256-CBC), deployment rollback, health snapshots   | `scripts/backup/`, `deployment_rollbacks` table                                     |
+| Change Management    | Software change controls, testing                     | Change request workflow with approval gates, deployment log with git SHA | `change_requests` table, `tenant_deployment_log` table                              |
+| Audit Trail          | Comprehensive logging, log integrity                  | 49+ audited action types, append-only audit log, searchable admin UI     | `apps/web/src/services/auditLogger.ts`, `apps/web/src/pages/admin/AuditLog.tsx`     |
 
 ### 2.2 Call Report Alignment
 
-Fiducia's data model aligns with NCUA 5300 Call Report categories. Account types, loan classifications, and share categories are mapped to standard Call Report line items through the core banking adapter layer. Tenants configure their specific Chart of Accounts mapping during onboarding via `src/pages/admin/TenantOnboarding.tsx`.
+Fiducia's data model aligns with NCUA 5300 Call Report categories. Account types, loan classifications, and share categories are mapped to standard Call Report line items through the core banking adapter layer. Tenants configure their specific Chart of Accounts mapping during onboarding via `apps/web/src/pages/admin/TenantOnboarding.tsx`.
 
 ### 2.3 Examiner Access Provisions
 
@@ -56,26 +56,26 @@ Fiducia's data model aligns with NCUA 5300 Call Report categories. Account types
 
 ### 3.1 Regulation E — Electronic Fund Transfers
 
-| Reg E Requirement | Fiducia Implementation |
-|-------------------|----------------------|
-| Initial disclosures (12 CFR 1005.7) | Tenant-configurable disclosure templates served during account enrollment |
-| Periodic statements (12 CFR 1005.9) | Transaction history with all required data fields; exportable statements |
-| Error resolution (12 CFR 1005.11) | Dispute workflow with 10-business-day provisional credit tracking, 45-day investigation timeline |
+| Reg E Requirement                               | Fiducia Implementation                                                                                     |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Initial disclosures (12 CFR 1005.7)             | Tenant-configurable disclosure templates served during account enrollment                                  |
+| Periodic statements (12 CFR 1005.9)             | Transaction history with all required data fields; exportable statements                                   |
+| Error resolution (12 CFR 1005.11)               | Dispute workflow with 10-business-day provisional credit tracking, 45-day investigation timeline           |
 | Unauthorized transfer liability (12 CFR 1005.6) | Fraud alert triggers in transaction monitoring; notification timestamps logged for liability determination |
-| Preauthorized transfers (12 CFR 1005.10) | Recurring payment management with stop-payment capability and member notification |
-| Receipt requirements (12 CFR 1005.9(a)) | Electronic receipts generated for all POS and ATM transactions via adapter |
+| Preauthorized transfers (12 CFR 1005.10)        | Recurring payment management with stop-payment capability and member notification                          |
+| Receipt requirements (12 CFR 1005.9(a))         | Electronic receipts generated for all POS and ATM transactions via adapter                                 |
 
 Error resolution timelines are enforced programmatically. The platform tracks dispute creation date, provisional credit issuance, investigation milestones, and final resolution with full audit trail.
 
 ### 3.2 Regulation Z — Truth in Lending
 
-| Reg Z Requirement | Fiducia Implementation |
-|-------------------|----------------------|
-| APR disclosure | Loan origination workflow calculates and displays APR per Appendix J methodology |
+| Reg Z Requirement   | Fiducia Implementation                                                                   |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| APR disclosure      | Loan origination workflow calculates and displays APR per Appendix J methodology         |
 | Right of rescission | 3-business-day rescission window enforced for applicable transactions; automated notices |
-| Periodic statements | Credit card and HELOC statements with minimum payment, late fee, and payoff disclosures |
-| Advertising rules | Marketing content review workflow in admin portal |
-| Ability-to-repay | Underwriting data captured and retained per ATR/QM requirements via loan adapter |
+| Periodic statements | Credit card and HELOC statements with minimum payment, late fee, and payoff disclosures  |
+| Advertising rules   | Marketing content review workflow in admin portal                                        |
+| Ability-to-repay    | Underwriting data captured and retained per ATR/QM requirements via loan adapter         |
 
 ### 3.3 UDAAP Compliance
 
@@ -92,42 +92,42 @@ Fiducia supports UDAAP (Unfair, Deceptive, or Abusive Acts or Practices) complia
 
 ### 4.1 Information Security Booklet
 
-| FFIEC Control Area | Fiducia Control ID | Implementation |
-|--------------------|--------------------|----------------|
-| Risk Assessment | AC-01, DP-01 | Tenant data classification; RLS enforcement on all tables |
-| Access Controls | AC-02, AC-04, AC-07 | RBAC with admin/owner/member roles; JWT validation; least privilege with approval escalation |
-| Encryption | CR-01, CR-02, CR-03 | TLS 1.2+ in transit; AES-256 at rest; AES-256-CBC backup encryption with key rotation |
-| Authentication | IA-01, IA-02 | Email/password, magic link, SSO (SAML/OIDC); TOTP MFA with per-tenant enforcement |
-| Network Security | SC-01, SC-04 | Rate limiting with circuit breaker; Cloudflare WAF; DDoS protection |
-| Vulnerability Management | SC-02 | Zod input validation; `npm audit` in CI; Dependabot alerts; 48h critical CVE patch SLA |
+| FFIEC Control Area       | Fiducia Control ID  | Implementation                                                                               |
+| ------------------------ | ------------------- | -------------------------------------------------------------------------------------------- |
+| Risk Assessment          | AC-01, DP-01        | Tenant data classification; RLS enforcement on all tables                                    |
+| Access Controls          | AC-02, AC-04, AC-07 | RBAC with admin/owner/member roles; JWT validation; least privilege with approval escalation |
+| Encryption               | CR-01, CR-02, CR-03 | TLS 1.2+ in transit; AES-256 at rest; AES-256-CBC backup encryption with key rotation        |
+| Authentication           | IA-01, IA-02        | Email/password, magic link, SSO (SAML/OIDC); TOTP MFA with per-tenant enforcement            |
+| Network Security         | SC-01, SC-04        | Rate limiting with circuit breaker; Cloudflare WAF; DDoS protection                          |
+| Vulnerability Management | SC-02               | Zod input validation; `npm audit` in CI; Dependabot alerts; 48h critical CVE patch SLA       |
 
 ### 4.2 Audit Booklet
 
-| FFIEC Control Area | Fiducia Control ID | Implementation |
-|--------------------|--------------------|----------------|
-| Audit Trail | AU-01, AU-02 | 49+ action types; append-only table with no delete capability |
-| Audit Independence | AU-03 | Audit logs isolated from operational data; read-only access for auditors |
-| Continuous Monitoring | IR-01 | Prometheus alerts, Sentry error tracking, health checks |
-| Audit Reporting | AU-03 | Searchable, filterable admin view with export capabilities |
+| FFIEC Control Area    | Fiducia Control ID | Implementation                                                           |
+| --------------------- | ------------------ | ------------------------------------------------------------------------ |
+| Audit Trail           | AU-01, AU-02       | 49+ action types; append-only table with no delete capability            |
+| Audit Independence    | AU-03              | Audit logs isolated from operational data; read-only access for auditors |
+| Continuous Monitoring | IR-01              | Prometheus alerts, Sentry error tracking, health checks                  |
+| Audit Reporting       | AU-03              | Searchable, filterable admin view with export capabilities               |
 
 ### 4.3 Business Continuity Planning Booklet
 
-| FFIEC Control Area | Fiducia Control ID | Implementation |
-|--------------------|--------------------|----------------|
-| Business Impact Analysis | IR-02 | Incident management with severity classification and impact assessment |
-| Recovery Strategy | IR-03 | Automated deployment rollback with pre/post health snapshots |
-| Backup and Recovery | CR-03, DP-04 | AES-256-CBC encrypted backups; 30-day retention; S3 storage |
-| Testing | CM-01, CM-02 | Change request workflow with testing gates; CI/CD pipeline validation |
-| Crisis Communication | IR-04 | Multi-channel stakeholder notification (Slack, email, SMS, push) |
+| FFIEC Control Area       | Fiducia Control ID | Implementation                                                         |
+| ------------------------ | ------------------ | ---------------------------------------------------------------------- |
+| Business Impact Analysis | IR-02              | Incident management with severity classification and impact assessment |
+| Recovery Strategy        | IR-03              | Automated deployment rollback with pre/post health snapshots           |
+| Backup and Recovery      | CR-03, DP-04       | AES-256-CBC encrypted backups; 30-day retention; S3 storage            |
+| Testing                  | CM-01, CM-02       | Change request workflow with testing gates; CI/CD pipeline validation  |
+| Crisis Communication     | IR-04              | Multi-channel stakeholder notification (Slack, email, SMS, push)       |
 
 ### 4.4 Operations Booklet
 
-| FFIEC Control Area | Fiducia Control ID | Implementation |
-|--------------------|--------------------|----------------|
-| Change Management | CM-01, CM-02 | Full lifecycle: request, approve, test, deploy, monitor |
-| Configuration Management | CM-03, CM-04 | Platform version tracking per tenant; per-tenant feature flags |
-| Performance Monitoring | IR-01 | Prometheus metrics, Grafana dashboards, AlertManager rules |
-| Incident Response | IR-02, IR-05 | Detect, investigate, resolve lifecycle; postmortem documentation |
+| FFIEC Control Area       | Fiducia Control ID | Implementation                                                   |
+| ------------------------ | ------------------ | ---------------------------------------------------------------- |
+| Change Management        | CM-01, CM-02       | Full lifecycle: request, approve, test, deploy, monitor          |
+| Configuration Management | CM-03, CM-04       | Platform version tracking per tenant; per-tenant feature flags   |
+| Performance Monitoring   | IR-01              | Prometheus metrics, Grafana dashboards, AlertManager rules       |
+| Incident Response        | IR-02, IR-05       | Detect, investigate, resolve lifecycle; postmortem documentation |
 
 ---
 
@@ -135,17 +135,17 @@ Fiducia supports UDAAP (Unfair, Deceptive, or Abusive Acts or Practices) complia
 
 ### 5.1 Program Requirements
 
-The Bank Secrecy Act and anti-money laundering requirements are supported through Fiducia's ComplianceCenter (`src/pages/admin/ComplianceCenter.tsx`) and the compliance adapter layer.
+The Bank Secrecy Act and anti-money laundering requirements are supported through Fiducia's ComplianceCenter (`apps/web/src/pages/admin/ComplianceCenter.tsx`) and the compliance adapter layer.
 
-| BSA/AML Requirement | Fiducia Capability | Configuration Required |
-|---------------------|-------------------|----------------------|
-| **SAR Filing** | Alert generation, investigation workflow, filing preparation | Tenant must configure FinCEN BSA E-Filing credentials |
-| **CTR Reporting** | Automatic flagging of cash transactions at or above $10,000; aggregation of structured transactions | Threshold monitoring enabled by default; filing requires FinCEN credentials |
-| **CDD (Customer Due Diligence)** | KYC verification workflow during onboarding; risk rating assignment | Tenant selects KYC provider (Jumio, Onfido, Socure) via adapter |
-| **EDD (Enhanced Due Diligence)** | High-risk customer flagging; periodic re-verification triggers | Risk scoring thresholds configured per tenant |
-| **Beneficial Ownership** | Ownership data collection during business account onboarding | CDD Rule compliant data fields; tenant configures verification provider |
-| **OFAC Screening** | Real-time screening against SDN list via compliance adapter | Requires OFAC screening service credentials |
-| **314(a) Requests** | Secure search capability for law enforcement information requests | Manual workflow supported through ComplianceCenter |
+| BSA/AML Requirement              | Fiducia Capability                                                                                  | Configuration Required                                                      |
+| -------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **SAR Filing**                   | Alert generation, investigation workflow, filing preparation                                        | Tenant must configure FinCEN BSA E-Filing credentials                       |
+| **CTR Reporting**                | Automatic flagging of cash transactions at or above $10,000; aggregation of structured transactions | Threshold monitoring enabled by default; filing requires FinCEN credentials |
+| **CDD (Customer Due Diligence)** | KYC verification workflow during onboarding; risk rating assignment                                 | Tenant selects KYC provider (Jumio, Onfido, Socure) via adapter             |
+| **EDD (Enhanced Due Diligence)** | High-risk customer flagging; periodic re-verification triggers                                      | Risk scoring thresholds configured per tenant                               |
+| **Beneficial Ownership**         | Ownership data collection during business account onboarding                                        | CDD Rule compliant data fields; tenant configures verification provider     |
+| **OFAC Screening**               | Real-time screening against SDN list via compliance adapter                                         | Requires OFAC screening service credentials                                 |
+| **314(a) Requests**              | Secure search capability for law enforcement information requests                                   | Manual workflow supported through ComplianceCenter                          |
 
 ### 5.2 Transaction Monitoring
 
@@ -168,11 +168,11 @@ BSA requires retention of transaction records for five years. Fiducia's data ret
 
 ### 6.1 Privacy Rule
 
-| GLBA Privacy Requirement | Fiducia Implementation |
-|--------------------------|----------------------|
-| Initial privacy notice | Tenant-configurable privacy notice served at account opening |
-| Annual privacy notice | Automated annual notice delivery via notification service |
-| Opt-out rights | Member preference management in account settings |
+| GLBA Privacy Requirement        | Fiducia Implementation                                             |
+| ------------------------------- | ------------------------------------------------------------------ |
+| Initial privacy notice          | Tenant-configurable privacy notice served at account opening       |
+| Annual privacy notice           | Automated annual notice delivery via notification service          |
+| Opt-out rights                  | Member preference management in account settings                   |
 | Information sharing disclosures | Configurable disclosure categories per tenant's sharing agreements |
 
 ### 6.2 Safeguards Rule
@@ -181,30 +181,30 @@ The Safeguards Rule requires financial institutions to develop, implement, and m
 
 **Administrative Safeguards**
 
-| Requirement | Fiducia Control |
-|-------------|----------------|
-| Designated security coordinator | Tenant admin roles with security oversight permissions |
-| Risk assessment | Platform-level risk assessment documented; tenant-specific assessments supported |
-| Employee training | Audit logs track admin actions for training gap identification |
-| Vendor oversight | Adapter pattern with credential isolation; no cross-tenant data exposure |
+| Requirement                     | Fiducia Control                                                                  |
+| ------------------------------- | -------------------------------------------------------------------------------- |
+| Designated security coordinator | Tenant admin roles with security oversight permissions                           |
+| Risk assessment                 | Platform-level risk assessment documented; tenant-specific assessments supported |
+| Employee training               | Audit logs track admin actions for training gap identification                   |
+| Vendor oversight                | Adapter pattern with credential isolation; no cross-tenant data exposure         |
 
 **Technical Safeguards**
 
-| Requirement | Fiducia Control |
-|-------------|----------------|
-| Access controls | PostgreSQL RLS enforces tenant isolation at the database level; RBAC at application level |
-| Encryption | AES-256 at rest, TLS 1.2+ in transit, AES-256-CBC encrypted backups |
-| Monitoring | Prometheus metrics, Sentry error tracking, audit logging of all privileged actions |
-| MFA | TOTP-based MFA with per-tenant enforcement policy |
-| Incident detection | AlertManager rules for anomalous activity; real-time Sentry alerts |
+| Requirement        | Fiducia Control                                                                           |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| Access controls    | PostgreSQL RLS enforces tenant isolation at the database level; RBAC at application level |
+| Encryption         | AES-256 at rest, TLS 1.2+ in transit, AES-256-CBC encrypted backups                       |
+| Monitoring         | Prometheus metrics, Sentry error tracking, audit logging of all privileged actions        |
+| MFA                | TOTP-based MFA with per-tenant enforcement policy                                         |
+| Incident detection | AlertManager rules for anomalous activity; real-time Sentry alerts                        |
 
 **Physical Safeguards**
 
-| Requirement | Fiducia Control |
-|-------------|----------------|
+| Requirement          | Fiducia Control                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------ |
 | Data center security | Managed by cloud infrastructure provider (AWS/GCP/Azure); SOC 2 certified facilities |
-| Media disposal | Cloud provider managed; encrypted storage ensures data is unrecoverable without keys |
-| Facility access | Cloud provider responsibility; documented in shared responsibility model |
+| Media disposal       | Cloud provider managed; encrypted storage ensures data is unrecoverable without keys |
+| Facility access      | Cloud provider responsibility; documented in shared responsibility model             |
 
 ### 6.3 Information Sharing
 
@@ -226,7 +226,7 @@ All changes to the Fiducia platform follow a documented change management proces
 
 ### 7.3 Incident Response
 
-Fiducia provides a structured incident response capability. Detection is supported through Prometheus alerting rules that monitor latency, error rates, and resource utilization, supplemented by Sentry for application-level error tracking. When an incident is detected, the Incident Manager (`src/pages/admin/IncidentManager.tsx`) provides a structured workflow for investigation, tracking, and resolution. Each incident maintains an immutable JSONB timeline capturing detection, investigation steps, mitigation actions, and resolution. Severity classification drives escalation procedures and notification routing. Multi-channel notifications (Slack, email, SMS, push) ensure stakeholders are informed according to the incident severity. Post-incident, the platform supports postmortem documentation with root cause analysis and corrective action tracking. Deployment rollback capabilities enable rapid mitigation when incidents are traced to recent changes.
+Fiducia provides a structured incident response capability. Detection is supported through Prometheus alerting rules that monitor latency, error rates, and resource utilization, supplemented by Sentry for application-level error tracking. When an incident is detected, the Incident Manager (`apps/web/src/pages/admin/IncidentManager.tsx`) provides a structured workflow for investigation, tracking, and resolution. Each incident maintains an immutable JSONB timeline capturing detection, investigation steps, mitigation actions, and resolution. Severity classification drives escalation procedures and notification routing. Multi-channel notifications (Slack, email, SMS, push) ensure stakeholders are informed according to the incident severity. Post-incident, the platform supports postmortem documentation with root cause analysis and corrective action tracking. Deployment rollback capabilities enable rapid mitigation when incidents are traced to recent changes.
 
 ### 7.4 Data Protection
 
@@ -260,26 +260,26 @@ Automated encrypted backups run on a configurable schedule. Backups are encrypte
 
 ### 9.1 Built-in vs. Tenant-Configured Controls
 
-| Capability | Platform Status | Tenant Action Required |
-|-----------|----------------|----------------------|
-| Tenant data isolation (RLS) | Built-in, always active | None |
-| Encryption at rest / in transit | Built-in, always active | None |
-| Audit logging (49+ action types) | Built-in, always active | None |
-| RBAC (admin/owner/member) | Built-in, always active | Assign roles to users |
-| MFA support | Built-in | Enable MFA enforcement policy per tenant |
-| Change management workflow | Built-in | Use workflow for all platform changes |
-| Incident management | Built-in | Configure notification channels and escalation contacts |
-| SAR filing | Alert generation built-in | Tenant must configure FinCEN BSA E-Filing credentials and designate filing officer |
-| CTR reporting | Threshold monitoring built-in | Tenant must configure FinCEN credentials for automated filing |
-| OFAC screening | Adapter framework built-in | Tenant must provide OFAC screening service subscription |
-| KYC/CDD verification | Workflow built-in | Tenant must select and configure KYC provider (Jumio, Onfido, Socure) |
-| Privacy notices (GLBA) | Delivery mechanism built-in | Tenant must author institution-specific privacy notice content |
-| Reg E disclosures | Template framework built-in | Tenant must configure institution-specific disclosure language |
-| Reg Z APR calculations | Calculation engine built-in | Tenant must verify calculations against their specific product terms |
-| Call Report mapping | Framework built-in | Tenant must map Chart of Accounts to 5300 line items |
-| SSO/SAML integration | Built-in | Tenant must configure their identity provider |
-| Backup encryption | Built-in | Tenant should verify backup schedule meets their BCP requirements |
-| Penetration testing | Platform-level testing performed | Tenant may require institution-specific penetration test |
+| Capability                       | Platform Status                  | Tenant Action Required                                                             |
+| -------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------- |
+| Tenant data isolation (RLS)      | Built-in, always active          | None                                                                               |
+| Encryption at rest / in transit  | Built-in, always active          | None                                                                               |
+| Audit logging (49+ action types) | Built-in, always active          | None                                                                               |
+| RBAC (admin/owner/member)        | Built-in, always active          | Assign roles to users                                                              |
+| MFA support                      | Built-in                         | Enable MFA enforcement policy per tenant                                           |
+| Change management workflow       | Built-in                         | Use workflow for all platform changes                                              |
+| Incident management              | Built-in                         | Configure notification channels and escalation contacts                            |
+| SAR filing                       | Alert generation built-in        | Tenant must configure FinCEN BSA E-Filing credentials and designate filing officer |
+| CTR reporting                    | Threshold monitoring built-in    | Tenant must configure FinCEN credentials for automated filing                      |
+| OFAC screening                   | Adapter framework built-in       | Tenant must provide OFAC screening service subscription                            |
+| KYC/CDD verification             | Workflow built-in                | Tenant must select and configure KYC provider (Jumio, Onfido, Socure)              |
+| Privacy notices (GLBA)           | Delivery mechanism built-in      | Tenant must author institution-specific privacy notice content                     |
+| Reg E disclosures                | Template framework built-in      | Tenant must configure institution-specific disclosure language                     |
+| Reg Z APR calculations           | Calculation engine built-in      | Tenant must verify calculations against their specific product terms               |
+| Call Report mapping              | Framework built-in               | Tenant must map Chart of Accounts to 5300 line items                               |
+| SSO/SAML integration             | Built-in                         | Tenant must configure their identity provider                                      |
+| Backup encryption                | Built-in                         | Tenant should verify backup schedule meets their BCP requirements                  |
+| Penetration testing              | Platform-level testing performed | Tenant may require institution-specific penetration test                           |
 
 ### 9.2 Items Requiring External Services
 
@@ -288,7 +288,7 @@ The following capabilities require the tenant to contract with external service 
 1. **FinCEN BSA E-Filing**: Required for SAR and CTR submission. Platform prepares filing data; submission requires institutional credentials.
 2. **KYC identity verification**: Requires subscription to a supported provider (Jumio, Onfido, or Socure).
 3. **OFAC screening**: Requires access to an SDN list screening service.
-4. **Core banking integration**: Real-time account data requires connection to the institution's core system (CU*Answers, Symitar, Fineract, or compatible system).
+4. **Core banking integration**: Real-time account data requires connection to the institution's core system (CU\*Answers, Symitar, Fineract, or compatible system).
 5. **Payment network access**: FedNow, RTP, Zelle, and ACH connectivity require institutional enrollment and credentials.
 
 ---
@@ -312,31 +312,31 @@ Use this checklist to prepare for NCUA, FDIC, or state examinations.
 
 ### 10.2 Documentation Packet for Examiners
 
-| Document | Source | Description |
-|----------|--------|-------------|
-| System description | This document, Section 8 | Architecture and security model overview |
-| Controls matrix | `docs/security/CONTROLS-MATRIX.md` | All platform controls with evidence pointers |
-| Security posture | `docs/security/SECURITY-POSTURE.md` | OWASP mapping, RLS coverage, MFA configuration |
-| Data flow map | `docs/security/DATA-FLOW-MAP.md` | Data flows between system components |
-| Audit log extract | Admin portal export | Timestamped record of all platform actions |
-| Change log | `change_requests` table export | All system changes with approval documentation |
-| Incident history | Incident Manager export | Detection, response, and resolution records |
-| BSA/AML reports | ComplianceCenter export | AML alerts, SAR filings, CTR filings |
-| BCP documentation | Platform BCP + tenant-specific BCP | Backup procedures, recovery testing results |
-| Vendor agreements | Tenant-maintained | Contracts with core banking, KYC, and payment providers |
+| Document           | Source                              | Description                                             |
+| ------------------ | ----------------------------------- | ------------------------------------------------------- |
+| System description | This document, Section 8            | Architecture and security model overview                |
+| Controls matrix    | `docs/security/CONTROLS-MATRIX.md`  | All platform controls with evidence pointers            |
+| Security posture   | `docs/security/SECURITY-POSTURE.md` | OWASP mapping, RLS coverage, MFA configuration          |
+| Data flow map      | `docs/security/DATA-FLOW-MAP.md`    | Data flows between system components                    |
+| Audit log extract  | Admin portal export                 | Timestamped record of all platform actions              |
+| Change log         | `change_requests` table export      | All system changes with approval documentation          |
+| Incident history   | Incident Manager export             | Detection, response, and resolution records             |
+| BSA/AML reports    | ComplianceCenter export             | AML alerts, SAR filings, CTR filings                    |
+| BCP documentation  | Platform BCP + tenant-specific BCP  | Backup procedures, recovery testing results             |
+| Vendor agreements  | Tenant-maintained                   | Contracts with core banking, KYC, and payment providers |
 
 ### 10.3 Common Examiner Questions and Fiducia Responses
 
-| Examiner Question | Prepared Response |
-|-------------------|------------------|
-| How is member data isolated between institutions? | PostgreSQL Row Level Security on every table; `firm_id` column with database-enforced policies. No application-level bypass possible. |
-| How are system changes controlled? | Formal change request workflow with approval gates, automated CI/CD validation, deployment logging with git SHA, and rollback capability. |
-| How are suspicious transactions identified? | Compliance adapter monitors transactions against configurable velocity, structuring, geographic, and behavioral rules. Alerts surface in ComplianceCenter. |
-| How is data encrypted? | AES-256 at rest (database), TLS 1.2+ in transit, AES-256-CBC for backups with key rotation support. |
-| What is the incident response process? | Structured lifecycle: detect (Prometheus/Sentry), investigate, mitigate, resolve, postmortem. Full timeline maintained in immutable log. |
-| How is access to the system authenticated? | Supabase Auth with email/password, magic link, or SSO (SAML/OIDC). TOTP MFA configurable per tenant. JWT tokens with configurable expiry. |
-| How are audit logs protected from tampering? | Append-only database table with no delete capability exposed through the application. Timestamps are database-generated. |
+| Examiner Question                                 | Prepared Response                                                                                                                                          |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| How is member data isolated between institutions? | PostgreSQL Row Level Security on every table; `firm_id` column with database-enforced policies. No application-level bypass possible.                      |
+| How are system changes controlled?                | Formal change request workflow with approval gates, automated CI/CD validation, deployment logging with git SHA, and rollback capability.                  |
+| How are suspicious transactions identified?       | Compliance adapter monitors transactions against configurable velocity, structuring, geographic, and behavioral rules. Alerts surface in ComplianceCenter. |
+| How is data encrypted?                            | AES-256 at rest (database), TLS 1.2+ in transit, AES-256-CBC for backups with key rotation support.                                                        |
+| What is the incident response process?            | Structured lifecycle: detect (Prometheus/Sentry), investigate, mitigate, resolve, postmortem. Full timeline maintained in immutable log.                   |
+| How is access to the system authenticated?        | Supabase Auth with email/password, magic link, or SSO (SAML/OIDC). TOTP MFA configurable per tenant. JWT tokens with configurable expiry.                  |
+| How are audit logs protected from tampering?      | Append-only database table with no delete capability exposed through the application. Timestamps are database-generated.                                   |
 
 ---
 
-*This document should be reviewed and updated at least annually or whenever significant platform changes affect regulatory compliance posture. Tenant compliance officers are responsible for ensuring institution-specific configurations (SAR filing credentials, KYC provider selection, privacy notice content) are maintained current.*
+_This document should be reviewed and updated at least annually or whenever significant platform changes affect regulatory compliance posture. Tenant compliance officers are responsible for ensuring institution-specific configurations (SAR filing credentials, KYC provider selection, privacy notice content) are maintained current._
