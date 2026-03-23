@@ -114,6 +114,12 @@ import {
   createWireTransferAdapter as _createWireTransferAdapter,
   detectWireTransferProvider as _detectWireTransferProvider,
 } from "./wire-transfers/registry.ts";
+// Search (Algolia)
+import { createSearchAdapter, detectSearchProvider } from "./search/registry.ts";
+// CMS (Storyblok)
+import { createCMSAdapter, detectCMSProvider } from "./cms/registry.ts";
+// Fraud Graph (Neo4j)
+import { createFraudGraphAdapter, detectFraudGraphProvider } from "./fraud-graph/registry.ts";
 
 // =============================================================================
 // PLATFORM-AGNOSTIC ENV ACCESS
@@ -172,6 +178,8 @@ const _DOMAIN_TO_CATEGORY: Partial<Record<AdapterDomain, string>> = {
   global_clearing: "financial",
   stablecoin: "financial",
   engagement: "platform",
+  search: "platform",
+  fraud_graph: "financial",
 };
 
 /** Maps adapter domains to env var overrides */
@@ -211,6 +219,8 @@ const DOMAIN_ENV_OVERRIDES: Partial<Record<AdapterDomain, string>> = {
   stablecoin: "STABLECOIN_PROVIDER",
   engagement: "ENGAGEMENT_PROVIDER",
   e_signature: "E_SIGNATURE_PROVIDER",
+  search: "SEARCH_PROVIDER",
+  fraud_graph: "FRAUD_GRAPH_PROVIDER",
 };
 
 /**
@@ -398,6 +408,18 @@ function createAdapter(domain: AdapterDomain, provider: string, env?: EnvProvide
     case "engagement": {
       const p = provider !== "mock" ? provider : detectEngagementProvider(env);
       return createEngagementAdapter(p);
+    }
+    case "search": {
+      const p = provider !== "mock" ? provider : detectSearchProvider(env);
+      return createSearchAdapter(p);
+    }
+    case "cms": {
+      const p = provider !== "mock" ? provider : detectCMSProvider(env);
+      return createCMSAdapter(p);
+    }
+    case "fraud_graph": {
+      const p = provider !== "mock" ? provider : detectFraudGraphProvider(env);
+      return createFraudGraphAdapter(p);
     }
     default:
       throw new Error(`No adapter factory registered for domain: ${domain}`);
@@ -729,6 +751,18 @@ export const ADAPTER_VALIDATION_STATUS: Record<string, ValidationStatus> = {
   "e_signature/mock": "mock",
   "e_signature/docusign": "provisional",
   "e_signature/pandadoc": "provisional",
+
+  // -- Search --
+  "search/mock": "mock",
+  "search/algolia": "provisional",
+
+  // -- CMS --
+  "cms/mock": "mock",
+  "cms/storyblok": "provisional",
+
+  // -- Fraud Graph --
+  "fraud_graph/mock": "mock",
+  "fraud_graph/neo4j": "provisional",
 };
 
 /**
