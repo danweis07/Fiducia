@@ -68,7 +68,7 @@ Fiducia's design supports the four outcomes of the Consumer Duty:
 
 1. **Products and services** — Tenant institutions configure product catalogues with clear eligibility criteria; the platform prevents offering unsuitable products to consumers outside defined target markets.
 2. **Price and value** — Fee schedules are transparent, auditable, and surfaced to consumers prior to transaction execution.
-3. **Consumer understanding** — Multi-language support (33 locales via `src/lib/i18n/`) ensures communications are accessible. Plain-language descriptions are enforced through content review workflows.
+3. **Consumer understanding** — Multi-language support (33 locales via `apps/web/src/lib/i18n/`) ensures communications are accessible. Plain-language descriptions are enforced through content review workflows.
 4. **Consumer support** — Accessibility features (WCAG 2.1 AA compliance, skip links, screen reader compatibility) ensure equitable access across consumer demographics.
 
 ### 2.3 Operational Resilience (FCA PS21/3, PRA PS6/21)
@@ -77,9 +77,9 @@ The FCA and PRA operational resilience framework, effective since March 2025, re
 
 Fiducia directly supports these obligations:
 
-- **Incident Manager** (`src/pages/admin/IncidentManager.tsx`) provides a structured three-panel interface for incident detection, investigation, mitigation, and resolution. Incidents are classified by severity (critical, high, medium, low) and tracked through a full lifecycle: `detected` → `investigating` → `mitigating` → `resolved` → `postmortem`. Each incident maintains a timestamped timeline of actions, actors, and decisions.
+- **Incident Manager** (`apps/web/src/pages/admin/IncidentManager.tsx`) provides a structured three-panel interface for incident detection, investigation, mitigation, and resolution. Incidents are classified by severity (critical, high, medium, low) and tracked through a full lifecycle: `detected` → `investigating` → `mitigating` → `resolved` → `postmortem`. Each incident maintains a timestamped timeline of actions, actors, and decisions.
 - **Automated rollback** capability allows deployment reversions (full, migration-only, or functions-only) to be initiated directly from the Incident Manager. Rollback status is tracked (`pending` → `in_progress` → `completed` or `failed`) with pre- and post-rollback health checks recorded.
-- **Control Tower** (`src/pages/admin/ControlTower.tsx`) provides a four-quadrant operational dashboard covering deployments, approval status, test results, and system health. This enables real-time visibility into platform state, directly supporting the FCA's expectation that firms can monitor Important Business Services continuously.
+- **Control Tower** (`apps/web/src/pages/admin/ControlTower.tsx`) provides a four-quadrant operational dashboard covering deployments, approval status, test results, and system health. This enables real-time visibility into platform state, directly supporting the FCA's expectation that firms can monitor Important Business Services continuously.
 - **Stakeholder notification** is integrated into the incident workflow, ensuring that affected parties — including regulators where required — are notified within impact tolerance windows.
 - **Service health monitoring** tracks the status (`healthy`, `degraded`, `down`) and latency of each platform component, providing the evidence base for impact tolerance self-assessments.
 
@@ -139,13 +139,13 @@ PostgreSQL Row Level Security (RLS), enforced at the database engine level, is a
 
 ### 4.3 Data Subject Rights
 
-| Right                                   | Platform Implementation                                                                                                                                                       |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Right of access (Art. 15)**           | Data Export page (`src/pages/admin/DataExport.tsx`) enables authorised personnel to generate structured exports of a data subject's personal data in machine-readable format. |
-| **Right to erasure (Art. 17)**          | Data Export module supports erasure request workflows. Cascading foreign key constraints (`ON DELETE CASCADE`) ensure referential integrity during deletion.                  |
-| **Right to data portability (Art. 20)** | Export functionality produces data in JSON format, satisfying the "structured, commonly used, machine-readable" requirement.                                                  |
-| **Right to restriction (Art. 18)**      | Account suspension capabilities allow processing to be restricted while a dispute is resolved.                                                                                |
-| **Consent withdrawal (Art. 7(3))**      | Open banking consent revocation is effective immediately; withdrawal is as easy as granting consent.                                                                          |
+| Right                                   | Platform Implementation                                                                                                                                                                |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Right of access (Art. 15)**           | Data Export page (`apps/web/src/pages/admin/DataExport.tsx`) enables authorised personnel to generate structured exports of a data subject's personal data in machine-readable format. |
+| **Right to erasure (Art. 17)**          | Data Export module supports erasure request workflows. Cascading foreign key constraints (`ON DELETE CASCADE`) ensure referential integrity during deletion.                           |
+| **Right to data portability (Art. 20)** | Export functionality produces data in JSON format, satisfying the "structured, commonly used, machine-readable" requirement.                                                           |
+| **Right to restriction (Art. 18)**      | Account suspension capabilities allow processing to be restricted while a dispute is resolved.                                                                                         |
+| **Consent withdrawal (Art. 7(3))**      | Open banking consent revocation is effective immediately; withdrawal is as easy as granting consent.                                                                                   |
 
 ### 4.4 Data Protection Impact Assessments (DPIAs)
 
@@ -202,10 +202,10 @@ The Incident Manager directly satisfies DORA's incident management requirements:
 
 Fiducia's adapter pattern architecture provides structural controls for third-party ICT risk:
 
-- **Abstraction layer** — External integrations (core banking, KYC, payments, AI services) are accessed through a provider abstraction (`src/lib/backend/`). This ensures that no third-party dependency is tightly coupled to the platform.
+- **Abstraction layer** — External integrations (core banking, KYC, payments, AI services) are accessed through a provider abstraction (`apps/web/src/lib/backend/`). This ensures that no third-party dependency is tightly coupled to the platform.
 - **Graceful degradation** — The adapter registry auto-detects credentials via environment variables. When third-party credentials are absent, the platform falls back to mock implementations. This ensures service continuity even during third-party outages.
 - **Concentration risk mitigation** — The swappable adapter pattern means that any critical third-party provider can be replaced without platform-wide re-engineering, directly addressing DORA's concentration risk provisions.
-- **Exit strategies** — The standardised interface contracts defined in `src/types/` ensure that migration to alternative providers is structurally feasible.
+- **Exit strategies** — The standardised interface contracts defined in `apps/web/src/types/` ensure that migration to alternative providers is structurally feasible.
 
 ### 5.5 Pillar V — Information Sharing (Article 45)
 

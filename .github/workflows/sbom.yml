@@ -11,6 +11,7 @@ on:
     paths:
       - "package.json"
       - "package-lock.json"
+      - "apps/web/package.json"
   workflow_dispatch:
 
 jobs:

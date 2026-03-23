@@ -8,12 +8,12 @@ Africa's digital banking environment spans dozens of distinct regulatory regimes
 
 ### 1.1 Key Regulators by Market
 
-| Country | Primary Regulator | Prudential Authority | Data Protection | Payment Systems |
-|---|---|---|---|---|
-| South Africa | SARB | Prudential Authority (PA) | Information Regulator (POPIA) | PASA / NPS Act |
-| Nigeria | Central Bank of Nigeria (CBN) | CBN | NDPR / NITDA | NIBSS |
-| Kenya | Central Bank of Kenya (CBK) | CBK | ODPC (DPA 2019) | NPS Act 2011 |
-| Ghana | Bank of Ghana (BoG) | BoG | Data Protection Commission | GhIPSS |
+| Country      | Primary Regulator             | Prudential Authority      | Data Protection               | Payment Systems |
+| ------------ | ----------------------------- | ------------------------- | ----------------------------- | --------------- |
+| South Africa | SARB                          | Prudential Authority (PA) | Information Regulator (POPIA) | PASA / NPS Act  |
+| Nigeria      | Central Bank of Nigeria (CBN) | CBN                       | NDPR / NITDA                  | NIBSS           |
+| Kenya        | Central Bank of Kenya (CBK)   | CBK                       | ODPC (DPA 2019)               | NPS Act 2011    |
+| Ghana        | Bank of Ghana (BoG)           | BoG                       | Data Protection Commission    | GhIPSS          |
 
 ### 1.2 Cross-Cutting Themes
 
@@ -31,9 +31,9 @@ Across all four markets, regulators share common priorities that shape Fiducia's
 
 South Africa's Twin Peaks model splits oversight between the Prudential Authority (PA), housed within SARB for safety and soundness, and the Financial Sector Conduct Authority (FSCA) for market conduct and consumer protection. Fiducia's tenant configuration for South African deployments must satisfy both pillars simultaneously.
 
-The PA requires that digital banking platforms maintain capital adequacy reporting hooks, liquidity risk dashboards, and automated prudential returns. Fiducia's gateway layer (`src/lib/gateway/`) exposes dedicated action handlers for regulatory reporting that institutions can map to PA submission formats.
+The PA requires that digital banking platforms maintain capital adequacy reporting hooks, liquidity risk dashboards, and automated prudential returns. Fiducia's gateway layer (`apps/web/src/lib/gateway/`) exposes dedicated action handlers for regulatory reporting that institutions can map to PA submission formats.
 
-The FSCA's Treating Customers Fairly (TCF) outcomes require transparent fee disclosure, clear product terms, and accessible complaint mechanisms. Fiducia enforces these through configurable fee-disclosure components in `src/components/banking/` and tenant-level complaint-routing workflows.
+The FSCA's Treating Customers Fairly (TCF) outcomes require transparent fee disclosure, clear product terms, and accessible complaint mechanisms. Fiducia enforces these through configurable fee-disclosure components in `apps/web/src/components/banking/` and tenant-level complaint-routing workflows.
 
 ### 2.2 National Payment System (NPS) Act
 
@@ -43,7 +43,7 @@ The NPS Act, administered by the Payments Association of South Africa (PASA), go
 - **RTC (Real-Time Clearing):** Sub-ten-second interbank transfers aligned with PASA's RTC rules.
 - **Card schemes:** Domestic card processing through BankservAfrica's card switch.
 
-Each adapter auto-detects credentials from environment variables. When South African payment credentials are absent, the platform falls back to mock implementations in `src/lib/demo-data/`, allowing development without live rail access.
+Each adapter auto-detects credentials from environment variables. When South African payment credentials are absent, the platform falls back to mock implementations in `apps/web/src/lib/demo-data/`, allowing development without live rail access.
 
 ### 2.3 POPIA Compliance
 
@@ -53,7 +53,7 @@ The Protection of Personal Information Act (POPIA) imposes obligations analogous
 
 **Encryption:** All personal information is encrypted at rest (AES-256 via Supabase's storage encryption) and in transit (TLS 1.3). Fiducia's edge functions in `supabase/functions/` enforce TLS termination for all API traffic.
 
-**Data subject rights:** POPIA grants data subjects the right to access, correct, and delete their personal information. Fiducia provides self-service data export and account deletion flows in `src/pages/`, with audit trails stored in immutable append-only tables protected by RLS.
+**Data subject rights:** POPIA grants data subjects the right to access, correct, and delete their personal information. Fiducia provides self-service data export and account deletion flows in `apps/web/src/pages/`, with audit trails stored in immutable append-only tables protected by RLS.
 
 **Cross-border transfers:** POPIA Section 72 restricts transfers of personal information outside South Africa unless the recipient country provides adequate protection. Fiducia's deployment architecture supports in-country data residency through region-locked Supabase projects and CDN configurations in `deploy/`.
 
@@ -82,7 +82,7 @@ The Bank Verification Number system, managed by NIBSS, assigns a unique biometri
 3. The platform performs a liveness check and facial match against the BVN photo.
 4. Verification status is recorded in the customer profile with an immutable audit entry.
 
-When NIBSS credentials are not configured, the demo adapter in `src/lib/demo-data/` returns synthetic BVN responses for development and testing.
+When NIBSS credentials are not configured, the demo adapter in `apps/web/src/lib/demo-data/` returns synthetic BVN responses for development and testing.
 
 ### 3.3 NIBSS Instant Payment (NIP)
 
@@ -97,13 +97,13 @@ NIP is Nigeria's real-time interbank transfer system, processing the majority of
 
 The CBN's Risk-Based Cybersecurity Framework and Guidelines (2022) mandate specific controls for all financial institutions. Fiducia addresses these through:
 
-| CBN Requirement | Fiducia Control |
-|---|---|
-| Multi-factor authentication | WebAuthn + TOTP support in auth context (`src/contexts/`) |
-| Encryption of data at rest and in transit | AES-256 storage encryption, TLS 1.3 for all API traffic |
-| Security incident reporting within 24 hours | Alertmanager integration in `monitoring/` with CBN-formatted templates |
-| Annual penetration testing | CI/CD pipeline includes DAST scanning; results exportable for CBN review |
-| Business continuity planning | Multi-region failover documented in `deploy/` configurations |
+| CBN Requirement                             | Fiducia Control                                                          |
+| ------------------------------------------- | ------------------------------------------------------------------------ |
+| Multi-factor authentication                 | WebAuthn + TOTP support in auth context (`apps/web/src/contexts/`)       |
+| Encryption of data at rest and in transit   | AES-256 storage encryption, TLS 1.3 for all API traffic                  |
+| Security incident reporting within 24 hours | Alertmanager integration in `monitoring/` with CBN-formatted templates   |
+| Annual penetration testing                  | CI/CD pipeline includes DAST scanning; results exportable for CBN review |
+| Business continuity planning                | Multi-region failover documented in `deploy/` configurations             |
 
 ### 3.5 Nigeria Data Protection Regulation (NDPR)
 
@@ -128,7 +128,7 @@ Kenya's mobile money ecosystem, led by M-Pesa, is foundational to digital bankin
 
 **Float management:** Agent banking and mobile money operations require float tracking. Fiducia's accounting module supports real-time float balance monitoring with configurable low-balance alerts.
 
-**USSD fallback:** For feature phone users, Fiducia provides a USSD session gateway that maps menu-driven interactions to the same backend services used by the web and mobile clients. The USSD adapter is registered alongside REST and Supabase providers in `src/lib/backend/`.
+**USSD fallback:** For feature phone users, Fiducia provides a USSD session gateway that maps menu-driven interactions to the same backend services used by the web and mobile clients. The USSD adapter is registered alongside REST and Supabase providers in `apps/web/src/lib/backend/`.
 
 ### 4.3 National Payment System Act (2011)
 
@@ -160,7 +160,7 @@ The African Continental Free Trade Area's Protocol on Digital Trade, under negot
 
 ### 6.2 Mobile-First Design Requirements
 
-African markets require mobile-first interfaces as the primary access channel. Fiducia enforces this through responsive Tailwind CSS layouts optimized for low-bandwidth conditions, progressive image loading, offline-capable service workers, and lightweight bundle sizes achieved through React lazy loading in route definitions (`src/routes/`).
+African markets require mobile-first interfaces as the primary access channel. Fiducia enforces this through responsive Tailwind CSS layouts optimized for low-bandwidth conditions, progressive image loading, offline-capable service workers, and lightweight bundle sizes achieved through React lazy loading in route definitions (`apps/web/src/routes/`).
 
 ### 6.3 Agent Banking Support
 
@@ -170,11 +170,11 @@ Agent banking extends formal financial services through third-party agents in un
 
 Regulators across Africa mandate tiered KYC to reduce barriers for low-income customers. Fiducia supports three KYC tiers:
 
-| Tier | Verification | Daily Limit | Balance Cap |
-|---|---|---|---|
-| Tier 1 | Phone number + name | Country-specific | Country-specific |
-| Tier 2 | National ID + photo | Higher threshold | Higher threshold |
-| Tier 3 | Full KYC + address + BVN/equivalent | Unrestricted | Unrestricted |
+| Tier   | Verification                        | Daily Limit      | Balance Cap      |
+| ------ | ----------------------------------- | ---------------- | ---------------- |
+| Tier 1 | Phone number + name                 | Country-specific | Country-specific |
+| Tier 2 | National ID + photo                 | Higher threshold | Higher threshold |
+| Tier 3 | Full KYC + address + BVN/equivalent | Unrestricted     | Unrestricted     |
 
 Tier thresholds are configurable per tenant and per country to match local regulatory requirements.
 
@@ -191,12 +191,12 @@ Each target market undergoes periodic FATF or FATF-Style Regional Body (FSRB) mu
 
 ### 7.2 Currency Transaction Reporting (CTR) Thresholds
 
-| Country | CTR Threshold | Reporting Authority | Deadline |
-|---|---|---|---|
-| South Africa | ZAR 25,000 | Financial Intelligence Centre (FIC) | Within 15 days |
-| Nigeria | NGN 5,000,000 (individual) / NGN 10,000,000 (corporate) | NFIU | Within 24 hours |
-| Kenya | KES 1,000,000 | Financial Reporting Centre (FRC) | Within 7 days |
-| Ghana | GHS 20,000 | Financial Intelligence Centre | Within 15 days |
+| Country      | CTR Threshold                                           | Reporting Authority                 | Deadline        |
+| ------------ | ------------------------------------------------------- | ----------------------------------- | --------------- |
+| South Africa | ZAR 25,000                                              | Financial Intelligence Centre (FIC) | Within 15 days  |
+| Nigeria      | NGN 5,000,000 (individual) / NGN 10,000,000 (corporate) | NFIU                                | Within 24 hours |
+| Kenya        | KES 1,000,000                                           | Financial Reporting Centre (FRC)    | Within 7 days   |
+| Ghana        | GHS 20,000                                              | Financial Intelligence Centre       | Within 15 days  |
 
 Fiducia's transaction monitoring engine automatically flags transactions exceeding these thresholds and generates pre-formatted reports for the relevant financial intelligence unit.
 
@@ -266,69 +266,69 @@ Sending Institution (Country A)          Receiving Institution (Country B)
 
 ### 9.3 Data Residency Rules
 
-| Data Category | Residency Rule | Justification |
-|---|---|---|
-| Customer PII | Must remain in-country | POPIA s72, NDPR, DPA 2019 |
-| Transaction records | Must remain in-country | Central bank regulations |
-| BVN biometric data | Nigeria only | NIBSS data sharing agreement |
-| Anonymized analytics | May cross borders | No PII; exempt from residency rules |
-| System configuration | May cross borders | Non-personal operational data |
-| Audit logs | Must remain in-country | Regulatory examination requirements |
+| Data Category        | Residency Rule         | Justification                       |
+| -------------------- | ---------------------- | ----------------------------------- |
+| Customer PII         | Must remain in-country | POPIA s72, NDPR, DPA 2019           |
+| Transaction records  | Must remain in-country | Central bank regulations            |
+| BVN biometric data   | Nigeria only           | NIBSS data sharing agreement        |
+| Anonymized analytics | May cross borders      | No PII; exempt from residency rules |
+| System configuration | May cross borders      | Non-personal operational data       |
+| Audit logs           | Must remain in-country | Regulatory examination requirements |
 
 ## 10. Policy Alignment Matrix
 
-| Fiducia Feature | South Africa | Nigeria | Kenya | Ghana |
-|---|---|---|---|---|
-| Row-Level Security | POPIA s19 (security safeguards) | NDPR 2.1 (data security) | DPA 2019 s41 | DPA 2012 s28 |
-| Multi-factor auth | PA Directive 3/2022 | CBN Cybersecurity Framework | CBK Prudential Guidelines | BoG Cyber Directive |
-| BVN/national ID KYC | FICA s21 | CBN KYC Regs / BVN mandate | CBK KYC Guidelines | BoG AML/CFT |
-| Tiered KYC | SARB Directive 7 | CBN 3-tier KYC | CBK tiered approach | BoG e-money guidelines |
-| Mobile money adapter | N/A (limited) | CBN mobile money regs | CBK M-Pesa guidelines | BoG e-money directive |
-| Agent banking module | SARB agent banking guidance | CBN agent banking guidelines | CBK agent banking regs | BoG agent guidelines |
-| Transaction monitoring | FIC Act (FICA) | NFIU Act | POCAMLA | AML Act 2020 |
-| Fee disclosure | FSCA TCF outcomes | CBN consumer protection | CBK transparency rules | BoG market conduct |
-| Data export/deletion | POPIA s24 (data subject rights) | NDPR 3.1 (individual rights) | DPA 2019 s26 | DPA 2012 s18 |
-| Breach notification | POPIA s22 (72 hours) | NDPR (72 hours) | DPA 2019 s43 (72 hours) | DPA 2012 (48 hours) |
-| Audit logging | PA operational resilience | CBN examination readiness | CBK supervisory requirements | BoG reporting requirements |
-| Encryption at rest | POPIA s19 | CBN Cybersecurity s4.3 | DPA 2019 s41 | BoG Cyber Directive s5 |
+| Fiducia Feature        | South Africa                    | Nigeria                      | Kenya                        | Ghana                      |
+| ---------------------- | ------------------------------- | ---------------------------- | ---------------------------- | -------------------------- |
+| Row-Level Security     | POPIA s19 (security safeguards) | NDPR 2.1 (data security)     | DPA 2019 s41                 | DPA 2012 s28               |
+| Multi-factor auth      | PA Directive 3/2022             | CBN Cybersecurity Framework  | CBK Prudential Guidelines    | BoG Cyber Directive        |
+| BVN/national ID KYC    | FICA s21                        | CBN KYC Regs / BVN mandate   | CBK KYC Guidelines           | BoG AML/CFT                |
+| Tiered KYC             | SARB Directive 7                | CBN 3-tier KYC               | CBK tiered approach          | BoG e-money guidelines     |
+| Mobile money adapter   | N/A (limited)                   | CBN mobile money regs        | CBK M-Pesa guidelines        | BoG e-money directive      |
+| Agent banking module   | SARB agent banking guidance     | CBN agent banking guidelines | CBK agent banking regs       | BoG agent guidelines       |
+| Transaction monitoring | FIC Act (FICA)                  | NFIU Act                     | POCAMLA                      | AML Act 2020               |
+| Fee disclosure         | FSCA TCF outcomes               | CBN consumer protection      | CBK transparency rules       | BoG market conduct         |
+| Data export/deletion   | POPIA s24 (data subject rights) | NDPR 3.1 (individual rights) | DPA 2019 s26                 | DPA 2012 s18               |
+| Breach notification    | POPIA s22 (72 hours)            | NDPR (72 hours)              | DPA 2019 s43 (72 hours)      | DPA 2012 (48 hours)        |
+| Audit logging          | PA operational resilience       | CBN examination readiness    | CBK supervisory requirements | BoG reporting requirements |
+| Encryption at rest     | POPIA s19                       | CBN Cybersecurity s4.3       | DPA 2019 s41                 | BoG Cyber Directive s5     |
 
 ## 11. Gap Analysis
 
 ### 11.1 Mobile Money Integration
 
-| Gap | Impact | Priority | Remediation Path |
-|---|---|---|---|
-| USSD session management at scale | Feature phone users may experience timeouts | High | Implement session persistence in edge functions with 120-second timeout |
-| M-Pesa STK Push error handling | Failed push notifications leave transactions in limbo | High | Add reconciliation cron job and manual retry flow |
-| Ghana mobile money interop testing | GhIPSS sandbox availability is limited | Medium | Build comprehensive mock adapter using production message formats |
-| Airtel Money integration | Missing adapter for East Africa's second-largest MNO | Medium | Extend mobile money adapter interface; implement Airtel API client |
+| Gap                                | Impact                                                | Priority | Remediation Path                                                        |
+| ---------------------------------- | ----------------------------------------------------- | -------- | ----------------------------------------------------------------------- |
+| USSD session management at scale   | Feature phone users may experience timeouts           | High     | Implement session persistence in edge functions with 120-second timeout |
+| M-Pesa STK Push error handling     | Failed push notifications leave transactions in limbo | High     | Add reconciliation cron job and manual retry flow                       |
+| Ghana mobile money interop testing | GhIPSS sandbox availability is limited                | Medium   | Build comprehensive mock adapter using production message formats       |
+| Airtel Money integration           | Missing adapter for East Africa's second-largest MNO  | Medium   | Extend mobile money adapter interface; implement Airtel API client      |
 
 ### 11.2 Agent Banking
 
-| Gap | Impact | Priority | Remediation Path |
-|---|---|---|---|
-| Offline transaction queuing | Agents in low-connectivity areas cannot transact | High | Implement service worker with IndexedDB queue; sync on reconnect |
-| Agent float reconciliation | End-of-day float mismatches require manual resolution | Medium | Add automated reconciliation comparing agent ledger to bank ledger |
-| Agent device management | No MDM integration for agent terminals | Low | Integrate with third-party MDM; enforce app version and OS policies |
+| Gap                         | Impact                                                | Priority | Remediation Path                                                    |
+| --------------------------- | ----------------------------------------------------- | -------- | ------------------------------------------------------------------- |
+| Offline transaction queuing | Agents in low-connectivity areas cannot transact      | High     | Implement service worker with IndexedDB queue; sync on reconnect    |
+| Agent float reconciliation  | End-of-day float mismatches require manual resolution | Medium   | Add automated reconciliation comparing agent ledger to bank ledger  |
+| Agent device management     | No MDM integration for agent terminals                | Low      | Integrate with third-party MDM; enforce app version and OS policies |
 
 ### 11.3 Local Payment Rails
 
-| Gap | Impact | Priority | Remediation Path |
-|---|---|---|---|
-| NIBSS direct debit mandate | Cannot originate direct debits in Nigeria | High | Implement NIBSS direct debit API adapter with mandate management |
-| PesaLink bulk payments | No batch API for Kenya interbank transfers | Medium | Build batch processor wrapping individual PesaLink API calls |
-| e-zwich biometric integration | Ghana biometric card payments not supported | Medium | Integrate e-zwich SDK for biometric authentication at point of sale |
-| SARB SAMOS integration | No direct RTGS access for South African high-value | Low | Partner with settlement bank; implement SWIFT message adapter |
+| Gap                           | Impact                                             | Priority | Remediation Path                                                    |
+| ----------------------------- | -------------------------------------------------- | -------- | ------------------------------------------------------------------- |
+| NIBSS direct debit mandate    | Cannot originate direct debits in Nigeria          | High     | Implement NIBSS direct debit API adapter with mandate management    |
+| PesaLink bulk payments        | No batch API for Kenya interbank transfers         | Medium   | Build batch processor wrapping individual PesaLink API calls        |
+| e-zwich biometric integration | Ghana biometric card payments not supported        | Medium   | Integrate e-zwich SDK for biometric authentication at point of sale |
+| SARB SAMOS integration        | No direct RTGS access for South African high-value | Low      | Partner with settlement bank; implement SWIFT message adapter       |
 
 ### 11.4 Regulatory Reporting
 
-| Gap | Impact | Priority | Remediation Path |
-|---|---|---|---|
-| CBN automated returns | Prudential returns require manual data extraction | High | Build report generator mapping Fiducia data to CBN return templates |
-| FIC goAML integration | South African STR filing is manual | Medium | Implement goAML XML export from transaction monitoring engine |
-| CBK digital lending reports | Quarterly DCP reports assembled manually | Medium | Automate report generation from lending module transaction data |
-| Cross-border payment reporting | AfCFTA reporting formats not yet defined | Low | Monitor AfCFTA protocol developments; prepare flexible report schema |
+| Gap                            | Impact                                            | Priority | Remediation Path                                                     |
+| ------------------------------ | ------------------------------------------------- | -------- | -------------------------------------------------------------------- |
+| CBN automated returns          | Prudential returns require manual data extraction | High     | Build report generator mapping Fiducia data to CBN return templates  |
+| FIC goAML integration          | South African STR filing is manual                | Medium   | Implement goAML XML export from transaction monitoring engine        |
+| CBK digital lending reports    | Quarterly DCP reports assembled manually          | Medium   | Automate report generation from lending module transaction data      |
+| Cross-border payment reporting | AfCFTA reporting formats not yet defined          | Low      | Monitor AfCFTA protocol developments; prepare flexible report schema |
 
 ---
 
-*This document should be reviewed quarterly against regulatory developments in each market. Country-specific addenda may be appended as new regulations are promulgated. All control implementations reference Fiducia's architecture as documented in `docs/ARCHITECTURE.md` and security controls in `docs/security/CONTROLS-MATRIX.md`.*
+_This document should be reviewed quarterly against regulatory developments in each market. Country-specific addenda may be appended as new regulations are promulgated. All control implementations reference Fiducia's architecture as documented in `docs/ARCHITECTURE.md` and security controls in `docs/security/CONTROLS-MATRIX.md`._

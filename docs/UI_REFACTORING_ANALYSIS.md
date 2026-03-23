@@ -13,11 +13,11 @@ Analysis of the React 19 + TypeScript + Vite codebase covering 130+ components, 
 
 ### 1. Monolithic Route Configuration in App.tsx (P0 — HIGH impact)
 
-**Problem:** `src/App.tsx` is 270 lines with 95 lazy imports and 70+ route definitions. The `<ProtectedRoute><ErrorBoundary>...</ErrorBoundary></ProtectedRoute>` wrapper pattern is repeated 43 times.
+**Problem:** `apps/web/src/App.tsx` is 270 lines with 95 lazy imports and 70+ route definitions. The `<ProtectedRoute><ErrorBoundary>...</ErrorBoundary></ProtectedRoute>` wrapper pattern is repeated 43 times.
 
 **Recommendation:**
 
-- Extract routes into domain-specific files (`src/routes/publicRoutes.tsx`, `bankingRoutes.tsx`, `businessRoutes.tsx`, `adminRoutes.tsx`)
+- Extract routes into domain-specific files (`apps/web/src/routes/publicRoutes.tsx`, `bankingRoutes.tsx`, `businessRoutes.tsx`, `adminRoutes.tsx`)
 - Create a `protectedRoute()` helper to eliminate wrapper boilerplate
 - Use React Router layout routes to share `AppShell` across protected pages
 - Target: reduce App.tsx from 270 to ~30 lines
@@ -34,7 +34,7 @@ Analysis of the React 19 + TypeScript + Vite codebase covering 130+ components, 
 
 ### 3. God Context in TenantContext (P1 — MEDIUM impact)
 
-**Problem:** `src/contexts/TenantContext.tsx` combines auth state, auth actions, tenant state, permission helpers, and refresh logic into one context with 7 `useState` calls and 22 exposed values. Any change re-renders all consumers.
+**Problem:** `apps/web/src/contexts/TenantContext.tsx` combines auth state, auth actions, tenant state, permission helpers, and refresh logic into one context with 7 `useState` calls and 22 exposed values. Any change re-renders all consumers.
 
 **Recommendation:**
 
@@ -48,12 +48,12 @@ Analysis of the React 19 + TypeScript + Vite codebase covering 130+ components, 
 **Recommendation:**
 
 - Remove `sonner` dependency and `<Sonner />` from App.tsx
-- Delete `src/components/ui/sonner.tsx`
+- Delete `apps/web/src/components/ui/sonner.tsx`
 - Standardize on `useToast` from `@/hooks/use-toast`
 
-### 5. Empty `components/banking/` Directory (P2 — MEDIUM impact)
+### 5. Empty `apps/web/src/components/banking/` Directory (P2 — MEDIUM impact)
 
-**Problem:** `src/components/banking/` contains only `.gitkeep`. Banking-specific UI (transaction rows, account cards, balance displays) is scattered across individual page files with significant duplication.
+**Problem:** `apps/web/src/components/banking/` contains only `.gitkeep`. Banking-specific UI (transaction rows, account cards, balance displays) is scattered across individual page files with significant duplication.
 
 **Recommendation:**
 
@@ -91,15 +91,15 @@ Analysis of the React 19 + TypeScript + Vite codebase covering 130+ components, 
 
 ## Priority Matrix
 
-| Priority | Refactoring                                           | Effort | Impact |
-| -------- | ----------------------------------------------------- | ------ | ------ |
-| P0       | Split App.tsx routes + layout routes                  | Medium | High   |
-| P0       | Break up large pages + adopt react-hook-form          | High   | High   |
-| P1       | Split TenantContext into Auth + Tenant                | Low    | Medium |
-| P1       | Remove duplicate toast system (sonner)                | Low    | Medium |
-| P2       | Populate `components/banking/` with shared components | Medium | Medium |
-| P2       | Use layout routes for persistent AppShell             | Medium | Medium |
-| P3       | Standardize SDUI widget naming                        | Low    | Low    |
+| Priority | Refactoring                                                        | Effort | Impact |
+| -------- | ------------------------------------------------------------------ | ------ | ------ |
+| P0       | Split App.tsx routes + layout routes                               | Medium | High   |
+| P0       | Break up large pages + adopt react-hook-form                       | High   | High   |
+| P1       | Split TenantContext into Auth + Tenant                             | Low    | Medium |
+| P1       | Remove duplicate toast system (sonner)                             | Low    | Medium |
+| P2       | Populate `apps/web/src/components/banking/` with shared components | Medium | Medium |
+| P2       | Use layout routes for persistent AppShell                          | Medium | Medium |
+| P3       | Standardize SDUI widget naming                                     | Low    | Low    |
 
 ## Architecture Summary
 

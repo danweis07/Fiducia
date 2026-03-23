@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: "Deployment environment"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
           - staging
@@ -52,7 +52,7 @@ jobs:
             --build-arg VITE_DEMO_MODE=false \
             -t "$IMAGE" \
             -t "${REGISTRY}/${PROJECT_ID}/${SERVICE_NAME}:latest" \
-            .
+            ./apps/web
           docker push "$IMAGE"
           docker push "${REGISTRY}/${PROJECT_ID}/${SERVICE_NAME}:latest"
 

@@ -30,8 +30,9 @@ NC='\033[0m'
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 TEMPLATES_DIR="$ROOT_DIR/scripts/templates"
-PAGES_DIR="$ROOT_DIR/src/pages"
-ROUTES_FILE="$ROOT_DIR/src/routes/bankingRoutes.tsx"
+WEB_DIR="$ROOT_DIR/apps/web"
+PAGES_DIR="$WEB_DIR/src/pages"
+ROUTES_FILE="$WEB_DIR/src/routes/bankingRoutes.tsx"
 
 TEMPLATES=(
   "account-dashboard"
@@ -150,13 +151,13 @@ fi
 echo ""
 echo -e "${BOLD}${GREEN}Done!${NC} Your mini-app is ready:"
 echo ""
-echo -e "  Page:  ${BOLD}src/pages/${PAGE_NAME}.tsx${NC}"
+echo -e "  Page:  ${BOLD}apps/web/src/pages/${PAGE_NAME}.tsx${NC}"
 echo -e "  Route: ${BOLD}/${ROUTE_PATH}${NC}"
 echo ""
 echo -e "Next steps:"
 echo -e "  1. ${BOLD}npm run dev${NC}"
 echo -e "  2. Open ${BOLD}http://localhost:8080/${ROUTE_PATH}?demo=true${NC}"
-echo -e "  3. Edit ${BOLD}src/pages/${PAGE_NAME}.tsx${NC} — HMR updates instantly"
+echo -e "  3. Edit ${BOLD}apps/web/src/pages/${PAGE_NAME}.tsx${NC} — HMR updates instantly"
 echo ""
 echo -e "  Tip: Run ${BOLD}npx tsx scripts/recipes/list-all-actions.ts${NC}"
 echo -e "       to see all available gateway actions for your page."

@@ -9,22 +9,22 @@
  */
 
 // Import each domain handler set to enumerate all registered actions
-import { accountHandlers } from "../../src/lib/demo-data/accounts";
-import { paymentHandlers } from "../../src/lib/demo-data/payments";
-import { cardHandlers } from "../../src/lib/demo-data/cards";
-import { loanHandlers } from "../../src/lib/demo-data/loans";
-import { depositHandlers } from "../../src/lib/demo-data/deposits";
-import { memberHandlers } from "../../src/lib/demo-data/member";
-import { adminHandlers } from "../../src/lib/demo-data/admin";
-import { financialHandlers } from "../../src/lib/demo-data/financial";
-import { complianceHandlers } from "../../src/lib/demo-data/compliance";
-import { contentHandlers } from "../../src/lib/demo-data/content";
-import { integrationHandlers } from "../../src/lib/demo-data/integrations";
-import { messagingHandlers } from "../../src/lib/demo-data/messaging";
-import { aiHandlers } from "../../src/lib/demo-data/ai";
-import { businessHandlers } from "../../src/lib/demo-data/business";
-import { internationalHandlers } from "../../src/lib/demo-data/international";
-import { incidentHandlers } from "../../src/lib/demo-data/incidents";
+import { accountHandlers } from "../../apps/web/src/lib/demo-data/accounts";
+import { paymentHandlers } from "../../apps/web/src/lib/demo-data/payments";
+import { cardHandlers } from "../../apps/web/src/lib/demo-data/cards";
+import { loanHandlers } from "../../apps/web/src/lib/demo-data/loans";
+import { depositHandlers } from "../../apps/web/src/lib/demo-data/deposits";
+import { memberHandlers } from "../../apps/web/src/lib/demo-data/member";
+import { adminHandlers } from "../../apps/web/src/lib/demo-data/admin";
+import { financialHandlers } from "../../apps/web/src/lib/demo-data/financial";
+import { complianceHandlers } from "../../apps/web/src/lib/demo-data/compliance";
+import { contentHandlers } from "../../apps/web/src/lib/demo-data/content";
+import { integrationHandlers } from "../../apps/web/src/lib/demo-data/integrations";
+import { messagingHandlers } from "../../apps/web/src/lib/demo-data/messaging";
+import { aiHandlers } from "../../apps/web/src/lib/demo-data/ai";
+import { businessHandlers } from "../../apps/web/src/lib/demo-data/business";
+import { internationalHandlers } from "../../apps/web/src/lib/demo-data/international";
+import { incidentHandlers } from "../../apps/web/src/lib/demo-data/incidents";
 
 const domainMap: Record<string, Record<string, unknown>> = {
   accounts: accountHandlers,

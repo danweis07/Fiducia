@@ -56,7 +56,7 @@ Once the app is running, here's how to get oriented:
 1. **Explore the demo** — log in with `demo@fiducia.dev` / `demo1234` and browse accounts, transfers, cards, and the admin portal
 2. **Run the tests** — `npm run test` (unit) or `npm run test:e2e` (end-to-end)
 3. **Read the architecture** — [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) explains the adapter pattern, API gateway, and multi-tenancy model
-4. **Make a change** — try editing a page in `src/pages/`, watch HMR update instantly, then run `npm run validate` to check everything passes
+4. **Make a change** — try editing a page in `apps/web/src/pages/`, watch HMR update instantly, then run `npm run validate` to check everything passes
 
 ## Prerequisites
 
@@ -71,24 +71,24 @@ Once the app is running, here's how to get oriented:
 
 ```
 Fiducia/
-├── src/                    # React frontend
-│   ├── pages/              # Route page components (60+)
-│   ├── components/         # Reusable components (ui/, banking/, admin/, sdui/)
-│   ├── contexts/           # Auth, Theme, Tenant providers
-│   ├── hooks/              # Custom React hooks
-│   ├── lib/                # Core logic: gateway, backend, i18n, demo-data, services
-│   ├── integrations/       # Supabase client & auto-generated types
-│   ├── routes/             # Public, banking, admin route definitions
-│   ├── services/           # Domain service layer
-│   └── types/              # TypeScript domain types (20+ files)
+├── apps/
+│   └── web/                # React frontend (Vite + TypeScript)
+│       ├── src/
+│       │   ├── pages/      # Route page components (60+)
+│       │   ├── components/ # Reusable components (ui/, banking/, admin/, sdui/)
+│       │   ├── contexts/   # Auth, Theme, Tenant providers
+│       │   ├── hooks/      # Custom React hooks
+│       │   ├── lib/        # Core logic: gateway, backend, i18n, demo-data
+│       │   ├── routes/     # Public, banking, admin route definitions
+│       │   ├── services/   # Domain service layer
+│       │   └── types/      # TypeScript domain types (20+ files)
+│       ├── e2e/            # Playwright E2E tests (7 spec files)
+│       └── public/         # Static assets
+├── core-simulator/         # Mock core banking server (Express, port 9090)
+├── mobile/                 # Flutter mobile app
 ├── supabase/               # Backend
 │   ├── migrations/         # 41 SQL migrations (schema + seed data)
 │   └── functions/          # 11 Deno edge functions (gateway, SSO, OAuth, etc.)
-├── core-simulator/         # Mock core banking server (Express, port 9090)
-├── mobile/                 # Flutter mobile app
-├── e2e/                    # Playwright E2E tests (7 spec files)
-├── tests/                  # Load tests (k6, smoke, soak, stress)
-├── load-tests/             # Additional k6 performance tests
 ├── deploy/                 # Cloud configs (AWS, GCP, Azure, Cloudflare, networking, secrets)
 ├── helm/                   # Kubernetes Helm chart
 ├── monitoring/             # Prometheus, Grafana, Alertmanager configs
@@ -157,14 +157,14 @@ Configs are provided for multiple platforms. Pick one:
 
 | Platform                  | Config                                  | Deploy                            |
 | ------------------------- | --------------------------------------- | --------------------------------- |
-| **Vercel**                | `vercel.json`                           | Connect repo in Vercel dashboard  |
-| **Netlify**               | `netlify.toml`                          | Connect repo in Netlify dashboard |
-| **Railway**               | `railway.json`                          | `railway up`                      |
+| **Vercel**                | `apps/web/vercel.json`                  | Connect repo in Vercel dashboard  |
+| **Netlify**               | `apps/web/netlify.toml`                 | Connect repo in Netlify dashboard |
+| **Railway**               | `apps/web/railway.json`                 | `railway up`                      |
 | **Cloudflare Pages**      | `wrangler.toml`                         | `npx wrangler pages deploy dist`  |
 | **AWS**                   | `deploy/aws/cloudformation.yaml`        | `aws cloudformation deploy`       |
 | **GCP Cloud Run**         | `deploy/gcp/cloud-run.yaml`             | `gcloud run deploy`               |
 | **Azure Static Web Apps** | `deploy/azure/staticwebapp.config.json` | Connect via Azure Portal          |
-| **Docker**                | `Dockerfile`                            | Multi-stage build → nginx         |
+| **Docker**                | `apps/web/Dockerfile`                   | Multi-stage build → nginx         |
 | **Kubernetes**            | `helm/banking-platform/`                | `helm install`                    |
 
 For multi-tenant deployment: `./scripts/deploy-all-tenants.sh`

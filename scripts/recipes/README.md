@@ -1,6 +1,6 @@
 # Demo Recipes
 
-Standalone scripts that exercise the Fiducia demo-data layer **without starting the full app**. Each recipe imports handlers directly from `src/lib/demo-data/` and prints realistic JSON responses, so you can see exact data shapes, explore the gateway action catalogue, and prototype new features.
+Standalone scripts that exercise the Fiducia demo-data layer **without starting the full app**. Each recipe imports handlers directly from `apps/web/src/lib/demo-data/` and prints realistic JSON responses, so you can see exact data shapes, explore the gateway action catalogue, and prototype new features.
 
 ## Quick start
 
@@ -27,4 +27,4 @@ npx tsx scripts/recipes/list-all-actions.ts
 
 ## Using recipes to prototype
 
-To add a new gateway action, start by adding a handler in `src/lib/demo-data/`, then create (or extend) a recipe script to verify the response shape before wiring up hooks and UI.
+To add a new gateway action, start by adding a handler in `apps/web/src/lib/demo-data/`, then create (or extend) a recipe script to verify the response shape before wiring up hooks and UI.

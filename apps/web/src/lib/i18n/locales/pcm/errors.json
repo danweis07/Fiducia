@@ -1,0 +1,147 @@
+{
+  "AUTH_REQUIRED": {
+    "title": "You need to sign in",
+    "message": "Your session don finish. Abeg sign in to continue.",
+    "action": "Sign In"
+  },
+  "AUTH_EXPIRED": {
+    "title": "Session don expire",
+    "message": "Your session don expire for security. Abeg sign in again.",
+    "action": "Sign in again"
+  },
+  "AUTH_MFA_REQUIRED": {
+    "title": "Verification needed",
+    "message": "Abeg complete multi-factor authentication to continue.",
+    "action": "Verify identity"
+  },
+  "AUTH_FORBIDDEN": {
+    "title": "Access denied",
+    "message": "You no get permission to do dis action.",
+    "action": "Contact support"
+  },
+  "ACCOUNT_NOT_FOUND": {
+    "title": "Account no dey",
+    "message": "We no fit find the account wey you dey find.",
+    "action": "Go to accounts"
+  },
+  "ACCOUNT_FROZEN": {
+    "title": "Account don freeze",
+    "message": "Dem don freeze dis account and e no fit process transactions now.",
+    "action": "Contact support"
+  },
+  "ACCOUNT_CLOSED": {
+    "title": "Account don close",
+    "message": "Dem don close dis account and e no dey active again.",
+    "action": "Go to accounts"
+  },
+  "INSUFFICIENT_FUNDS": {
+    "title": "Money no reach",
+    "message": "Money no reach for dis account to complete the transaction.",
+    "action": "Check balance"
+  },
+  "TRANSFER_LIMIT_EXCEEDED": {
+    "title": "Transfer limit don pass",
+    "message": "Dis transfer pass your daily or per-transaction limit.",
+    "action": "Try smaller amount"
+  },
+  "TRANSFER_INVALID_AMOUNT": {
+    "title": "Amount no correct",
+    "message": "Abeg enter valid transfer amount wey pass zero.",
+    "action": "Enter correct amount"
+  },
+  "TRANSFER_SAME_ACCOUNT": {
+    "title": "Na same account",
+    "message": "The from and to accounts must be different.",
+    "action": "Choose different account"
+  },
+  "TRANSFER_CUTOFF_PASSED": {
+    "title": "Cutoff time don pass",
+    "message": "Today processing cutoff don pass. Your transfer go process next business day.",
+    "action": "Schedule for tomorrow"
+  },
+  "TRANSFER_NOT_FOUND": {
+    "title": "Transfer no dey",
+    "message": "We no fit find the transfer wey you dey find.",
+    "action": "View transfers"
+  },
+  "BILL_NOT_FOUND": {
+    "title": "Bill no dey",
+    "message": "We no fit find the bill or payee wey you dey find.",
+    "action": "View payees"
+  },
+  "BILL_ALREADY_PAID": {
+    "title": "E don pay already",
+    "message": "Dis bill don pay already.",
+    "action": "View payment history"
+  },
+  "BILL_PAST_DUE": {
+    "title": "Bill don pass due date",
+    "message": "Dis bill don pass im due date. Late fees fit apply.",
+    "action": "Pay now"
+  },
+  "CARD_NOT_FOUND": {
+    "title": "Card no dey",
+    "message": "We no fit find the card wey you dey find.",
+    "action": "View cards"
+  },
+  "CARD_ALREADY_LOCKED": {
+    "title": "Card don lock already",
+    "message": "Dis card don lock already.",
+    "action": "Unlock card"
+  },
+  "CARD_LIMIT_INVALID": {
+    "title": "Card limit no correct",
+    "message": "The spending limit wey you enter no correct. Check the minimum and maximum.",
+    "action": "Adjust limit"
+  },
+  "RDC_IMAGE_QUALITY": {
+    "title": "Image quality wahala",
+    "message": "We no fit read the check image well. Abeg take the photo again with better light.",
+    "action": "Take photo again"
+  },
+  "RDC_AMOUNT_EXCEEDED": {
+    "title": "Deposit limit don pass",
+    "message": "Dis check pass your mobile deposit limit.",
+    "action": "Visit branch"
+  },
+  "RDC_DUPLICATE_CHECK": {
+    "title": "Duplicate check found",
+    "message": "E be like say dem don deposit dis check before.",
+    "action": "Check deposit history"
+  },
+  "VALIDATION_ERROR": {
+    "title": "Validation error",
+    "message": "Some fields get bad data. Abeg review and fix dem.",
+    "action": "Review form"
+  },
+  "INVALID_INPUT": {
+    "title": "Bad input",
+    "message": "Abeg check wetin you enter and try again.",
+    "action": "Fix input"
+  },
+  "RATE_LIMITED": {
+    "title": "Too many requests",
+    "message": "You don make too many requests. Abeg wait small and try again.",
+    "action": "Wait and retry"
+  },
+  "INTERNAL_ERROR": {
+    "title": "Something go wrong",
+    "message": "Unexpected error happen. We don tell our team.",
+    "action": "Try again"
+  },
+  "SERVICE_UNAVAILABLE": {
+    "title": "Service no dey available",
+    "message": "Dis service no dey available for now. Abeg try again in few minutes.",
+    "action": "Try again later"
+  },
+  "GATEWAY_ERROR": {
+    "title": "Connection error",
+    "message": "We no fit connect to the banking service. Check your connection and try again.",
+    "action": "Try again"
+  },
+  "fallback": {
+    "title": "Something go wrong",
+    "message": "Unexpected error happen. Abeg try again.",
+    "action": "Try again"
+  }
+}

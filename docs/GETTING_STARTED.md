@@ -87,7 +87,7 @@ All integration adapters (Plaid, MX, Alloy, AI services, etc.) are **optional** 
 ## First Things to Try
 
 1. **Log in** — Use `demo@fiducia.dev` / `demo1234` and explore accounts, transfers, cards, and the admin portal
-2. **Edit a page** — Open `src/pages/DashboardPage.tsx`, make a change, and watch HMR update instantly
+2. **Edit a page** — Open `apps/web/src/pages/DashboardPage.tsx`, make a change, and watch HMR update instantly
 3. **Run the tests** — `npm run test` starts Vitest in watch mode
 4. **Run validation** — `npm run validate` runs the same checks as CI (typecheck + lint + test + build)
 5. **Explore Supabase Studio** — Open http://localhost:54323 (Docker mode only) to browse the database
@@ -105,9 +105,9 @@ This repo includes `.vscode/` workspace configuration. When you open the project
 
 ### Other IDEs
 
-- Configure the `@/` path alias to resolve to `src/` (see `tsconfig.json`)
+- Configure the `@/` path alias to resolve to `apps/web/src/` (see `apps/web/tsconfig.json`)
 - Use Prettier for formatting (config in `package.json`)
-- Use ESLint with the flat config in `eslint.config.js`
+- Use ESLint with the flat config in `apps/web/eslint.config.js`
 
 ## Common Issues
 

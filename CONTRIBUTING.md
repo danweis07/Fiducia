@@ -50,7 +50,7 @@ Prefix with the area if helpful: `[adapters]`, `[i18n]`, `[admin]`, `[mobile]`, 
 - **TypeScript** — strict mode is enabled. No `any` unless unavoidable.
 - **React** — functional components with hooks. No class components.
 - **Styling** — Tailwind CSS utility classes. Use the existing design tokens in `tailwind.config.ts`.
-- **UI primitives** — use components from `src/components/ui/` (Radix-based, shadcn/ui pattern).
+- **UI primitives** — use components from `apps/web/src/components/ui/` (Radix-based, shadcn/ui pattern).
 - **Imports** — use the `@/` path alias (e.g., `import { Button } from "@/components/ui/button"`).
 - **Formatting** — ESLint enforces style. Run `npm run lint:fix` to auto-fix.
 - **Tests** — Vitest for unit tests, Playwright for E2E. Place unit tests in `__tests__/` directories or colocate as `*.test.ts(x)`.
@@ -66,13 +66,13 @@ All PRs must pass `npm run validate` which includes tests. Coverage thresholds a
 | Branches   | 40%       |
 | Functions  | 40%       |
 
-These thresholds are configured in `vitest.config.ts`. `src/components/ui/**` (shadcn primitives) is excluded from coverage.
+These thresholds are configured in `apps/web/vitest.config.ts`. `src/components/ui/**` (shadcn primitives) is excluded from coverage.
 
 **What to test:**
 
-- New hooks: test with `renderHook` + mocked gateway (see `src/hooks/__tests__/useAccounts.test.ts`)
+- New hooks: test with `renderHook` + mocked gateway (see `apps/web/src/hooks/__tests__/useAccounts.test.ts`)
 - New pages/components: test rendering and key interactions with Testing Library
-- New gateway actions: add mock data in `src/lib/demo-data/` and verify with a recipe script
+- New gateway actions: add mock data in `apps/web/src/lib/demo-data/` and verify with a recipe script
 - Bug fixes: add a regression test that would have caught the bug
 
 See `docs/TESTING_PATTERNS.md` for detailed patterns and examples.
@@ -99,8 +99,8 @@ See `docs/QUICKSTART-DEMO.md` for the full guide.
 
 Adapters follow a consistent pattern. Every adapter must:
 
-1. Define a TypeScript interface in `src/types/`
-2. Implement a mock/demo version in `src/lib/demo-data/`
+1. Define a TypeScript interface in `apps/web/src/types/`
+2. Implement a mock/demo version in `apps/web/src/lib/demo-data/`
 3. Implement the real adapter (if applicable)
 4. Register in the adapter registry so it can be selected via environment variable
 5. Fall back gracefully to the mock when no credentials are configured
@@ -109,7 +109,7 @@ Use the "New Adapter" issue template to propose one before starting work.
 
 ## Adding Translations (i18n)
 
-Translations live in `src/lib/i18n/locales/<lang-code>.json`. To add or update:
+Translations live in `apps/web/src/lib/i18n/locales/<lang-code>.json`. To add or update:
 
 1. Edit the relevant locale JSON file
 2. Run `npm run i18n:check` to verify all keys are present across languages

@@ -8,13 +8,13 @@ This document describes how the Fiducia digital banking platform aligns with Bra
 
 Brazilian financial institutions operate under a multi-authority supervisory model:
 
-| Authority | Scope | Relevance to Fiducia |
-|-----------|-------|----------------------|
-| **BCB** (Banco Central do Brasil) | Monetary policy, payment systems, prudential supervision | Pix rules, Open Finance, Resolution 4.893 cybersecurity, Resolution 4.658 cloud/outsourcing |
-| **CMN** (Conselho Monetario Nacional) | Overarching financial-system norms | CMN Resolution 2.025 (formerly 2.852) on CDD/KYC, data-retention minimums |
-| **CVM** (Comissao de Valores Mobiliarios) | Securities regulation | Relevant if a tenant offers investment products; out of scope for core banking |
-| **COAF** (Conselho de Controle de Atividades Financeiras) | Financial intelligence unit, AML/CFT | STR (Suspicious Transaction Report) filings, COAF data formats |
-| **ANPD** (Autoridade Nacional de Protecao de Dados) | Data protection enforcement | LGPD compliance, breach notifications, international data transfers |
+| Authority                                                 | Scope                                                    | Relevance to Fiducia                                                                        |
+| --------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **BCB** (Banco Central do Brasil)                         | Monetary policy, payment systems, prudential supervision | Pix rules, Open Finance, Resolution 4.893 cybersecurity, Resolution 4.658 cloud/outsourcing |
+| **CMN** (Conselho Monetario Nacional)                     | Overarching financial-system norms                       | CMN Resolution 2.025 (formerly 2.852) on CDD/KYC, data-retention minimums                   |
+| **CVM** (Comissao de Valores Mobiliarios)                 | Securities regulation                                    | Relevant if a tenant offers investment products; out of scope for core banking              |
+| **COAF** (Conselho de Controle de Atividades Financeiras) | Financial intelligence unit, AML/CFT                     | STR (Suspicious Transaction Report) filings, COAF data formats                              |
+| **ANPD** (Autoridade Nacional de Protecao de Dados)       | Data protection enforcement                              | LGPD compliance, breach notifications, international data transfers                         |
 
 Fiducia tenants operating in Brazil must satisfy requirements from all five authorities. The platform provides configurable controls so that each obligation maps to an auditable technical measure.
 
@@ -24,7 +24,7 @@ Fiducia tenants operating in Brazil must satisfy requirements from all five auth
 
 ### 2.1 Pix Instant Payments
 
-Pix is the BCB-mandated instant-payment rail. In the Fiducia market template for Brazil, Pix is enabled through the `aliasPayments` feature flag (set to `true` by default in the Brazil Digital Bank template). The adapter pattern in `src/lib/gateway/` allows the gateway action `payments.transfer` to route Pix transactions to a connected SPI (Sistema de Pagamentos Instantaneos) participant or PSP provider.
+Pix is the BCB-mandated instant-payment rail. In the Fiducia market template for Brazil, Pix is enabled through the `aliasPayments` feature flag (set to `true` by default in the Brazil Digital Bank template). The adapter pattern in `apps/web/src/lib/gateway/` allows the gateway action `payments.transfer` to route Pix transactions to a connected SPI (Sistema de Pagamentos Instantaneos) participant or PSP provider.
 
 **Key integration points:**
 
@@ -41,12 +41,12 @@ See Section 5 for full details on Open Finance participation.
 
 Resolution 4.658 (and successor Circular 3.909) govern the use of cloud services by regulated institutions. Requirements and Fiducia coverage:
 
-| Requirement | Platform Control |
-|-------------|-----------------|
+| Requirement                              | Platform Control                                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------------------- |
 | Data must be accessible to BCB on demand | Audit logs stored in PostgreSQL with `tenant_id` isolation; exportable via DataExport |
-| Cloud provider must allow BCB inspection | Deployment docs specify contractual clauses for AWS/GCP/Azure (see `deploy/`) |
-| Incident communication to BCB within 24h | Incident Manager triggers notification workflows |
-| Business continuity plan | Helm chart supports multi-AZ; monitoring stack provides failover alerting |
+| Cloud provider must allow BCB inspection | Deployment docs specify contractual clauses for AWS/GCP/Azure (see `deploy/`)         |
+| Incident communication to BCB within 24h | Incident Manager triggers notification workflows                                      |
+| Business continuity plan                 | Helm chart supports multi-AZ; monitoring stack provides failover alerting             |
 
 ### 2.4 Resolution 4.893 -- Cybersecurity
 
@@ -62,20 +62,20 @@ Brazil's LGPD (Law 13.709/2018) closely mirrors GDPR in structure but has distin
 
 Fiducia supports configurable lawful-basis tracking per data-processing activity. For Brazilian tenants, common bases include:
 
-- **Consent** (Art. 7, I) -- Managed through the consent tables used by Open Banking; see `src/pages/OpenBankingConsents.tsx`.
+- **Consent** (Art. 7, I) -- Managed through the consent tables used by Open Banking; see `apps/web/src/pages/OpenBankingConsents.tsx`.
 - **Legal obligation** (Art. 7, II) -- AML/KYC data retained under CMN rules; retention period set in `complianceSettings.dataRetentionYears` (default 5 years for BR).
 - **Legitimate interest** (Art. 7, IX) -- Fraud prevention and security monitoring.
 
 ### 3.2 Mapping to Platform Controls
 
-| LGPD Obligation | Fiducia Feature | Implementation |
-|-----------------|-----------------|----------------|
-| **Technical and administrative measures** (Art. 46) | Row Level Security (RLS) | Every database row scoped to `tenant_id`; PostgreSQL policies enforce isolation at query time |
-| **Data subject access requests** (Art. 18) | DataExport page (`src/pages/admin/DataExport.tsx`) | Admins generate full data packages for a given user; supports JSON and CSV output |
-| **Right to deletion** (Art. 18, VI) | DataExport + retention policies | Soft-delete with configurable hard-delete after retention period expires |
-| **Accountability and governance** (Art. 50) | Audit logs (`src/services/auditLogger.ts`) | All state-changing operations logged with actor, timestamp, tenant, and action metadata |
-| **Breach notification** (Art. 48) | Incident Manager + alerting | ANPD must be notified within a "reasonable time"; Incident Manager templates include ANPD notification steps |
-| **Data Protection Officer** (Art. 41) | Tenant settings | DPO contact information configurable per tenant in admin panel |
+| LGPD Obligation                                     | Fiducia Feature                                             | Implementation                                                                                               |
+| --------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Technical and administrative measures** (Art. 46) | Row Level Security (RLS)                                    | Every database row scoped to `tenant_id`; PostgreSQL policies enforce isolation at query time                |
+| **Data subject access requests** (Art. 18)          | DataExport page (`apps/web/src/pages/admin/DataExport.tsx`) | Admins generate full data packages for a given user; supports JSON and CSV output                            |
+| **Right to deletion** (Art. 18, VI)                 | DataExport + retention policies                             | Soft-delete with configurable hard-delete after retention period expires                                     |
+| **Accountability and governance** (Art. 50)         | Audit logs (`apps/web/src/services/auditLogger.ts`)         | All state-changing operations logged with actor, timestamp, tenant, and action metadata                      |
+| **Breach notification** (Art. 48)                   | Incident Manager + alerting                                 | ANPD must be notified within a "reasonable time"; Incident Manager templates include ANPD notification steps |
+| **Data Protection Officer** (Art. 41)               | Tenant settings                                             | DPO contact information configurable per tenant in admin panel                                               |
 
 ### 3.3 ANPD Requirements
 
@@ -97,7 +97,7 @@ LGPD restricts transfers of personal data outside Brazil (Art. 33). Fiducia supp
 
 ### 4.1 COAF Reporting
 
-COAF requires regulated institutions to file Suspicious Transaction Reports (STRs) for transactions that may indicate money laundering, terrorism financing, or proliferation financing. The ComplianceCenter (`src/pages/admin/ComplianceCenter.tsx`) provides:
+COAF requires regulated institutions to file Suspicious Transaction Reports (STRs) for transactions that may indicate money laundering, terrorism financing, or proliferation financing. The ComplianceCenter (`apps/web/src/pages/admin/ComplianceCenter.tsx`) provides:
 
 - **AML alerts dashboard** -- Real-time display of flagged transactions with severity, status, and investigation notes.
 - **STR generation** -- Alert data can be exported in the format required for COAF's SISCOAF electronic filing system.
@@ -107,11 +107,11 @@ COAF requires regulated institutions to file Suspicious Transaction Reports (STR
 
 CMN Resolution 2.025 (consolidating earlier norms including 2.852 and 4.753) requires CDD procedures including:
 
-| CDD Level | Trigger | Fiducia Implementation |
-|-----------|---------|----------------------|
-| **Simplified** | Low-risk products, accounts below BRL 5,000/month | Basic identity verification via KYC adapter |
-| **Standard** | All account holders | Full KYC flow: document verification + CPF/CNPJ validation via adapter |
-| **Enhanced** | PEPs (Pessoas Expostas Politicamente), high-value accounts | Additional screening through AML adapter; PEP lists refreshed periodically |
+| CDD Level      | Trigger                                                    | Fiducia Implementation                                                     |
+| -------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------- |
+| **Simplified** | Low-risk products, accounts below BRL 5,000/month          | Basic identity verification via KYC adapter                                |
+| **Standard**   | All account holders                                        | Full KYC flow: document verification + CPF/CNPJ validation via adapter     |
+| **Enhanced**   | PEPs (Pessoas Expostas Politicamente), high-value accounts | Additional screening through AML adapter; PEP lists refreshed periodically |
 
 The KYC adapter pattern allows integration with Brazilian identity verification providers (e.g., Serpro for CPF validation, Receita Federal for CNPJ lookups) without changing core platform code.
 
@@ -131,16 +131,16 @@ Open Finance Brasil, mandated by the BCB, extends beyond PSD2-style open banking
 
 ### 5.1 Phase Coverage
 
-| Phase | Scope | Platform Support |
-|-------|-------|-----------------|
-| **Phase 1** | Institution data, products, and channels | Public API endpoints; no authentication required |
-| **Phase 2** | Customer data sharing (accounts, transactions, credit) | Consent-managed API access via `openBanking` feature flag |
-| **Phase 3** | Payment initiation, Pix forwarding | `aliasPayments` + `payments.transfer` gateway action |
-| **Phase 4** | Insurance, investments, foreign exchange, pensions | Adapter extension points; tenant-specific configuration required |
+| Phase       | Scope                                                  | Platform Support                                                 |
+| ----------- | ------------------------------------------------------ | ---------------------------------------------------------------- |
+| **Phase 1** | Institution data, products, and channels               | Public API endpoints; no authentication required                 |
+| **Phase 2** | Customer data sharing (accounts, transactions, credit) | Consent-managed API access via `openBanking` feature flag        |
+| **Phase 3** | Payment initiation, Pix forwarding                     | `aliasPayments` + `payments.transfer` gateway action             |
+| **Phase 4** | Insurance, investments, foreign exchange, pensions     | Adapter extension points; tenant-specific configuration required |
 
 ### 5.2 Consent Management
 
-The consent framework (`src/pages/OpenBankingConsents.tsx`, hooks in `src/hooks/useOpenBanking.ts`) implements:
+The consent framework (`apps/web/src/pages/OpenBankingConsents.tsx`, hooks in `apps/web/src/hooks/useOpenBanking.ts`) implements:
 
 - **Granular consent** -- Customers grant or revoke access per data category and per third-party institution.
 - **Consent lifecycle** -- Creation, renewal (max 12 months per BCB rules), and revocation tracked with timestamps and audit logs.
@@ -163,18 +163,18 @@ BCB Resolution 4.893 (replacing Circular 3.909) establishes cybersecurity requir
 
 ### 6.1 Requirement Mapping
 
-| Res. 4.893 Requirement | Fiducia Control | Evidence |
-|-------------------------|-----------------|----------|
-| **Cybersecurity policy** (Art. 2) | Tenant-level compliance settings; documented security policies | `complianceSettings` in tenant config |
-| **Incident detection and response** (Art. 3) | Monitoring stack (Prometheus + Grafana + Alertmanager); Incident Manager | `monitoring/` configs, alert rules |
-| **Vulnerability management** (Art. 6) | CI/CD pipeline includes dependency scanning; Dependabot enabled | `.github/` workflows |
-| **Access controls** (Art. 8) | RBAC with tenant-scoped roles (`owner`, `admin`, `member`, `viewer`); MFA enforced for BR tenants | `TenantUserRole` type, `mfaRequired: true` |
-| **Data classification** (Art. 10) | Four-tier classification: `public`, `internal`, `confidential`, `restricted` | `DataClassification` type in `src/types/tenant.ts` |
-| **Audit trail** (Art. 12) | Immutable audit logs with actor, action, timestamp, tenant context | `src/services/auditLogger.ts` |
-| **Third-party risk** (Art. 14) | Adapter pattern isolates integrations; each adapter independently testable | `src/lib/gateway/` adapter registry |
-| **BCB notification** (Art. 16) | Incident Manager includes BCB notification template; 24-hour reporting window | Incident response runbook |
-| **Business continuity** (Art. 17) | Multi-AZ deployments via Helm; automated failover | `helm/`, `deploy/` configs |
-| **Penetration testing** (Art. 20) | Annual pentest scope documented; findings tracked in ComplianceCenter | External engagement; results uploaded to tenant |
+| Res. 4.893 Requirement                       | Fiducia Control                                                                                   | Evidence                                                    |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Cybersecurity policy** (Art. 2)            | Tenant-level compliance settings; documented security policies                                    | `complianceSettings` in tenant config                       |
+| **Incident detection and response** (Art. 3) | Monitoring stack (Prometheus + Grafana + Alertmanager); Incident Manager                          | `monitoring/` configs, alert rules                          |
+| **Vulnerability management** (Art. 6)        | CI/CD pipeline includes dependency scanning; Dependabot enabled                                   | `.github/` workflows                                        |
+| **Access controls** (Art. 8)                 | RBAC with tenant-scoped roles (`owner`, `admin`, `member`, `viewer`); MFA enforced for BR tenants | `TenantUserRole` type, `mfaRequired: true`                  |
+| **Data classification** (Art. 10)            | Four-tier classification: `public`, `internal`, `confidential`, `restricted`                      | `DataClassification` type in `apps/web/src/types/tenant.ts` |
+| **Audit trail** (Art. 12)                    | Immutable audit logs with actor, action, timestamp, tenant context                                | `apps/web/src/services/auditLogger.ts`                      |
+| **Third-party risk** (Art. 14)               | Adapter pattern isolates integrations; each adapter independently testable                        | `apps/web/src/lib/gateway/` adapter registry                |
+| **BCB notification** (Art. 16)               | Incident Manager includes BCB notification template; 24-hour reporting window                     | Incident response runbook                                   |
+| **Business continuity** (Art. 17)            | Multi-AZ deployments via Helm; automated failover                                                 | `helm/`, `deploy/` configs                                  |
+| **Penetration testing** (Art. 20)            | Annual pentest scope documented; findings tracked in ComplianceCenter                             | External engagement; results uploaded to tenant             |
 
 ### 6.2 Incident Response Timeline
 
@@ -239,35 +239,35 @@ Pix transactions flow through a dedicated adapter that validates the Pix key, ch
 
 ### 8.2 Data Classification by Flow
 
-| Data Category | Classification | Residency | Retention |
-|--------------|----------------|-----------|-----------|
-| Customer PII (CPF, name, address) | Restricted | LATAM region only | 5 years post account closure |
-| Transaction records | Confidential | LATAM region only | 5 years minimum (CMN) |
-| Pix key mappings | Restricted | LATAM region only | Duration of key registration |
-| Audit logs | Confidential | LATAM region only | 5 years minimum |
-| Consent records | Confidential | LATAM region only | 5 years post expiry |
-| Tenant configuration | Internal | Global control plane | Active tenant lifetime |
-| Aggregated analytics | Internal | Global control plane | 2 years |
+| Data Category                     | Classification | Residency            | Retention                    |
+| --------------------------------- | -------------- | -------------------- | ---------------------------- |
+| Customer PII (CPF, name, address) | Restricted     | LATAM region only    | 5 years post account closure |
+| Transaction records               | Confidential   | LATAM region only    | 5 years minimum (CMN)        |
+| Pix key mappings                  | Restricted     | LATAM region only    | Duration of key registration |
+| Audit logs                        | Confidential   | LATAM region only    | 5 years minimum              |
+| Consent records                   | Confidential   | LATAM region only    | 5 years post expiry          |
+| Tenant configuration              | Internal       | Global control plane | Active tenant lifetime       |
+| Aggregated analytics              | Internal       | Global control plane | 2 years                      |
 
 ---
 
 ## 9. Policy Alignment Matrix
 
-| Platform Feature | BCB/CMN | LGPD | COAF/AML | Open Finance | Res. 4.893 |
-|-----------------|---------|------|----------|--------------|------------|
-| Row Level Security | -- | Art. 46 (technical measures) | -- | Data isolation | Art. 8 (access control) |
-| Audit Logger | Resolution 4.658 (BCB access) | Art. 50 (accountability) | Transaction trail | Consent audit | Art. 12 (audit trail) |
-| DataExport | -- | Art. 18 (DSAR) | -- | -- | -- |
-| ComplianceCenter | -- | -- | STR filing | -- | Incident tracking |
-| MFA enforcement | -- | Art. 46 | -- | FAPI profile | Art. 8 |
-| Consent management | -- | Art. 7-8 (consent basis) | -- | Phase 2-3 consent | -- |
-| `aliasPayments` flag | Pix regulation | -- | Transaction monitoring | Phase 3 (payment init) | -- |
-| `amlScreening` flag | -- | -- | CMN 2.025 CDD | -- | -- |
-| KYC adapter | -- | Art. 7, II (legal obligation) | CMN 2.025 CDD | -- | Art. 14 (third-party) |
-| Incident Manager | Res. 4.658 (24h notify) | Art. 48 (breach notify) | -- | -- | Art. 3, Art. 16 |
-| Data classification | -- | Art. 46 | -- | -- | Art. 10 |
-| Session timeout (10 min) | BCB digital channel guidance | -- | -- | FAPI session rules | Art. 8 |
-| Data residency config | Res. 4.658 (data access) | Art. 33 (intl transfers) | -- | -- | -- |
+| Platform Feature         | BCB/CMN                       | LGPD                          | COAF/AML               | Open Finance           | Res. 4.893              |
+| ------------------------ | ----------------------------- | ----------------------------- | ---------------------- | ---------------------- | ----------------------- |
+| Row Level Security       | --                            | Art. 46 (technical measures)  | --                     | Data isolation         | Art. 8 (access control) |
+| Audit Logger             | Resolution 4.658 (BCB access) | Art. 50 (accountability)      | Transaction trail      | Consent audit          | Art. 12 (audit trail)   |
+| DataExport               | --                            | Art. 18 (DSAR)                | --                     | --                     | --                      |
+| ComplianceCenter         | --                            | --                            | STR filing             | --                     | Incident tracking       |
+| MFA enforcement          | --                            | Art. 46                       | --                     | FAPI profile           | Art. 8                  |
+| Consent management       | --                            | Art. 7-8 (consent basis)      | --                     | Phase 2-3 consent      | --                      |
+| `aliasPayments` flag     | Pix regulation                | --                            | Transaction monitoring | Phase 3 (payment init) | --                      |
+| `amlScreening` flag      | --                            | --                            | CMN 2.025 CDD          | --                     | --                      |
+| KYC adapter              | --                            | Art. 7, II (legal obligation) | CMN 2.025 CDD          | --                     | Art. 14 (third-party)   |
+| Incident Manager         | Res. 4.658 (24h notify)       | Art. 48 (breach notify)       | --                     | --                     | Art. 3, Art. 16         |
+| Data classification      | --                            | Art. 46                       | --                     | --                     | Art. 10                 |
+| Session timeout (10 min) | BCB digital channel guidance  | --                            | --                     | FAPI session rules     | Art. 8                  |
+| Data residency config    | Res. 4.658 (data access)      | Art. 33 (intl transfers)      | --                     | --                     | --                      |
 
 ---
 
@@ -277,27 +277,27 @@ The following items require tenant-level configuration or additional development
 
 ### 10.1 Required Configuration (Supported, Needs Tenant Setup)
 
-| Item | Action Required | Effort |
-|------|----------------|--------|
-| Pix adapter credentials | Connect SPI participant or PSP; configure DICT proxy URL | Configuration |
-| CPF/CNPJ validation provider | Register with Serpro or equivalent; configure KYC adapter | Configuration |
-| COAF SISCOAF credentials | Obtain institutional access; configure STR export format | Configuration |
-| Open Finance Brasil directory registration | Register with governance body; configure mTLS certificates | Configuration + Ops |
-| ANPD DPO registration | Appoint DPO; configure contact in tenant settings | Configuration |
-| Portuguese (pt-BR) locale | Already supported in `supportedLanguages`; verify all 6 i18n namespaces complete | Validation |
+| Item                                       | Action Required                                                                  | Effort              |
+| ------------------------------------------ | -------------------------------------------------------------------------------- | ------------------- |
+| Pix adapter credentials                    | Connect SPI participant or PSP; configure DICT proxy URL                         | Configuration       |
+| CPF/CNPJ validation provider               | Register with Serpro or equivalent; configure KYC adapter                        | Configuration       |
+| COAF SISCOAF credentials                   | Obtain institutional access; configure STR export format                         | Configuration       |
+| Open Finance Brasil directory registration | Register with governance body; configure mTLS certificates                       | Configuration + Ops |
+| ANPD DPO registration                      | Appoint DPO; configure contact in tenant settings                                | Configuration       |
+| Portuguese (pt-BR) locale                  | Already supported in `supportedLanguages`; verify all 6 i18n namespaces complete | Validation          |
 
 ### 10.2 Gaps Requiring Development
 
-| Gap | Description | Priority | Estimated Effort |
-|-----|-------------|----------|-----------------|
-| **DICT integration adapter** | Direct integration with BCB's DICT for Pix key resolution (currently requires PSP intermediary) | High | 2-3 sprints |
-| **SISCOAF report format** | Automated STR generation in COAF's specific XML schema | High | 1-2 sprints |
-| **Open Finance Phase 4 APIs** | Insurance, investment, and pension data sharing endpoints | Medium | 3-4 sprints |
-| **Pix QR code standards** | Full BR Code specification compliance (dynamic QR with merchant data) | Medium | 1 sprint |
-| **LGPD cookie consent banner** | Brazil-specific consent language and ANPD-compliant opt-in flow | Medium | 1 sprint |
-| **PEP list integration** | Automated ingestion of Brazilian PEP lists from official sources | Medium | 1 sprint |
-| **BACEN STAR reporting** | Automated generation of BCB's STAR regulatory reports | Low | 2 sprints |
-| **Pix Garantias** | Support for Pix-based collateral/guarantee flows | Low | 2-3 sprints |
+| Gap                            | Description                                                                                     | Priority | Estimated Effort |
+| ------------------------------ | ----------------------------------------------------------------------------------------------- | -------- | ---------------- |
+| **DICT integration adapter**   | Direct integration with BCB's DICT for Pix key resolution (currently requires PSP intermediary) | High     | 2-3 sprints      |
+| **SISCOAF report format**      | Automated STR generation in COAF's specific XML schema                                          | High     | 1-2 sprints      |
+| **Open Finance Phase 4 APIs**  | Insurance, investment, and pension data sharing endpoints                                       | Medium   | 3-4 sprints      |
+| **Pix QR code standards**      | Full BR Code specification compliance (dynamic QR with merchant data)                           | Medium   | 1 sprint         |
+| **LGPD cookie consent banner** | Brazil-specific consent language and ANPD-compliant opt-in flow                                 | Medium   | 1 sprint         |
+| **PEP list integration**       | Automated ingestion of Brazilian PEP lists from official sources                                | Medium   | 1 sprint         |
+| **BACEN STAR reporting**       | Automated generation of BCB's STAR regulatory reports                                           | Low      | 2 sprints        |
+| **Pix Garantias**              | Support for Pix-based collateral/guarantee flows                                                | Low      | 2-3 sprints      |
 
 ### 10.3 Operational Prerequisites
 

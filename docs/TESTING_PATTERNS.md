@@ -12,17 +12,17 @@ npm run test:e2e         # Playwright E2E (auto-starts dev server)
 npm run test:e2e:headed  # E2E with visible browser
 
 # Single file
-npx vitest run src/hooks/__tests__/useAccounts.test.ts
+npx vitest run apps/web/src/hooks/__tests__/useAccounts.test.ts
 ```
 
 ## File Organization
 
 - Place tests in `__tests__/` directories next to the source code
 - Name files `*.test.ts` for pure logic, `*.test.tsx` for component tests
-- Global setup lives in `src/test/setup.ts` (auto-loaded by vitest)
+- Global setup lives in `apps/web/src/test/setup.ts` (auto-loaded by vitest)
 
 ```
-src/hooks/
+apps/web/src/hooks/
 ├── useAccounts.ts
 ├── __tests__/
 │   └── useAccounts.test.ts
@@ -30,16 +30,16 @@ src/hooks/
 
 ## Coverage
 
-Thresholds (from `vitest.config.ts`):
+Thresholds (from `apps/web/vitest.config.ts`):
 
 - Statements: 50%, Lines: 50%, Branches: 40%, Functions: 40%
-- `src/components/ui/**` is excluded (shadcn primitives)
+- `apps/web/src/components/ui/**` is excluded (shadcn primitives)
 
 ## Unit Test Patterns
 
 ### Testing React Hooks (TanStack Query)
 
-Reference: `src/hooks/__tests__/useAccounts.test.ts`
+Reference: `apps/web/src/hooks/__tests__/useAccounts.test.ts`
 
 ```ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -94,7 +94,7 @@ Key points:
 
 ### Testing Components
 
-Reference: `src/components/common/__tests__/Spinner.test.tsx`
+Reference: `apps/web/src/components/common/__tests__/Spinner.test.tsx`
 
 ```ts
 import { render, screen } from '@testing-library/react';
@@ -111,7 +111,7 @@ Prefer accessible queries: `getByRole`, `getByText`, `getByLabelText` over CSS s
 
 ### Testing Context Providers
 
-Reference: `src/contexts/__tests__/TenantContext.test.tsx`
+Reference: `apps/web/src/contexts/__tests__/TenantContext.test.tsx`
 
 Context tests typically mock the backend module, then test state transitions:
 
@@ -128,7 +128,7 @@ vi.mock("@/lib/backend");
 | Gateway calls   | `vi.mock('@/lib/gateway')` then `vi.mocked(gateway.xxx).mockResolvedValue(...)` |
 | Backend/auth    | `vi.mock('@/lib/backend')`                                                      |
 | Demo mode       | `vi.mock('@/lib/demo')`                                                         |
-| Supabase client | Pre-mocked in `src/test/setup.ts` (automatic)                                   |
+| Supabase client | Pre-mocked in `apps/web/src/test/setup.ts` (automatic)                          |
 | Browser APIs    | `matchMedia`, `IntersectionObserver`, `ResizeObserver` pre-mocked in setup      |
 
 ## E2E Test Patterns
@@ -150,7 +150,7 @@ test.describe("Authentication", () => {
 });
 ```
 
-- Dev server starts automatically (configured in `playwright.config.ts`)
+- Dev server starts automatically (configured in `apps/web/playwright.config.ts`)
 - Browser matrix: Chromium, Firefox, WebKit, Mobile Chrome
 - Use `page.getByRole()`, `page.getByText()`, `page.getByPlaceholder()` for locators
 - Traces collected on first retry, screenshots on failure
@@ -160,7 +160,7 @@ test.describe("Authentication", () => {
 - **Hooks:** Public API (return values, side effects). Mock the gateway/backend layer.
 - **Components:** Rendering, user interactions, accessibility roles.
 - **Contexts:** State machine behavior (init -> loading -> loaded/error).
-- **Skip:** shadcn/ui primitives in `src/components/ui/` (excluded from coverage).
+- **Skip:** shadcn/ui primitives in `apps/web/src/components/ui/` (excluded from coverage).
 
 ## Adding a New Test
 
@@ -168,5 +168,5 @@ test.describe("Authentication", () => {
 2. Import from vitest: `describe`, `it`, `expect`, `vi`, `beforeEach`
 3. Set up `vi.mock()` calls before imports that depend on them
 4. For hooks needing providers, use the `createWrapper()` pattern shown above
-5. Run: `npx vitest run src/path/__tests__/your-file.test.ts`
+5. Run: `npx vitest run apps/web/src/path/__tests__/your-file.test.ts`
 6. Check coverage: `npm run test:coverage`

@@ -11,15 +11,15 @@
 
 Fiducia operates within a multi-regulator environment in India. The following bodies hold supervisory authority over digital banking platforms deployed for Indian financial institutions:
 
-| Regulator | Full Name | Jurisdiction |
-|-----------|-----------|-------------|
-| **RBI** | Reserve Bank of India | Banking regulation, payment systems, digital lending, KYC/AML, data localization |
-| **SEBI** | Securities and Exchange Board of India | Investment products, mutual fund distribution, securities settlement |
-| **IRDAI** | Insurance Regulatory and Development Authority of India | Insurance product distribution, if offered through the platform |
-| **NPCI** | National Payments Corporation of India | UPI, IMPS, NACH, RuPay rail operations and certification |
-| **MeitY** | Ministry of Electronics and Information Technology | DPDP Act 2023 enforcement, IT Act 2000, intermediary guidelines |
-| **CERT-In** | Indian Computer Emergency Response Team | Cybersecurity incident reporting, vulnerability disclosure |
-| **FIU-IND** | Financial Intelligence Unit — India | Suspicious transaction reporting under PMLA |
+| Regulator   | Full Name                                               | Jurisdiction                                                                     |
+| ----------- | ------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **RBI**     | Reserve Bank of India                                   | Banking regulation, payment systems, digital lending, KYC/AML, data localization |
+| **SEBI**    | Securities and Exchange Board of India                  | Investment products, mutual fund distribution, securities settlement             |
+| **IRDAI**   | Insurance Regulatory and Development Authority of India | Insurance product distribution, if offered through the platform                  |
+| **NPCI**    | National Payments Corporation of India                  | UPI, IMPS, NACH, RuPay rail operations and certification                         |
+| **MeitY**   | Ministry of Electronics and Information Technology      | DPDP Act 2023 enforcement, IT Act 2000, intermediary guidelines                  |
+| **CERT-In** | Indian Computer Emergency Response Team                 | Cybersecurity incident reporting, vulnerability disclosure                       |
+| **FIU-IND** | Financial Intelligence Unit — India                     | Suspicious transaction reporting under PMLA                                      |
 
 Fiducia's multi-tenant architecture and adapter pattern allow each tenant (credit union or community bank) to satisfy the requirements of all applicable regulators through a shared compliance infrastructure while maintaining strict data isolation.
 
@@ -39,11 +39,11 @@ The RBI's Guidelines on Digital Lending, effective September 2, 2022, impose req
 
 ### 2.2 UPI / NPCI Integration
 
-Fiducia's adapter pattern (`src/lib/gateway/`) supports UPI integration through a dedicated payment adapter. The architecture works as follows:
+Fiducia's adapter pattern (`apps/web/src/lib/gateway/`) supports UPI integration through a dedicated payment adapter. The architecture works as follows:
 
 1. The `payments.transfer` gateway action routes to a UPI adapter when the tenant's configuration specifies UPI as a payment rail.
 2. The adapter implements NPCI's UPI 2.0 specification, handling collect requests, pay requests, mandate creation, and transaction status callbacks.
-3. In demo mode (`VITE_DEMO_MODE=true`), the UPI adapter falls back to a mock implementation in `src/lib/demo-data/` — no NPCI sandbox credentials required.
+3. In demo mode (`VITE_DEMO_MODE=true`), the UPI adapter falls back to a mock implementation in `apps/web/src/lib/demo-data/` — no NPCI sandbox credentials required.
 4. For production tenants, the adapter connects to the acquiring bank's UPI switch via the PSP (Payment Service Provider) stack.
 
 NPCI certification (functional, security, and performance) must be completed per-tenant through the sponsoring bank before production UPI traffic is routed.
@@ -56,7 +56,7 @@ RBI's Master Direction on KYC requires regulated entities to perform Customer Du
 - **Aadhaar eKYC.** Adapter for UIDAI's eKYC API (OTP-based and biometric modes). See Section 10 for current gap status.
 - **CKYC.** Central KYC Registry lookup and upload via adapter, enabling de-duplication of KYC records across institutions.
 - **Periodic re-KYC.** Automated workflows trigger re-verification at RBI-mandated intervals (2 years for high-risk, 8 years for low-risk customers).
-- **PEP and sanctions screening.** Configurable screening lists integrated through the compliance adapter in `src/lib/gateway/compliance/`.
+- **PEP and sanctions screening.** Configurable screening lists integrated through the compliance adapter in `apps/web/src/lib/gateway/compliance/`.
 
 ### 2.4 Outsourcing Guidelines
 
@@ -75,12 +75,12 @@ The DPDP Act 2023 (Act No. 22 of 2023) establishes India's comprehensive data pr
 
 ### 3.1 Data Principal Rights
 
-| Right | DPDP Act Section | Platform Implementation |
-|-------|-----------------|------------------------|
-| Right to access | Section 11 | DataExport component generates a machine-readable summary of all personal data held |
-| Right to correction and erasure | Section 12 | Self-service profile editing; erasure requests routed to tenant compliance officer with audit trail |
-| Right to grievance redressal | Section 13 | In-app grievance submission; SLA tracking per Data Protection Board timelines |
-| Right to nominate | Section 14 | Nominee registration workflow for account holders (death or incapacity scenarios) |
+| Right                           | DPDP Act Section | Platform Implementation                                                                             |
+| ------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------- |
+| Right to access                 | Section 11       | DataExport component generates a machine-readable summary of all personal data held                 |
+| Right to correction and erasure | Section 12       | Self-service profile editing; erasure requests routed to tenant compliance officer with audit trail |
+| Right to grievance redressal    | Section 13       | In-app grievance submission; SLA tracking per Data Protection Board timelines                       |
+| Right to nominate               | Section 14       | Nominee registration workflow for account holders (death or incapacity scenarios)                   |
 
 ### 3.2 Consent Management
 
@@ -145,19 +145,19 @@ Under CERT-In Directions of April 28, 2022, all service providers (including tho
 
 The RBI's Comprehensive Cyber Security Framework for Primary (Urban) Cooperative Banks and the IT Framework for NBFC/Banks require:
 
-| Requirement | Platform Control |
-|-------------|-----------------|
-| Board-approved cybersecurity policy | Template provided per tenant; policy document management in admin portal |
-| SOC operations | Monitoring stack (Prometheus + Grafana) with pre-built dashboards for anomaly detection |
-| Vulnerability assessment | Quarterly VAPT scheduling support; findings tracked in the compliance module |
-| Access control and privilege management | RBAC with role hierarchy; MFA enforcement; session timeout policies |
-| Patch management | Infrastructure-as-code deployment pipelines with automated patching for managed components |
-| Phishing/social engineering awareness | Tenant-configurable security awareness prompts within the platform |
+| Requirement                             | Platform Control                                                                           |
+| --------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Board-approved cybersecurity policy     | Template provided per tenant; policy document management in admin portal                   |
+| SOC operations                          | Monitoring stack (Prometheus + Grafana) with pre-built dashboards for anomaly detection    |
+| Vulnerability assessment                | Quarterly VAPT scheduling support; findings tracked in the compliance module               |
+| Access control and privilege management | RBAC with role hierarchy; MFA enforcement; session timeout policies                        |
+| Patch management                        | Infrastructure-as-code deployment pipelines with automated patching for managed components |
+| Phishing/social engineering awareness   | Tenant-configurable security awareness prompts within the platform                         |
 
 ### 5.3 Access Controls
 
 - **Multi-factor authentication** is enforced for all administrative access and configurable for end-user access.
-- **Role-based access control (RBAC)** in `src/contexts/` and enforced at the database level via RLS policies.
+- **Role-based access control (RBAC)** in `apps/web/src/contexts/` and enforced at the database level via RLS policies.
 - **Session management** includes configurable idle timeouts, concurrent session limits, and device binding.
 - **Privileged access management** — administrative actions require step-up authentication and are logged separately.
 
@@ -243,22 +243,22 @@ No payment system data leaves Indian borders. For cross-border payment transacti
 
 ## 9. Policy Alignment — Feature to Regulation Mapping
 
-| Platform Feature | Indian Regulation | Compliance Function |
-|-----------------|-------------------|-------------------|
-| Row Level Security (RLS) | DPDP Act 2023, RBI IT Framework | Tenant data isolation, access control |
-| Audit logging | PMLA 2002, RBI Outsourcing Guidelines | Tamper-evident activity records, 5-year retention |
-| DataExport API | DPDP Act 2023 (Section 11) | Data principal right to access |
-| Consent management | DPDP Act 2023, RBI Digital Lending Guidelines | Purpose-specific consent, granular withdrawal |
-| Transaction monitoring | PMLA 2002, FIU-IND Rules | STR/CTR generation, threshold-based alerts |
-| MFA enforcement | RBI Cybersecurity Framework, CERT-In Directions | Strong authentication for admin and user access |
-| `tenant_registry.region` | RBI Data Localization Circular | Payment data residency enforcement |
-| Adapter pattern (UPI) | NPCI UPI 2.0 Specification | Pluggable payment rail integration |
-| Adapter pattern (KYC) | RBI Master Direction on KYC, PMLA Rules | V-CIP, Aadhaar eKYC, CKYC integration |
-| Incident manager | CERT-In Directions (6-hour reporting) | Automated incident classification and report drafting |
-| Grievance redressal module | DPDP Act 2023, RBI Digital Lending Guidelines | Complaint tracking with SLA enforcement |
-| Monitoring stack | RBI CSITE Guidelines | Prometheus/Grafana dashboards, Alertmanager escalation |
-| Encryption at rest/in transit | RBI IT Framework, DPDP Act 2023 | AES-256 at rest, TLS 1.2+ in transit |
-| Automated data purge | DPDP Act 2023 (purpose limitation) | Configurable retention periods with auto-deletion |
+| Platform Feature              | Indian Regulation                               | Compliance Function                                    |
+| ----------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| Row Level Security (RLS)      | DPDP Act 2023, RBI IT Framework                 | Tenant data isolation, access control                  |
+| Audit logging                 | PMLA 2002, RBI Outsourcing Guidelines           | Tamper-evident activity records, 5-year retention      |
+| DataExport API                | DPDP Act 2023 (Section 11)                      | Data principal right to access                         |
+| Consent management            | DPDP Act 2023, RBI Digital Lending Guidelines   | Purpose-specific consent, granular withdrawal          |
+| Transaction monitoring        | PMLA 2002, FIU-IND Rules                        | STR/CTR generation, threshold-based alerts             |
+| MFA enforcement               | RBI Cybersecurity Framework, CERT-In Directions | Strong authentication for admin and user access        |
+| `tenant_registry.region`      | RBI Data Localization Circular                  | Payment data residency enforcement                     |
+| Adapter pattern (UPI)         | NPCI UPI 2.0 Specification                      | Pluggable payment rail integration                     |
+| Adapter pattern (KYC)         | RBI Master Direction on KYC, PMLA Rules         | V-CIP, Aadhaar eKYC, CKYC integration                  |
+| Incident manager              | CERT-In Directions (6-hour reporting)           | Automated incident classification and report drafting  |
+| Grievance redressal module    | DPDP Act 2023, RBI Digital Lending Guidelines   | Complaint tracking with SLA enforcement                |
+| Monitoring stack              | RBI CSITE Guidelines                            | Prometheus/Grafana dashboards, Alertmanager escalation |
+| Encryption at rest/in transit | RBI IT Framework, DPDP Act 2023                 | AES-256 at rest, TLS 1.2+ in transit                   |
+| Automated data purge          | DPDP Act 2023 (purpose limitation)              | Configurable retention periods with auto-deletion      |
 
 ---
 
@@ -268,41 +268,41 @@ The following items represent areas where additional development, certification,
 
 ### 10.1 UPI Integration
 
-| Item | Status | Remediation |
-|------|--------|------------|
-| UPI adapter implementation | Partial — mock adapter exists in demo mode | Complete production adapter against NPCI UPI 2.0 spec |
-| NPCI functional certification | Not started | Engage sponsoring bank; schedule certification cycle (typically 4-6 weeks) |
-| NPCI security certification | Not started | Complete NPCI-mandated security audit of UPI integration endpoints |
-| UPI AutoPay (mandates) | Not implemented | Extend adapter to support recurring mandate registration and execution |
-| UPI QR code generation | Not implemented | Add QR code generation for merchant payment collection flows |
+| Item                          | Status                                     | Remediation                                                                |
+| ----------------------------- | ------------------------------------------ | -------------------------------------------------------------------------- |
+| UPI adapter implementation    | Partial — mock adapter exists in demo mode | Complete production adapter against NPCI UPI 2.0 spec                      |
+| NPCI functional certification | Not started                                | Engage sponsoring bank; schedule certification cycle (typically 4-6 weeks) |
+| NPCI security certification   | Not started                                | Complete NPCI-mandated security audit of UPI integration endpoints         |
+| UPI AutoPay (mandates)        | Not implemented                            | Extend adapter to support recurring mandate registration and execution     |
+| UPI QR code generation        | Not implemented                            | Add QR code generation for merchant payment collection flows               |
 
 ### 10.2 Aadhaar eKYC
 
-| Item | Status | Remediation |
-|------|--------|------------|
-| UIDAI AUA/KUA license | Not held by platform | Tenant must hold or obtain AUA license; platform integrates via tenant's ASA |
-| eKYC adapter (OTP mode) | Partial — interface defined | Complete implementation against UIDAI eKYC API specification |
-| eKYC adapter (biometric mode) | Not implemented | Integrate with registered biometric device SDK; requires RD service certification |
-| Aadhaar data vault | Not implemented | Build encrypted Aadhaar data vault per UIDAI circular on storage of Aadhaar numbers |
-| Virtual ID support | Not implemented | Support 16-digit Virtual ID as alternative to Aadhaar number in eKYC flow |
+| Item                          | Status                      | Remediation                                                                         |
+| ----------------------------- | --------------------------- | ----------------------------------------------------------------------------------- |
+| UIDAI AUA/KUA license         | Not held by platform        | Tenant must hold or obtain AUA license; platform integrates via tenant's ASA        |
+| eKYC adapter (OTP mode)       | Partial — interface defined | Complete implementation against UIDAI eKYC API specification                        |
+| eKYC adapter (biometric mode) | Not implemented             | Integrate with registered biometric device SDK; requires RD service certification   |
+| Aadhaar data vault            | Not implemented             | Build encrypted Aadhaar data vault per UIDAI circular on storage of Aadhaar numbers |
+| Virtual ID support            | Not implemented             | Support 16-digit Virtual ID as alternative to Aadhaar number in eKYC flow           |
 
 ### 10.3 Data Localization Enforcement
 
-| Item | Status | Remediation |
-|------|--------|------------|
-| Region-based tenant routing | Implemented — `tenant_registry.region` field | Verify enforcement at infrastructure level for all Indian tenants |
-| Automated localization audit | Not implemented | Build automated checks that validate no payment data replication outside India |
-| RBI annual compliance certificate | Process not defined | Define process for annual data localization audit and certification submission to RBI |
-| CDN configuration audit | Not performed | Verify CDN rules exclude personal/payment data from non-Indian edge nodes |
+| Item                              | Status                                       | Remediation                                                                           |
+| --------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Region-based tenant routing       | Implemented — `tenant_registry.region` field | Verify enforcement at infrastructure level for all Indian tenants                     |
+| Automated localization audit      | Not implemented                              | Build automated checks that validate no payment data replication outside India        |
+| RBI annual compliance certificate | Process not defined                          | Define process for annual data localization audit and certification submission to RBI |
+| CDN configuration audit           | Not performed                                | Verify CDN rules exclude personal/payment data from non-Indian edge nodes             |
 
 ### 10.4 Additional Gaps
 
-| Item | Status | Remediation |
-|------|--------|------------|
-| Account Aggregator (AA) integration | Not implemented | Build adapter for RBI-licensed Account Aggregator ecosystem (FIP/FIU roles) |
-| RBI regulatory sandbox participation | Not initiated | Evaluate participation in RBI's regulatory sandbox for digital lending or payments |
-| DPBI registration | Pending DPDP Act rules | Register as Data Processor once Data Protection Board of India issues procedural rules |
-| Hindi and regional language support | 33 languages supported; Hindi included | Verify completeness of Hindi translations across all 6 namespaces; add additional Scheduled Languages as required by tenants |
+| Item                                 | Status                                 | Remediation                                                                                                                  |
+| ------------------------------------ | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Account Aggregator (AA) integration  | Not implemented                        | Build adapter for RBI-licensed Account Aggregator ecosystem (FIP/FIU roles)                                                  |
+| RBI regulatory sandbox participation | Not initiated                          | Evaluate participation in RBI's regulatory sandbox for digital lending or payments                                           |
+| DPBI registration                    | Pending DPDP Act rules                 | Register as Data Processor once Data Protection Board of India issues procedural rules                                       |
+| Hindi and regional language support  | 33 languages supported; Hindi included | Verify completeness of Hindi translations across all 6 namespaces; add additional Scheduled Languages as required by tenants |
 
 ---
 
@@ -320,4 +320,4 @@ The following items represent areas where additional development, certification,
 
 ---
 
-*This document is maintained by the Fiducia Compliance Team and must be reviewed quarterly or upon material changes to applicable Indian regulations.*
+_This document is maintained by the Fiducia Compliance Team and must be reviewed quarterly or upon material changes to applicable Indian regulations._
