@@ -126,7 +126,9 @@ export type AdapterDomain =
   // Data aggregation & open banking
   | 'aggregator'
   // Fraud & risk
-  | 'fraud'
+  | 'fraud' | 'fraud_graph'
+  // Search
+  | 'search'
   // Confirmation of Payee, SCA, Multi-Currency & Alias Resolution
   | 'confirmation_of_payee' | 'sca' | 'multi_currency' | 'alias_resolution'
   // Platform domains
