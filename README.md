@@ -1,5 +1,3 @@
-[English](README.md) | [Français](README.fr.md) | [Español](README.es.md) | [Português](README.pt-BR.md) | [Deutsch](README.de.md)
-
 [![CI](https://github.com/danweis07/Fiducia/actions/workflows/ci.yml/badge.svg)](https://github.com/danweis07/Fiducia/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
