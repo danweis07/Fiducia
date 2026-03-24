@@ -23,7 +23,7 @@ export class PostHogProvider implements AnalyticsProvider {
   private ph: PostHogLib | null = null;
   private timers = new Map<string, number>();
 
-  init(config: Record<string, unknown>): void {
+  async init(config: Record<string, unknown>): Promise<void> {
     const apiKey = config.apiKey as string;
     if (!apiKey) {
       console.warn("[PostHog] No API key provided. PostHog is disabled.");
@@ -31,9 +31,10 @@ export class PostHogProvider implements AnalyticsProvider {
     }
 
     try {
-      // Dynamic import to avoid bundling when not used
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const posthog = require("posthog-js").default ?? require("posthog-js");
+      // Dynamic import with variable indirection so Rollup/Vite skip static resolution
+      const pkg = "posthog-js";
+      const mod = await import(/* @vite-ignore */ pkg);
+      const posthog = mod.default ?? mod;
       const host = (config.host as string) || "https://app.posthog.com";
 
       posthog.init(apiKey, {

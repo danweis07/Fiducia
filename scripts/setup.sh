@@ -71,7 +71,8 @@ setup_env() {
     if [ ! -f .env.local ]; then
         cp .env.example .env.local
         # Enable demo mode by default
-        sed -i 's/VITE_DEMO_MODE=false/VITE_DEMO_MODE=true/' .env.local
+        tmp="$(mktemp)"
+        sed 's/VITE_DEMO_MODE=false/VITE_DEMO_MODE=true/' .env.local > "$tmp" && mv "$tmp" .env.local
         echo -e "  ${GREEN}✓${NC} Created .env.local (demo mode enabled)"
     else
         echo -e "  ${YELLOW}→${NC} .env.local already exists, skipping"
