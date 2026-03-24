@@ -6,6 +6,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-03-24
+
+### Fixed
+
+- Fix broken "clone, install, run" demo setup path:
+  - Pin Tailwind CSS to v3 (was incorrectly set to ^4.2.1 with v3 codebase)
+  - Fix CSS @import order (Google Fonts before @tailwind directives)
+  - Add `envDir` to Vite config so `.env.local` is found at repo root
+  - Fix macOS `sed` incompatibility in `setup.sh` (cross-platform temp file pattern)
+  - Guard Supabase client init in demo mode with placeholder credentials
+- Convert optional SDK imports (mixpanel, amplitude, posthog, braze, airship, opentelemetry) from `require()` to async `import()` with variable indirection to prevent Rollup build failures
+
+### Changed
+
+- Disable automatic triggers on all GitHub Actions workflows (workflow_dispatch only)
+- Add failed-only and date filters to workflow cleanup script
+
+### Infrastructure
+
+- Add v1.1.0 release script and GitHub Actions workflow
+
+## [1.1.0] - 2026-03-23
+
+### Security
+
+- Fix high severity XSS: sanitize `logoUrl` before use in img src
+- Resolve 22 CodeQL security alerts (critical, high, medium)
+- Fix command injection vulnerability
+
+### Added
+
+- Add Algolia search, Storyblok CMS, and Neo4j fraud graph adapters
+
+### Infrastructure
+
+- Restructure as monorepo with npm workspaces (`apps/web/`)
+- Restore `.devcontainer` for one-click Codespaces setup
+- Make security scan workflows advisory to prevent red checks
+
 ### Developer Experience
 
 - Add `docs/QUICKSTART-DEMO.md` — 5-minute guide to running the full banking app with zero backend
@@ -14,12 +53,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Add `docs/GETTING_STARTED.md` — step-by-step developer setup guide
 - Add `.vscode/extensions.json` — recommended VS Code extensions for the project
 - Add `.devcontainer/devcontainer.json` — GitHub Codespaces / Dev Container support
+- Add changelog and contributing docs
+- Clean up repo structure, remove translated root files
 
 ### Testing
 
 - Add `docs/TESTING_PATTERNS.md` — documented testing conventions, hook/component/E2E patterns, and coverage expectations
 - Coverage thresholds increased: 50% statements/lines, 40% branches/functions (configured in `vitest.config.ts`)
 - Excluded `scripts/recipes/` and `scripts/templates/` from ESLint (CLI scripts and code-gen templates)
+
+### Dependencies
+
+- Bump flatted 3.4.1 → 3.4.2
 
 ## [1.0.0] - 2026-03-17
 
