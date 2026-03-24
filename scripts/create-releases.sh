@@ -1,7 +1,7 @@
 #!/bin/bash
-# Create the v1.1.0 release on GitHub
+# Create GitHub Releases for v1.0.1 and v1.1.0
 # Run this locally where you have gh CLI authenticated:
-#   chmod +x scripts/create-v1.1.0-release.sh && ./scripts/create-v1.1.0-release.sh
+#   chmod +x scripts/create-releases.sh && ./scripts/create-releases.sh
 
 set -euo pipefail
 
@@ -10,6 +10,25 @@ if ! command -v gh &> /dev/null; then
   exit 1
 fi
 
+echo "Creating v1.0.1 release..."
+gh release create v1.0.1 \
+  --target 8ef6021 \
+  --title "v1.0.1 — Testing & Reliability" \
+  --notes "$(cat <<'EOF'
+## Testing & Reliability
+
+- 3,700+ tests across unit, integration, and E2E
+- Circuit breaker, throttle, and cache infrastructure fully tested
+- Backend provider abstraction (Supabase, Ably, Kafka) fully tested
+- Coverage thresholds raised to 50%/40%
+- Fixed Zod v4 compatibility bug in password reset flow
+EOF
+)"
+
+echo "v1.0.1 release created"
+
+echo ""
+echo "Creating v1.1.0 release..."
 gh release create v1.1.0 \
   --target a4be7e4 \
   --title "v1.1.0 — Security, Monorepo & Vendor Integrations" \
@@ -37,4 +56,6 @@ gh release create v1.1.0 \
 EOF
 )"
 
-echo "✓ v1.1.0 release created successfully"
+echo "v1.1.0 release created"
+echo ""
+echo "Done! Both releases created successfully."
