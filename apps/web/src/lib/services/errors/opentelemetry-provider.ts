@@ -36,7 +36,7 @@ export class OpenTelemetryProvider implements ErrorTrackingProvider {
   private breadcrumbs: Breadcrumb[] = [];
   private user: ErrorUser | null = null;
 
-  init(config: Record<string, unknown>): void {
+  async init(config: Record<string, unknown>): Promise<void> {
     const endpoint = config.endpoint as string;
     if (!endpoint) {
       console.warn("[OTel] No exporter endpoint provided. OpenTelemetry is disabled.");
@@ -44,17 +44,17 @@ export class OpenTelemetryProvider implements ErrorTrackingProvider {
     }
 
     try {
-      // Dynamic imports to avoid bundling when not used
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const api = require("@opentelemetry/api");
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { WebTracerProvider } = require("@opentelemetry/sdk-trace-web");
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { OTLPTraceExporter } = require("@opentelemetry/exporter-trace-otlp-http");
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { Resource } = require("@opentelemetry/resources");
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { BatchSpanProcessor } = require("@opentelemetry/sdk-trace-web");
+      // Dynamic imports with variable indirection so Rollup/Vite skip static resolution.
+      // These packages are optional — install them to enable OpenTelemetry tracing.
+      const otelApi = "@opentelemetry/api";
+      const otelTraceWeb = "@opentelemetry/sdk-trace-web";
+      const otelOtlp = "@opentelemetry/exporter-trace-otlp-http";
+      const otelResources = "@opentelemetry/resources";
+      const api = await import(/* @vite-ignore */ otelApi);
+      const { WebTracerProvider } = await import(/* @vite-ignore */ otelTraceWeb);
+      const { OTLPTraceExporter } = await import(/* @vite-ignore */ otelOtlp);
+      const { Resource } = await import(/* @vite-ignore */ otelResources);
+      const { BatchSpanProcessor } = await import(/* @vite-ignore */ otelTraceWeb);
 
       const serviceName = (config.serviceName as string) || "fiducia-web";
       const environment = (config.environment as string) || "development";

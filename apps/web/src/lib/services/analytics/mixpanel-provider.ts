@@ -22,7 +22,7 @@ export class MixpanelProvider implements AnalyticsProvider {
   private mp: MixpanelLib | null = null;
   private initialized = false;
 
-  init(config: Record<string, unknown>): void {
+  async init(config: Record<string, unknown>): Promise<void> {
     const token = config.token as string;
     if (!token) {
       console.warn("[Mixpanel] No token provided. Mixpanel is disabled.");
@@ -30,16 +30,17 @@ export class MixpanelProvider implements AnalyticsProvider {
     }
 
     try {
-      // Dynamic import to avoid bundling when not used
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const mixpanel = require("mixpanel-browser");
-      mixpanel.init(token, {
+      // Dynamic import with variable indirection so Rollup/Vite skip static resolution
+      const pkg = "mixpanel-browser";
+      const mixpanel = await import(/* @vite-ignore */ pkg);
+      const mp = mixpanel.default ?? mixpanel;
+      mp.init(token, {
         debug: config.debug === true,
         track_pageview: false, // We handle this manually
         persistence: "localStorage",
         ...((config.options as Record<string, unknown>) ?? {}),
       });
-      this.mp = mixpanel;
+      this.mp = mp;
       this.initialized = true;
     } catch {
       console.warn("[Mixpanel] mixpanel-browser not installed. Run: npm install mixpanel-browser");

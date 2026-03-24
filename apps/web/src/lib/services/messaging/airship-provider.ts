@@ -59,7 +59,7 @@ export class AirshipProvider implements MessagingProvider {
   readonly name = "airship";
   private ua: AirshipLib | null = null;
 
-  init(config: Record<string, unknown>): void {
+  async init(config: Record<string, unknown>): Promise<void> {
     const appKey = config.appKey as string;
     const token = config.token as string;
 
@@ -69,10 +69,11 @@ export class AirshipProvider implements MessagingProvider {
     }
 
     try {
-      // Airship Web SDK loads asynchronously via their SDK loader
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const UA = require("@airship/web");
-      UA.then((sdk: AirshipLib) => {
+      // Dynamic import with variable indirection so Rollup/Vite skip static resolution
+      const pkg = "@airship/web";
+      const UA = await import(/* @vite-ignore */ pkg);
+      const sdk = UA.default ?? UA;
+      await Promise.resolve(sdk).then((sdk: AirshipLib) => {
         sdk.init({
           appKey,
           token,

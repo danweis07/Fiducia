@@ -55,7 +55,7 @@ export class BrazeProvider implements MessagingProvider {
   readonly name = "braze";
   private braze: BrazeLib | null = null;
 
-  init(config: Record<string, unknown>): void {
+  async init(config: Record<string, unknown>): Promise<void> {
     const apiKey = config.apiKey as string;
     const sdkEndpoint = config.sdkEndpoint as string;
 
@@ -65,8 +65,10 @@ export class BrazeProvider implements MessagingProvider {
     }
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const braze = require("@braze/web-sdk");
+      // Dynamic import with variable indirection so Rollup/Vite skip static resolution
+      const pkg = "@braze/web-sdk";
+      const mod = await import(/* @vite-ignore */ pkg);
+      const braze = mod.default ?? mod;
       braze.initialize(apiKey, {
         baseUrl: sdkEndpoint,
         enableLogging: config.debug === true,

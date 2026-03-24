@@ -21,7 +21,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
   private amp: AmplitudeLib | null = null;
   private timers = new Map<string, number>();
 
-  init(config: Record<string, unknown>): void {
+  async init(config: Record<string, unknown>): Promise<void> {
     const apiKey = config.apiKey as string;
     if (!apiKey) {
       console.warn("[Amplitude] No API key provided. Amplitude is disabled.");
@@ -29,9 +29,10 @@ export class AmplitudeProvider implements AnalyticsProvider {
     }
 
     try {
-      // Dynamic import to avoid bundling when not used
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const amplitude = require("@amplitude/analytics-browser");
+      // Dynamic import with variable indirection so Rollup/Vite skip static resolution
+      const pkg = "@amplitude/analytics-browser";
+      const mod = await import(/* @vite-ignore */ pkg);
+      const amplitude = mod.default ?? mod;
       amplitude.init(apiKey, {
         defaultTracking: false,
         ...((config.options as Record<string, unknown>) ?? {}),

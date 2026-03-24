@@ -24,7 +24,7 @@ export interface AnalyticsProvider {
   readonly name: string;
 
   /** Initialize the provider with config */
-  init(config: Record<string, unknown>): void;
+  init(config: Record<string, unknown>): void | Promise<void>;
 
   /** Identify a user (call after login) */
   identify(user: AnalyticsUser): void;
@@ -81,7 +81,7 @@ export interface ErrorTrackingProvider {
   readonly name: string;
 
   /** Initialize the provider */
-  init(config: Record<string, unknown>): void;
+  init(config: Record<string, unknown>): void | Promise<void>;
 
   /** Capture an exception */
   captureException(error: unknown, context?: Record<string, unknown>): void;
@@ -140,7 +140,7 @@ export interface MessagingProvider {
   readonly name: string;
 
   /** Initialize the provider */
-  init(config: Record<string, unknown>): void;
+  init(config: Record<string, unknown>): void | Promise<void>;
 
   /** Set the current user for targeted messaging */
   setUser(user: MessagingUser): void;
