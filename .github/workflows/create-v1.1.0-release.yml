@@ -1,9 +1,6 @@
 name: Create v1.1.0 Release
 
 on:
-  push:
-    paths:
-      - '.github/workflows/create-v1.1.0-release.yml'
   workflow_dispatch:
 
 permissions:

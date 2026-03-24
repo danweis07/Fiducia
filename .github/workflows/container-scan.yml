@@ -6,18 +6,7 @@
 name: Container Security Scan
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/web/Dockerfile"
-      - "apps/web/Dockerfile.dev"
-      - "package-lock.json"
-  pull_request:
-    branches: [main]
-    paths:
-      - "apps/web/Dockerfile"
-      - "apps/web/Dockerfile.dev"
-      - "package-lock.json"
+  workflow_dispatch:
 
 permissions:
   contents: read
