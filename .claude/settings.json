@@ -1,0 +1,42 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command' | grep -q 'git commit' && echo '{\"systemMessage\":\"Consider running /review and /qa on your changes\"}' || true",
+            "timeout": 10,
+            "statusMessage": "Checking for post-commit reminder..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command' | grep -q 'git push' && cd /home/user/Fiducia && npm run validate || true",
+            "timeout": 120,
+            "statusMessage": "Running validate before push..."
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\":\"gstack skills available: /review /qa /cso /investigate /ship /plan-eng-review /plan-ceo-review /office-hours /canary /retro /careful /freeze\"}'",
+            "timeout": 5,
+            "statusMessage": "Loading gstack skills..."
+          }
+        ]
+      }
+    ]
+  }
+}

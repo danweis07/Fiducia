@@ -132,6 +132,46 @@ mobile/                     # Flutter iOS/Android app
 2. Write idempotent SQL (`IF NOT EXISTS`, `CREATE OR REPLACE`)
 3. Test with `docker compose up` (migrations auto-apply)
 
+## AI Workflow — gstack Skills
+
+This project uses [gstack](https://github.com/garrytan/gstack) for AI-powered code review, security auditing, and release management. Skills are installed at `~/.claude/skills/gstack` and auto-discovered by Claude Code.
+
+### Available Skills
+
+| Skill | Purpose | When to use |
+|---|---|---|
+| `/review` | AI code review | After writing code, before push |
+| `/qa` | Quality assurance | Before merging, after feature complete |
+| `/cso` | Security audit (CSO perspective) | Before release, after security-sensitive changes |
+| `/investigate` | Structured root cause analysis | Debugging production issues, tricky bugs |
+| `/plan-eng-review` | Architecture/engineering review | Before starting large features |
+| `/plan-ceo-review` | Product strategy review | Feature prioritization, roadmap decisions |
+| `/office-hours` | Product discussion | Brainstorming, requirement refinement |
+| `/ship` | Release management | Ready to deploy |
+| `/canary` | Canary deployment | Gradual rollout |
+| `/retro` | Sprint retrospective | End of sprint/milestone |
+| `/careful` | Extra safety guardrails | High-risk changes (auth, payments, migrations) |
+| `/freeze` | Code freeze enforcement | Pre-release lockdown |
+
+### Automated Hooks (`.claude/settings.json`)
+
+These fire automatically — no manual invocation needed:
+
+- **Post-commit reminder:** After `git commit`, reminds to run `/review` and `/qa`
+- **Pre-push validation:** Before `git push`, runs `npm run validate` (lint + typecheck + test + build)
+- **Session start:** Lists available gstack skills at the start of each session
+
+### Recommended Workflow
+
+1. Write code
+2. Commit (hook reminds you about review/QA)
+3. Claude runs `/review` → addresses feedback
+4. Claude runs `/qa` → fixes issues
+5. Push (hook auto-validates before push)
+6. `/ship` when ready to release
+
+For security-sensitive changes (auth, payments, RLS policies), also run `/cso` before merge.
+
 ## Do Not Edit
 
 - `apps/web/src/integrations/supabase/types.ts` — auto-generated from Supabase schema
