@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   chunkDocument,
   formatRAGContext,
-} from "../../../supabase/functions/_shared/ai/rag-retrieval";
-import type { RAGContext } from "../../../supabase/functions/_shared/ai/rag-retrieval";
+} from "../../../../../supabase/functions/_shared/ai/rag-retrieval";
+import type { RAGContext } from "../../../../../supabase/functions/_shared/ai/rag-retrieval";
 
 // =============================================================================
 // chunkDocument

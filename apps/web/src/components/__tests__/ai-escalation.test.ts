@@ -3,9 +3,9 @@ import {
   detectSentiment,
   determinePriority,
   analyzeEscalation,
-} from "../../../supabase/functions/_shared/ai/escalation";
-import type { EscalationContext } from "../../../supabase/functions/_shared/ai/escalation";
-import type { AIServicesAdapter } from "../../../supabase/functions/_shared/adapters/ai-services/types";
+} from "../../../../../supabase/functions/_shared/ai/escalation";
+import type { EscalationContext } from "../../../../../supabase/functions/_shared/ai/escalation";
+import type { AIServicesAdapter } from "../../../../../supabase/functions/_shared/adapters/ai-services/types";
 
 // =============================================================================
 // detectSentiment

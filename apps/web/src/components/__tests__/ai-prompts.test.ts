@@ -3,8 +3,8 @@ import {
   resolvePrompt,
   buildMessages,
   DEFAULT_PROMPTS,
-} from "../../../supabase/functions/_shared/ai/prompts";
-import type { AIStakeholder } from "../../../supabase/functions/_shared/ai/prompts";
+} from "../../../../../supabase/functions/_shared/ai/prompts";
+import type { AIStakeholder } from "../../../../../supabase/functions/_shared/ai/prompts";
 
 // =============================================================================
 // DEFAULT_PROMPTS

@@ -5,8 +5,8 @@ import {
   checkSavingsOpportunity,
   checkPaymentFailureRisk,
   generateInsights,
-} from "../../../supabase/functions/_shared/ai/insights-engine";
-import type { InsightGeneratorContext } from "../../../supabase/functions/_shared/ai/insights-engine";
+} from "../../../../../supabase/functions/_shared/ai/insights-engine";
+import type { InsightGeneratorContext } from "../../../../../supabase/functions/_shared/ai/insights-engine";
 
 // =============================================================================
 // HELPERS

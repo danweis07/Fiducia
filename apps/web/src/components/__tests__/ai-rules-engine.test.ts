@@ -3,12 +3,12 @@ import {
   evaluateRule,
   parseNaturalLanguageRule,
   RULE_EXAMPLES,
-} from "../../../supabase/functions/_shared/ai/rules-engine";
+} from "../../../../../supabase/functions/_shared/ai/rules-engine";
 import type {
   RuleEvaluationContext,
   TriggerType,
-} from "../../../supabase/functions/_shared/ai/rules-engine";
-import type { AIServicesAdapter } from "../../../supabase/functions/_shared/adapters/ai-services/types";
+} from "../../../../../supabase/functions/_shared/ai/rules-engine";
+import type { AIServicesAdapter } from "../../../../../supabase/functions/_shared/adapters/ai-services/types";
 
 // =============================================================================
 // HELPERS

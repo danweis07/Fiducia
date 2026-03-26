@@ -73,9 +73,16 @@ describe("GitHub Actions workflow YAMLs", () => {
       }
     });
 
-    it("uses actions/checkout in at least one job", () => {
+    it("uses actions/checkout in at least one job (unless all jobs are script-only)", () => {
       workflow = loadWorkflow(filename);
-      const jobs = workflow.jobs as Record<string, { steps: Array<{ uses?: string }> }>;
+      const jobs = workflow.jobs as Record<
+        string,
+        { steps: Array<{ uses?: string; run?: string }> }
+      >;
+      const allJobsScriptOnly = Object.values(jobs).every((job) =>
+        job.steps?.every((step) => !step.run && step.uses?.startsWith("actions/github-script")),
+      );
+      if (allJobsScriptOnly) return; // workflows using only github-script don't need checkout
       const hasCheckout = Object.values(jobs).some((job) =>
         job.steps?.some((step) => step.uses?.startsWith("actions/checkout")),
       );
