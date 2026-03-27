@@ -22,6 +22,9 @@ import {
   Download,
   Rocket,
   Database,
+  Upload,
+  BookOpen,
+  GitBranch,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -53,6 +56,10 @@ const navItems = [
   { label: "Data Export", path: "/admin/data-export", icon: Download },
   { label: "Onboarding", path: "/admin/onboarding", icon: Rocket },
   { label: "CDP", path: "/admin/cdp", icon: Database },
+  { label: "Data Migration", path: "/admin/data-migration", icon: Upload },
+  { label: "Go-Live", path: "/admin/go-live", icon: Rocket },
+  { label: "Runbooks", path: "/admin/runbooks", icon: BookOpen },
+  { label: "Deployments", path: "/admin/deployments", icon: GitBranch },
   { label: "Audit Log", path: "/admin/audit", icon: FileText },
   { label: "Settings", path: "/admin/settings", icon: Settings },
 ];

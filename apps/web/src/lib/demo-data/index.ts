@@ -26,6 +26,8 @@ import { aiHandlers } from "./ai";
 import { businessHandlers } from "./business";
 import { internationalHandlers } from "./international";
 import { incidentHandlers } from "./incidents";
+import { migrationHandlers } from "./migration";
+import { goliveHandlers } from "./golive";
 
 // =============================================================================
 // MERGED HANDLER MAP
@@ -48,6 +50,8 @@ const handlers: Record<string, ActionHandler> = {
   ...businessHandlers,
   ...internationalHandlers,
   ...incidentHandlers,
+  ...migrationHandlers,
+  ...goliveHandlers,
 };
 
 // =============================================================================

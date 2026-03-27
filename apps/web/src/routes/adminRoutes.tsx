@@ -33,6 +33,13 @@ const AgentPolicies = lazy(() => import("@/pages/admin/AgentPolicies"));
 const IncidentManager = lazy(() => import("@/pages/admin/IncidentManager"));
 const ControlTower = lazy(() => import("@/pages/admin/ControlTower"));
 const ChangeTracker = lazy(() => import("@/pages/admin/ChangeTracker"));
+const DataMigration = lazy(() => import("@/pages/admin/DataMigration"));
+const SchemaMapper = lazy(() => import("@/pages/admin/SchemaMapper"));
+const MigrationPreview = lazy(() => import("@/pages/admin/MigrationPreview"));
+const GoLiveWorkflow = lazy(() => import("@/pages/admin/GoLiveWorkflow"));
+const RunbookGenerator = lazy(() => import("@/pages/admin/RunbookGenerator"));
+const AdapterSetupWizard = lazy(() => import("@/pages/admin/AdapterSetupWizard"));
+const CanaryDeployments = lazy(() => import("@/pages/admin/CanaryDeployments"));
 
 export function adminRoutes() {
   return (
@@ -227,6 +234,62 @@ export function adminRoutes() {
         element={
           <ErrorBoundary>
             <ChangeTracker />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="data-migration"
+        element={
+          <ErrorBoundary>
+            <DataMigration />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="data-migration/mapper/:batchId"
+        element={
+          <ErrorBoundary>
+            <SchemaMapper />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="data-migration/preview/:batchId"
+        element={
+          <ErrorBoundary>
+            <MigrationPreview />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="go-live"
+        element={
+          <ErrorBoundary>
+            <GoLiveWorkflow />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="runbooks"
+        element={
+          <ErrorBoundary>
+            <RunbookGenerator />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="integrations/setup"
+        element={
+          <ErrorBoundary>
+            <AdapterSetupWizard />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="deployments"
+        element={
+          <ErrorBoundary>
+            <CanaryDeployments />
           </ErrorBoundary>
         }
       />
