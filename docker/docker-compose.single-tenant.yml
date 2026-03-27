@@ -1,0 +1,131 @@
+# =============================================================================
+# Docker Compose — Single-Tenant Self-Hosted Deployment
+#
+# Simplified stack for credit unions and community banks running Fiducia
+# as a single-tenant instance. No multi-tenant control plane needed.
+#
+# Usage:
+#   # Standalone (all services defined here):
+#   docker compose -f docker/docker-compose.single-tenant.yml up
+#
+#   # Or as an overlay on the base file:
+#   docker compose -f docker-compose.yml -f docker/docker-compose.single-tenant.yml up
+#
+#   # Or use the setup script:
+#   ./scripts/single-tenant-setup.sh --name "My Credit Union" --admin-email admin@example.com
+#
+# Environment (set in shell or .env):
+#   VITE_TENANT_NAME — Institution name (default: "My Institution")
+#   TENANT_ID        — Tenant UUID     (default: "default")
+#   TENANT_REGION    — Region code     (default: "us")
+#   TENANT_COUNTRY   — Country code    (default: "US")
+#   DEFAULT_CURRENCY — Currency code   (default: "USD")
+#
+# Services:
+#   React App:          http://localhost:8080
+#   Supabase API:       http://localhost:54321
+#   Supabase Studio:    http://localhost:54323
+#   Core Simulator:     http://localhost:9090
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # React Frontend — single-tenant mode enabled
+  # ---------------------------------------------------------------------------
+  app:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../apps/web:/app
+      - /app/node_modules
+    environment:
+      # Single-tenant mode — skips multi-tenant DB lookups
+      - VITE_SINGLE_TENANT=true
+      - VITE_TENANT_ID=${TENANT_ID:-default}
+      - VITE_TENANT_NAME=${VITE_TENANT_NAME:-My Institution}
+      - VITE_SUBSCRIPTION_TIER=${SUBSCRIPTION_TIER:-enterprise}
+      - VITE_TENANT_REGION=${TENANT_REGION:-us}
+      - VITE_TENANT_COUNTRY=${TENANT_COUNTRY:-US}
+      - VITE_DEFAULT_CURRENCY=${DEFAULT_CURRENCY:-USD}
+      - VITE_FEATURES=${FEATURES:-rdc,billPay,p2p,cardControls,externalTransfers,wires,mobileDeposit,directDeposit,instantPayments}
+      # Supabase (local)
+      - VITE_SUPABASE_URL=http://localhost:54321
+      - VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0}
+      # Core banking simulator
+      - VITE_CORE_SIM_URL=http://core-sim:9090
+      # Demo mode (set to false once real core banking is connected)
+      - VITE_DEMO_MODE=true
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+      core-sim:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Supabase — Local PostgreSQL with migrations
+  # Optimized for single-tenant (lower connection overhead)
+  # ---------------------------------------------------------------------------
+  supabase-db:
+    image: supabase/postgres:15.6.1.143
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_MAX_CONNECTIONS: "50"
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+      - ../supabase/migrations:/docker-entrypoint-initdb.d/01-migrations
+      - ../docker/init-db.sql:/docker-entrypoint-initdb.d/00-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Supabase — API Gateway (PostgREST + GoTrue + Realtime + Studio)
+  # ---------------------------------------------------------------------------
+  supabase-api:
+    image: supabase/supabase-local:latest
+    ports:
+      - "54321:54321"
+      - "54323:54323"
+    environment:
+      SUPABASE_AUTH_EXTERNAL_GITHUB_ENABLED: "false"
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+    volumes:
+      - ../supabase/migrations:/docker-entrypoint-initdb.d
+
+  # ---------------------------------------------------------------------------
+  # Core Banking Simulator — included by default for single-tenant
+  # Lower latency defaults since there is no multi-tenant contention.
+  # ---------------------------------------------------------------------------
+  core-sim:
+    build:
+      context: ../core-simulator
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      PORT: "9090"
+      SIMULATED_LATENCY_MS: "20"
+      LATENCY_JITTER_MS: "10"
+      ERROR_RATE: "0"
+      CORE_BUSY_RATE: "0"
+      MTLS_ENABLED: "false"
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+
+volumes:
+  supabase-db-data:

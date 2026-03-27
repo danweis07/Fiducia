@@ -41,6 +41,9 @@ const RatesPage = lazy(() => import("@/pages/public/RatesPage"));
 const FraudPreventionPage = lazy(() => import("@/pages/public/FraudPreventionPage"));
 const FAQsPage = lazy(() => import("@/pages/public/FAQsPage"));
 const ContactPage = lazy(() => import("@/pages/public/ContactPage"));
+const GoLiveStatus = lazy(() => import("@/pages/GoLiveStatus"));
+const MigratedMemberActivation = lazy(() => import("@/pages/MigratedMemberActivation"));
+const MemberFirstLogin = lazy(() => import("@/pages/MemberFirstLogin"));
 
 export function publicRoutes() {
   return (
@@ -77,6 +80,11 @@ export function publicRoutes() {
       <Route path="/find-us" element={<FindUs />} />
       <Route path="/open-account" element={<AccountOpening />} />
       <Route path="/activate" element={<DigitalActivation />} />
+
+      {/* Go-live & migration */}
+      <Route path="/go-live-status/:id" element={<GoLiveStatus />} />
+      <Route path="/activate/migrate" element={<MigratedMemberActivation />} />
+      <Route path="/welcome" element={<MemberFirstLogin />} />
 
       {/* Auth */}
       <Route path="/auth" element={<Auth />} />
