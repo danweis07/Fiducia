@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowRight, Save, Loader2, ChevronLeft, Trash2, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -28,7 +27,7 @@ import {
   useSaveMappingTemplate,
 } from "@/hooks/useDataMigration";
 import { PageSkeleton } from "@/components/common/LoadingSkeleton";
-import type { FieldMapping, FieldTransform } from "@/types/migration";
+import type { FieldMapping, FieldTransform, MappingTemplate } from "@/types/migration";
 
 const TRANSFORMS: { value: FieldTransform; label: string }[] = [
   { value: "none", label: "None" },
@@ -40,7 +39,7 @@ const TRANSFORMS: { value: FieldTransform; label: string }[] = [
   { value: "cents_to_dollars", label: "Cents → Dollars" },
   { value: "dollars_to_cents", label: "Dollars → Cents" },
   { value: "boolean_yn", label: "Y/N → Boolean" },
-  { value: "phone_normalize", label: "Phone normalize" },
+  { value: "phone_e164", label: "Phone normalize" },
   { value: "ssn_mask", label: "SSN mask" },
 ];
 
@@ -122,17 +121,20 @@ export default function SchemaMapper() {
 
   const [templateName, setTemplateName] = useState("");
   const [mappings, setMappings] = useState<FieldMapping[]>([
-    { sourceField: "", targetField: "", transform: "none" },
+    { sourceField: "", targetField: "", transform: "none", defaultValue: null, required: false },
   ]);
 
   if (batchQuery.isLoading) return <PageSkeleton />;
 
   const batch = batchQuery.data?.batch;
-  const templates = templatesQuery.data?.data ?? [];
+  const templates = templatesQuery.data?.templates ?? [];
   const targetFields = TARGET_FIELDS[batch?.entityType ?? "members"] ?? TARGET_FIELDS.members;
 
   function addMapping() {
-    setMappings([...mappings, { sourceField: "", targetField: "", transform: "none" }]);
+    setMappings([
+      ...mappings,
+      { sourceField: "", targetField: "", transform: "none", defaultValue: null, required: false },
+    ]);
   }
 
   function removeMapping(idx: number) {
@@ -144,7 +146,7 @@ export default function SchemaMapper() {
   }
 
   function loadTemplate(templateId: string) {
-    const tmpl = templates.find((t) => t.id === templateId);
+    const tmpl = templates.find((t: MappingTemplate) => t.id === templateId);
     if (tmpl) {
       setMappings(tmpl.fieldMappings);
       setTemplateName(tmpl.name);
@@ -208,7 +210,7 @@ export default function SchemaMapper() {
             <CardDescription>Use a saved mapping template</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            {templates.map((tmpl) => (
+            {templates.map((tmpl: MappingTemplate) => (
               <Button
                 key={tmpl.id}
                 variant="outline"

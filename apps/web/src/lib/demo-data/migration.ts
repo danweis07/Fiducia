@@ -10,21 +10,14 @@ import type {
   MigrationBatchRow,
   MappingTemplate,
   ReconciliationReport,
-  DryRunPreview,
   ValidationError,
 } from "@/types/migration";
 
-const TENANT_ID = "demo-tenant";
+import { ActionHandler, TENANT_ID, isoDate, withPagination } from "./types";
 
-function isoDate(daysAgo: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - daysAgo);
-  return d.toISOString();
-}
-
-// ---------------------------------------------------------------------------
+// =============================================================================
 // SAMPLE DATA
-// ---------------------------------------------------------------------------
+// =============================================================================
 
 const sampleBatches: MigrationBatch[] = [
   {
@@ -88,33 +81,11 @@ const sampleBatches: MigrationBatch[] = [
   {
     id: "batch-003",
     firmId: TENANT_ID,
-    label: "Transaction History — 12 Months",
+    label: "Bill Pay Payees — Symitar Export",
     sourceSystem: "Symitar",
-    status: "draft",
-    entityType: "transactions",
-    fileName: "symitar_transactions_12mo.json",
-    fileFormat: "json",
-    totalRows: 387500,
-    validRows: 0,
-    errorRows: 0,
-    dryRun: true,
-    mappingTemplateId: null,
-    importedBy: null,
-    startedAt: null,
-    completedAt: null,
-    rolledBackAt: null,
-    errorSummary: {},
-    reconciliation: {},
-    createdAt: isoDate(2),
-  },
-  {
-    id: "batch-004",
-    firmId: TENANT_ID,
-    label: "Bill Pay Payees — FIS Export",
-    sourceSystem: "FIS",
     status: "failed",
     entityType: "payees",
-    fileName: "fis_payees_20260322.csv",
+    fileName: "symitar_payees_20260322.csv",
     fileFormat: "csv",
     totalRows: 8900,
     validRows: 7200,
@@ -126,7 +97,14 @@ const sampleBatches: MigrationBatch[] = [
     completedAt: null,
     rolledBackAt: null,
     errorSummary: { invalid_account_ref: 1200, missing_payee_name: 500 },
-    reconciliation: {},
+    reconciliation: {
+      sourceTotalCents: 0,
+      targetTotalCents: 0,
+      sourceRowCount: 8900,
+      targetRowCount: 7200,
+      balanceMatch: false,
+      countMatch: false,
+    },
     createdAt: isoDate(2),
   },
 ];
@@ -141,14 +119,14 @@ const sampleRows: MigrationBatchRow[] = [
       MemberID: "M10001",
       FirstName: "Alice",
       LastName: "Johnson",
-      Email: "alice@example.com",
+      Email: "alice.johnson@email.com",
       Phone: "555-0101",
     },
     mappedData: {
       member_number: "M10001",
       first_name: "Alice",
       last_name: "Johnson",
-      email: "alice@example.com",
+      email: "alice.johnson@email.com",
       phone: "+15550101",
     },
     targetTable: "firm_users",
@@ -163,25 +141,49 @@ const sampleRows: MigrationBatchRow[] = [
     status: "imported",
     sourceData: {
       MemberID: "M10002",
-      FirstName: "Bob",
-      LastName: "Smith",
-      Email: "bob@example.com",
+      FirstName: "Robert",
+      LastName: "Martinez",
+      Email: "rmartinez@email.com",
       Phone: "555-0102",
     },
     mappedData: {
       member_number: "M10002",
-      first_name: "Bob",
-      last_name: "Smith",
-      email: "bob@example.com",
+      first_name: "Robert",
+      last_name: "Martinez",
+      email: "rmartinez@email.com",
       phone: "+15550102",
     },
     targetTable: "firm_users",
-    targetId: "uuid-bob-002",
+    targetId: "uuid-robert-002",
     errors: [],
     createdAt: isoDate(5),
   },
   {
     id: "row-003",
+    batchId: "batch-001",
+    rowNumber: 87,
+    status: "imported",
+    sourceData: {
+      MemberID: "M10087",
+      FirstName: "Patricia",
+      LastName: "Chen",
+      Email: "pchen@email.com",
+      Phone: "555-0187",
+    },
+    mappedData: {
+      member_number: "M10087",
+      first_name: "Patricia",
+      last_name: "Chen",
+      email: "pchen@email.com",
+      phone: "+15550187",
+    },
+    targetTable: "firm_users",
+    targetId: "uuid-patricia-087",
+    errors: [],
+    createdAt: isoDate(5),
+  },
+  {
+    id: "row-004",
     batchId: "batch-001",
     rowNumber: 143,
     status: "invalid",
@@ -198,10 +200,34 @@ const sampleRows: MigrationBatchRow[] = [
     errors: [
       {
         field: "Email",
-        code: "duplicate_email",
+        code: "duplicate",
         message: "Email carol@dupe.com already exists in this batch",
       },
-      { field: "Phone", code: "missing_required", message: "Phone number is required" },
+      { field: "Phone", code: "required", message: "Phone number is required" },
+    ] satisfies ValidationError[],
+    createdAt: isoDate(5),
+  },
+  {
+    id: "row-005",
+    batchId: "batch-001",
+    rowNumber: 256,
+    status: "invalid",
+    sourceData: {
+      MemberID: "M10256",
+      FirstName: "James",
+      LastName: "Okonkwo",
+      Email: "jokonkwo@email.com",
+      Phone: "555-invalid",
+    },
+    mappedData: {},
+    targetTable: null,
+    targetId: null,
+    errors: [
+      {
+        field: "Phone",
+        code: "invalid_phone",
+        message: "Phone number '555-invalid' does not match expected format",
+      },
     ] satisfies ValidationError[],
     createdAt: isoDate(5),
   },
@@ -215,13 +241,55 @@ const sampleTemplates: MappingTemplate[] = [
     sourceSystem: "Symitar",
     entityType: "members",
     fieldMappings: [
-      { sourceField: "MemberID", targetField: "member_number", transform: "none" },
-      { sourceField: "FirstName", targetField: "first_name", transform: "trim" },
-      { sourceField: "LastName", targetField: "last_name", transform: "trim" },
-      { sourceField: "Email", targetField: "email", transform: "lowercase" },
-      { sourceField: "Phone", targetField: "phone", transform: "phone_normalize" },
-      { sourceField: "SSN", targetField: "ssn_masked", transform: "ssn_mask" },
-      { sourceField: "DOB", targetField: "date_of_birth", transform: "date_iso" },
+      {
+        sourceField: "MemberID",
+        targetField: "member_number",
+        transform: "none",
+        defaultValue: null,
+        required: false,
+      },
+      {
+        sourceField: "FirstName",
+        targetField: "first_name",
+        transform: "trim",
+        defaultValue: null,
+        required: true,
+      },
+      {
+        sourceField: "LastName",
+        targetField: "last_name",
+        transform: "trim",
+        defaultValue: null,
+        required: true,
+      },
+      {
+        sourceField: "Email",
+        targetField: "email",
+        transform: "lowercase",
+        defaultValue: null,
+        required: true,
+      },
+      {
+        sourceField: "Phone",
+        targetField: "phone",
+        transform: "phone_e164",
+        defaultValue: null,
+        required: false,
+      },
+      {
+        sourceField: "SSN",
+        targetField: "ssn_masked",
+        transform: "ssn_mask",
+        defaultValue: null,
+        required: false,
+      },
+      {
+        sourceField: "DOB",
+        targetField: "date_of_birth",
+        transform: "date_iso",
+        defaultValue: null,
+        required: false,
+      },
     ],
     isShared: true,
     createdBy: "user-admin-001",
@@ -235,33 +303,45 @@ const sampleTemplates: MappingTemplate[] = [
     sourceSystem: "Symitar",
     entityType: "accounts",
     fieldMappings: [
-      { sourceField: "AccountNumber", targetField: "account_number", transform: "none" },
-      { sourceField: "MemberID", targetField: "member_reference", transform: "none" },
-      { sourceField: "AccountType", targetField: "account_type", transform: "lowercase" },
-      { sourceField: "Balance", targetField: "balance_cents", transform: "dollars_to_cents" },
-      { sourceField: "OpenDate", targetField: "opened_at", transform: "date_iso" },
+      {
+        sourceField: "AccountNumber",
+        targetField: "account_number",
+        transform: "none",
+        defaultValue: null,
+        required: true,
+      },
+      {
+        sourceField: "MemberID",
+        targetField: "member_reference",
+        transform: "none",
+        defaultValue: null,
+        required: true,
+      },
+      {
+        sourceField: "AccountType",
+        targetField: "account_type",
+        transform: "lowercase",
+        defaultValue: null,
+        required: true,
+      },
+      {
+        sourceField: "Balance",
+        targetField: "balance_cents",
+        transform: "dollars_to_cents",
+        defaultValue: null,
+        required: true,
+      },
+      {
+        sourceField: "OpenDate",
+        targetField: "opened_at",
+        transform: "date_iso",
+        defaultValue: null,
+        required: false,
+      },
     ],
     isShared: true,
     createdBy: "user-admin-001",
     createdAt: isoDate(10),
-    updatedAt: isoDate(8),
-  },
-  {
-    id: "tmpl-003",
-    firmId: TENANT_ID,
-    name: "FIS Core → Fiducia Members (Bank)",
-    sourceSystem: "FIS",
-    entityType: "members",
-    fieldMappings: [
-      { sourceField: "CustomerNumber", targetField: "member_number", transform: "none" },
-      { sourceField: "GivenName", targetField: "first_name", transform: "trim" },
-      { sourceField: "Surname", targetField: "last_name", transform: "trim" },
-      { sourceField: "EmailAddress", targetField: "email", transform: "lowercase" },
-      { sourceField: "PhoneNumber", targetField: "phone", transform: "phone_normalize" },
-    ],
-    isShared: true,
-    createdBy: "user-admin-001",
-    createdAt: isoDate(8),
     updatedAt: isoDate(8),
   },
 ];
@@ -279,7 +359,7 @@ const sampleReconciliation: ReconciliationReport = {
   generatedAt: isoDate(3),
 };
 
-const sampleDryRunPreview: DryRunPreview = {
+const sampleDryRunPreview = {
   batchId: "batch-002",
   entityType: "accounts",
   totalRows: 24800,
@@ -317,33 +397,30 @@ const sampleDryRunPreview: DryRunPreview = {
   },
 };
 
-// ---------------------------------------------------------------------------
+// =============================================================================
 // HANDLERS
-// ---------------------------------------------------------------------------
+// =============================================================================
 
-function withPagination<T>(items: T[], page = 1, perPage = 25) {
-  const start = (page - 1) * perPage;
-  return {
-    data: items.slice(start, start + perPage),
-    _pagination: {
-      page,
-      perPage,
-      total: items.length,
-      totalPages: Math.ceil(items.length / perPage),
-    },
-  };
-}
-
-export const migrationHandlers: Record<string, (params: Record<string, unknown>) => unknown> = {
-  "migration.batches.list": (params) => withPagination(sampleBatches, (params.page as number) ?? 1),
+export const migrationHandlers: Record<string, ActionHandler> = {
+  "migration.batches.list": () => withPagination({ batches: sampleBatches }, sampleBatches.length),
 
   "migration.batches.get": (params) => {
     const batch = sampleBatches.find((b) => b.id === params.batchId);
-    return { batch: batch ?? null };
+    return {
+      batch: batch ? { ...batch, rows: sampleRows.filter((r) => r.batchId === batch.id) } : null,
+    };
   },
 
   "migration.upload": () => ({
-    batch: { ...sampleBatches[2], id: "batch-new-" + Date.now(), status: "draft" },
+    batch: {
+      ...sampleBatches[2],
+      id: "batch-new-" + Date.now(),
+      status: "draft",
+      totalRows: 0,
+      validRows: 0,
+      errorRows: 0,
+      errorSummary: {},
+    },
   }),
 
   "migration.validate": (params) => {
@@ -387,13 +464,8 @@ export const migrationHandlers: Record<string, (params: Record<string, unknown>)
     return { report: { ...sampleReconciliation, batchId } };
   },
 
-  "migration.rows.list": (params) => {
-    const batchId = params.batchId as string;
-    const rows = sampleRows.filter((r) => r.batchId === batchId);
-    return withPagination(rows, (params.page as number) ?? 1);
-  },
-
-  "migration.mappings.list": () => withPagination(sampleTemplates),
+  "migration.mappings.list": () =>
+    withPagination({ templates: sampleTemplates }, sampleTemplates.length),
 
   "migration.mappings.save": (params) => ({
     template: {

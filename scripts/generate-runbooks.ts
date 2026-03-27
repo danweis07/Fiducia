@@ -1,12 +1,8 @@
 /**
  * Runbook / SOP Generator
  *
- * Reads codebase artifacts and generates Markdown operational runbooks:
- *   - Incident response runbooks from Prometheus alert definitions
- *   - Adapter troubleshooting guides from adapter registry
- *   - Backup/restore SOPs from scripts/backup/
- *   - Support escalation playbooks
- *   - Tenant-specific runbooks (only enabled features/adapters)
+ * Reads codebase artifacts (Prometheus alert definitions, backup scripts)
+ * and generates Markdown operational runbooks.
  *
  * Usage:
  *   npx tsx scripts/generate-runbooks.ts --output docs/generated/
@@ -17,6 +13,10 @@
 import { parseArgs } from "node:util";
 import * as fs from "node:fs";
 import * as path from "node:path";
+
+// ---------------------------------------------------------------------------
+// CLI Arguments
+// ---------------------------------------------------------------------------
 
 const { values: args } = parseArgs({
   options: {
@@ -37,7 +37,7 @@ Usage:
 Options:
   --output <dir>   Output directory (default: docs/generated)
   --tenant <name>  Generate tenant-specific runbook
-  --all            Generate all runbooks including tenant-specific
+  --all            Generate all runbooks including tenant template
   --help           Show this help
 `);
   process.exit(0);
@@ -64,7 +64,126 @@ function writeRunbook(filename: string, content: string) {
 }
 
 // ---------------------------------------------------------------------------
-// 1. Incident Response Runbook (from Prometheus alerts)
+// Alert Parser
+// ---------------------------------------------------------------------------
+
+interface ParsedAlert {
+  name: string;
+  severity: string;
+  summary: string;
+  description: string;
+  expr: string;
+  forDuration: string;
+}
+
+function parseAlerts(yamlContent: string): ParsedAlert[] {
+  const alertBlocks = yamlContent.split("- alert:").slice(1);
+
+  return alertBlocks.map((block) => {
+    const nameMatch = block.match(/^\s*(\S+)/);
+    const severityMatch = block.match(/severity:\s*(\w+)/);
+    const summaryMatch = block.match(/summary:\s*"([^"]+)"/);
+    const descMatch = block.match(/description:\s*"([^"]+)"/);
+    const exprMatch = block.match(/expr:\s*(.+)/);
+    const forMatch = block.match(/for:\s*(\S+)/);
+
+    return {
+      name: nameMatch?.[1] ?? "Unknown",
+      severity: severityMatch?.[1] ?? "unknown",
+      summary: summaryMatch?.[1] ?? "",
+      description: descMatch?.[1] ?? "",
+      expr: exprMatch?.[1]?.trim() ?? "",
+      forDuration: forMatch?.[1] ?? "",
+    };
+  });
+}
+
+function triageSteps(alert: ParsedAlert): string {
+  const name = alert.name;
+
+  if (name === "HighErrorRate") {
+    return `1. Open Grafana HTTP overview dashboard and filter to 5xx responses
+2. Identify the failing endpoints from access logs
+3. Check recent deployments: \`kubectl rollout history deployment/banking-platform\`
+4. Review application logs for stack traces: \`kubectl logs -l app=banking-platform --tail=200\`
+5. If caused by a bad deploy, rollback: \`kubectl rollout undo deployment/banking-platform\`
+6. If caused by downstream dependency, check adapter health via gateway`;
+  }
+  if (name === "HighLatency") {
+    return `1. Check Grafana latency dashboard — identify slow endpoints
+2. Review database query performance: check \`pg_stat_statements\` for slow queries
+3. Check connection pool usage: \`SELECT count(*) FROM pg_stat_activity;\`
+4. Look for lock contention: \`SELECT * FROM pg_locks WHERE NOT granted;\`
+5. If query-related, consider adding indexes or optimizing the query
+6. If load-related, scale horizontally or enable read replicas`;
+  }
+  if (name === "GatewayDown") {
+    return `1. Verify Supabase project status at https://status.supabase.com
+2. Check edge function deployment status: \`npx supabase functions list\`
+3. Review edge function logs in Supabase dashboard
+4. Attempt redeployment: \`npx supabase functions deploy gateway\`
+5. If Supabase infra issue, check for ongoing incidents and notify stakeholders`;
+  }
+  if (name === "DatabaseConnectionPoolExhausted") {
+    return `1. Check active connections: \`SELECT count(*), state FROM pg_stat_activity GROUP BY state;\`
+2. Identify long-running queries: \`SELECT pid, now() - query_start AS duration, query FROM pg_stat_activity WHERE state = 'active' ORDER BY duration DESC LIMIT 10;\`
+3. Terminate idle-in-transaction connections older than 5 minutes
+4. Review application connection pooling settings (PgBouncer / Supavisor)
+5. If persistent, increase \`max_connections\` or add PgBouncer`;
+  }
+  if (name === "HighTransferFailureRate") {
+    return `1. Check recent failed transfers in \`banking_transactions\` table
+2. Identify error patterns — are failures from a specific adapter or account type?
+3. Verify core banking adapter connectivity via health check endpoint
+4. Check for upstream provider outages (FedNow, RTP, ACH processor)
+5. If adapter-related, review credentials and rate limits in \`firm_integrations\`
+6. Notify affected institutions if outage exceeds 15 minutes`;
+  }
+  if (name === "RDCProcessingBacklog") {
+    return `1. Check RDC queue depth in monitoring dashboard
+2. Verify RDC adapter connectivity and API key validity
+3. Review processing worker logs for errors
+4. Check if upstream provider (Mitek, etc.) has degraded performance
+5. If backlog is growing, scale processing workers or pause new submissions`;
+  }
+  if (name === "WebhookDeliveryBacklog") {
+    return `1. Check webhook queue metrics in Grafana
+2. Identify failing webhook endpoints (check HTTP status codes in logs)
+3. Review retry policies — are retries accumulating?
+4. Temporarily pause delivery to failing endpoints
+5. Notify affected integration partners of delivery delays`;
+  }
+  if (name === "KYCVerificationSlow") {
+    return `1. Check KYC provider status page for degraded performance
+2. Review KYC adapter logs for timeout or error patterns
+3. Check if verification volume has spiked (new tenant onboarding?)
+4. Consider switching to fallback KYC provider if configured
+5. Notify member-facing teams about potential delays in account opening`;
+  }
+  if (name === "DiskSpaceRunningLow") {
+    return `1. Identify largest consumers: \`du -sh /var/lib/postgresql/data/*\`
+2. Check for WAL accumulation: \`SELECT pg_wal_size();\`
+3. Rotate old backups: review retention in scripts/backup/backup-database.sh
+4. Vacuum and analyze tables: \`VACUUM FULL ANALYZE;\`
+5. If urgent, expand disk volume or move old data to archive storage`;
+  }
+  if (name === "MemoryPressure") {
+    return `1. Identify high-memory containers: \`kubectl top pods --sort-by=memory\`
+2. Check for memory leaks — review container restart count
+3. Review recent code changes that may have increased memory usage
+4. Adjust resource limits in Helm values if workload has legitimately grown
+5. If leak suspected, capture heap dump and analyze`;
+  }
+
+  // Generic fallback
+  return `1. Check the Grafana dashboard for the affected metric
+2. Review recent deployments or configuration changes
+3. Check application logs: \`kubectl logs -l app=banking-platform --tail=100\`
+4. Verify database connectivity: \`pg_isready -h <db-host>\``;
+}
+
+// ---------------------------------------------------------------------------
+// 1. Incident Response Runbook
 // ---------------------------------------------------------------------------
 
 function generateIncidentResponse(): string {
@@ -76,182 +195,142 @@ function generateIncidentResponse(): string {
     return "# Incident Response Runbook\n\nNo alert rules found at monitoring/prometheus/alerts/banking.yml.\n";
   }
 
-  // Parse alert names and annotations from YAML
-  const alertBlocks = alertsYaml.split("- alert:").slice(1);
+  const alerts = parseAlerts(alertsYaml);
+  const criticalAlerts = alerts.filter((a) => a.severity === "critical");
+  const warningAlerts = alerts.filter((a) => a.severity === "warning");
 
-  const sections = alertBlocks.map((block) => {
-    const nameMatch = block.match(/^\s*(\S+)/);
-    const name = nameMatch?.[1] ?? "Unknown";
-    const severityMatch = block.match(/severity:\s*(\w+)/);
-    const severity = severityMatch?.[1] ?? "unknown";
-    const summaryMatch = block.match(/summary:\s*"([^"]+)"/);
-    const summary = summaryMatch?.[1] ?? "";
-    const descMatch = block.match(/description:\s*"([^"]+)"/);
-    const description = descMatch?.[1] ?? "";
-    const exprMatch = block.match(/expr:\s*(.+)/);
-    const expr = exprMatch?.[1]?.trim() ?? "";
+  const renderAlert = (alert: ParsedAlert) => `## ${alert.name}
 
-    return `## ${name}
-
-**Severity:** ${severity}
-**Summary:** ${summary}
-${description ? `**Description:** ${description}` : ""}
+**Severity:** ${alert.severity}
+**Summary:** ${alert.summary}
+${alert.description ? `**Description:** ${alert.description}` : ""}
+**Fires after:** ${alert.forDuration || "immediately"}
 
 ### Detection
 
 \`\`\`promql
-${expr}
+${alert.expr}
 \`\`\`
 
-### Immediate Actions
+### Triage & Response
 
-1. Check the Grafana dashboard for the affected metric
-2. Review recent deployments or configuration changes
-3. Check application logs: \`kubectl logs -l app=banking-platform --tail=100\`
-4. Verify database connectivity: \`pg_isready -h <db-host>\`
+${triageSteps(alert)}
 
 ### Escalation
 
-- **P1 (critical):** Page on-call engineer immediately, notify engineering lead
-- **P2 (warning):** Create incident ticket, notify team in #ops channel
-- **P3 (info):** Log for review in next standup
+${alert.severity === "critical" ? "- **Immediate:** Page on-call engineer via PagerDuty\n- Notify engineering lead and affected institution contacts\n- Open incident channel in Slack (#incident-YYYYMMDD)" : "- Create incident ticket and assign to platform operations\n- Notify team in #ops channel\n- Schedule review if not resolved within 2 hours"}
 
 ### Resolution Checklist
 
 - [ ] Root cause identified
 - [ ] Fix deployed or rollback completed
 - [ ] Monitoring confirms metrics back to normal
-- [ ] Post-incident review scheduled (for P1/P2)
+- [ ] Affected institutions notified of resolution
+${alert.severity === "critical" ? "- [ ] Post-incident review scheduled within 48 hours" : "- [ ] Findings logged for next standup"}
 `;
-  });
 
   return `# Incident Response Runbook
 
 > Auto-generated from \`monitoring/prometheus/alerts/banking.yml\`
 > Generated: ${new Date().toISOString()}
+> Total alerts: ${alerts.length} (${criticalAlerts.length} critical, ${warningAlerts.length} warning)
 
-${sections.join("\n---\n\n")}`;
+## Quick Reference
+
+| Alert | Severity | Summary |
+|-------|----------|---------|
+${alerts.map((a) => `| ${a.name} | ${a.severity} | ${a.summary} |`).join("\n")}
+
+---
+
+# Critical Alerts
+
+${criticalAlerts.map(renderAlert).join("\n---\n\n")}
+
+---
+
+# Warning Alerts
+
+${warningAlerts.map(renderAlert).join("\n---\n\n")}`;
 }
 
 // ---------------------------------------------------------------------------
-// 2. Adapter Troubleshooting Guide
-// ---------------------------------------------------------------------------
-
-function generateAdapterGuide(): string {
-  const adaptersDir = path.join(ROOT, "supabase/functions/_shared/adapters");
-  let domains: string[] = [];
-  try {
-    domains = fs.readdirSync(adaptersDir).filter((f) => {
-      const fullPath = path.join(adaptersDir, f);
-      return fs.statSync(fullPath).isDirectory() && f !== "node_modules";
-    });
-  } catch {
-    return "# Adapter Troubleshooting Guide\n\nNo adapters directory found.\n";
-  }
-
-  const sections = domains.map((domain) => {
-    const registryPath = path.join(adaptersDir, domain, "registry.ts");
-    const typesPath = path.join(adaptersDir, domain, "types.ts");
-    const hasRegistry = fs.existsSync(registryPath);
-    const hasTypes = fs.existsSync(typesPath);
-
-    // Try to extract provider names from registry
-    let providers: string[] = [];
-    if (hasRegistry) {
-      try {
-        const content = fs.readFileSync(registryPath, "utf-8");
-        const providerMatches = content.match(/['"](\w+-adapter)['"]/g);
-        if (providerMatches) {
-          providers = providerMatches.map((m) => m.replace(/['"]/g, ""));
-        }
-      } catch {
-        // Ignore read errors
-      }
-    }
-
-    return `## ${domain}
-
-**Registry:** ${hasRegistry ? "Yes" : "No"}
-**Types:** ${hasTypes ? "Yes" : "No"}
-${providers.length > 0 ? `**Known Providers:** ${providers.join(", ")}` : ""}
-
-### Health Check
-
-\`\`\`bash
-curl -X POST <SUPABASE_URL>/functions/v1/gateway \\
-  -H "Authorization: Bearer <SERVICE_KEY>" \\
-  -d '{"action": "adapters.setup.healthcheck", "params": {"domain": "${domain}"}}'
-\`\`\`
-
-### Common Issues
-
-1. **Connection timeout:** Verify network connectivity and firewall rules to provider API
-2. **Authentication failure:** Check API credentials in \`firm_integrations\` table
-3. **Rate limiting:** Review provider rate limits, check \`rate_limits\` table
-4. **Data format mismatch:** Compare request/response with provider API docs
-
-### Environment Variables
-
-Check for \`${domain.toUpperCase().replace(/-/g, "_")}_*\` environment variables.
-
-### Escalation
-
-- Check provider status page
-- Contact provider support with request IDs
-- Review adapter logs in Supabase dashboard
-`;
-  });
-
-  return `# Adapter Troubleshooting Guide
-
-> Auto-generated from \`supabase/functions/_shared/adapters/\`
-> Generated: ${new Date().toISOString()}
-> Adapter domains: ${domains.length}
-
-${sections.join("\n---\n\n")}`;
-}
-
-// ---------------------------------------------------------------------------
-// 3. Backup/Restore SOP
+// 2. Backup & Restore SOP
 // ---------------------------------------------------------------------------
 
 function generateBackupSOP(): string {
   const backupDir = path.join(ROOT, "scripts/backup");
-  const scripts = ["backup-database.sh", "restore-database.sh", "verify-backup.sh"];
+  const scripts: { file: string; role: string }[] = [
+    { file: "backup-database.sh", role: "backup" },
+    { file: "restore-database.sh", role: "restore" },
+    { file: "verify-backup.sh", role: "verify" },
+  ];
 
-  const sections = scripts.map((script) => {
-    const scriptPath = path.join(backupDir, script);
+  const sections = scripts.map(({ file, role }) => {
+    const scriptPath = path.join(backupDir, file);
+    let content = "";
     let exists = false;
     try {
-      fs.accessSync(scriptPath);
+      content = fs.readFileSync(scriptPath, "utf-8");
       exists = true;
     } catch {
       exists = false;
     }
 
-    return `## ${script}
+    // Extract environment variables from the script
+    const envVars: string[] = [];
+    if (exists) {
+      const envMatches = content.match(/\$\{(\w+)[\}:]/g);
+      if (envMatches) {
+        const unique = [...new Set(envMatches.map((m) => m.replace(/[${}:]/g, "")))];
+        envVars.push(...unique);
+      }
+    }
+
+    const whenToUse: Record<string, string> = {
+      backup: `- Before any go-live deployment
+- Before running data migrations
+- As part of nightly automated backup schedule (cron)
+- Before major version upgrades
+- Before running destructive schema changes`,
+      restore: `- When recovering from data corruption
+- When rolling back a failed migration
+- When restoring from a specific point in time
+- After a security incident requiring data recovery
+- During disaster recovery drills`,
+      verify: `- After every backup to confirm integrity
+- As part of quarterly disaster recovery testing
+- When validating backup strategy or encryption changes
+- After restoring to a staging environment`,
+    };
+
+    return `## ${file}
 
 **Status:** ${exists ? "Available" : "Not found"}
+${envVars.length > 0 ? `**Required Env Vars:** \`${envVars.join("`, `")}\`` : ""}
 
 ### Usage
 
 \`\`\`bash
-./scripts/backup/${script}
+./scripts/backup/${file}${role === "verify" ? " <backup-file>" : ""}${role === "restore" ? " <backup-file>" : ""}
 \`\`\`
 
 ### When to Use
 
-${script.includes("backup") ? "- Before any go-live deployment\n- Before running data migrations\n- As part of nightly automated backup schedule\n- Before major version upgrades" : ""}
-${script.includes("restore") ? "- When recovering from data corruption\n- When rolling back a failed migration\n- When restoring from a specific point in time\n- After a security incident requiring data recovery" : ""}
-${script.includes("verify") ? "- After every backup to confirm integrity\n- As part of quarterly disaster recovery testing\n- When validating backup strategy changes" : ""}
+${whenToUse[role] ?? ""}
 
-### Checklist
+### Pre-Execution Checklist
 
 - [ ] Confirm target environment and credentials
 - [ ] Notify team in #ops channel before executing
 - [ ] Verify disk space / storage availability
-- [ ] Execute and monitor output
-- [ ] Confirm success and update runbook log
+- [ ] For restores: confirm you have a current backup first
+
+### Post-Execution Checklist
+
+- [ ] Verify output for errors
+- [ ] ${role === "backup" ? "Run verify-backup.sh against the new backup" : role === "restore" ? "Run verify-backup.sh to confirm data integrity" : "Confirm all critical tables are present and row counts are reasonable"}
+- [ ] Update backup log / incident ticket
 `;
   });
 
@@ -260,11 +339,29 @@ ${script.includes("verify") ? "- After every backup to confirm integrity\n- As p
 > Auto-generated from \`scripts/backup/\`
 > Generated: ${new Date().toISOString()}
 
+## Overview
+
+The backup system uses \`pg_dump\` for PostgreSQL backups with optional AES-256
+encryption and S3 upload. Backups are rotated based on the configured retention
+period (default: 30 days).
+
+### Critical Tables
+
+These tables must be present and populated after any restore:
+
+- \`firms\` — tenant configuration
+- \`banking_accounts\` — member accounts
+- \`banking_transactions\` — transaction history
+- \`banking_users\` — member profiles
+- \`audit_logs\` — compliance audit trail
+
+---
+
 ${sections.join("\n---\n\n")}`;
 }
 
 // ---------------------------------------------------------------------------
-// 4. Support Escalation Playbook
+// 3. Support Escalation Playbook
 // ---------------------------------------------------------------------------
 
 function generateEscalationPlaybook(): string {
@@ -285,18 +382,18 @@ function generateEscalationPlaybook(): string {
 ## Escalation Path
 
 ### Tier 1 — Institution Support
-- Handle: Password resets, account lockouts, basic navigation
-- Tools: Admin console, audit log, user management
-- Escalate to Tier 2 if: Technical issue, data discrepancy, integration error
+- **Handle:** Password resets, account lockouts, basic navigation
+- **Tools:** Admin console, audit log, user management
+- **Escalate to Tier 2 if:** Technical issue, data discrepancy, integration error
 
 ### Tier 2 — Platform Operations
-- Handle: Adapter issues, data migration problems, configuration changes
-- Tools: Supabase dashboard, Grafana, edge function logs
-- Escalate to Tier 3 if: Infrastructure issue, security concern, code change required
+- **Handle:** Adapter issues, data migration problems, configuration changes
+- **Tools:** Supabase dashboard, Grafana, edge function logs
+- **Escalate to Tier 3 if:** Infrastructure issue, security concern, code change required
 
 ### Tier 3 — Engineering
-- Handle: Bug fixes, infrastructure changes, security incidents
-- Tools: Full codebase access, CI/CD, cloud console
+- **Handle:** Bug fixes, infrastructure changes, security incidents
+- **Tools:** Full codebase access, CI/CD, cloud console
 
 ## Contact Channels
 
@@ -323,82 +420,6 @@ Is the platform accessible?
 }
 
 // ---------------------------------------------------------------------------
-// 5. Tenant-Specific Runbook
-// ---------------------------------------------------------------------------
-
-function generateTenantRunbook(tenantName: string): string {
-  return `# Tenant Runbook — ${tenantName}
-
-> Auto-generated for tenant: ${tenantName}
-> Generated: ${new Date().toISOString()}
-
-## Tenant Overview
-
-- **Name:** ${tenantName}
-- **Type:** Credit Union / Community Bank
-- **Template:** (configured at provisioning)
-
-## Enabled Features
-
-Review the \`firms.features\` JSONB column for this tenant to see which features are active.
-Only active adapters and features are relevant for this institution's operations.
-
-## Key Contacts
-
-| Role | Name | Contact |
-|------|------|---------|
-| Institution Admin | (configured) | (configured) |
-| Platform Operations | On-call | #platform-ops |
-| Engineering | On-call | PagerDuty |
-
-## Go-Live Checklist
-
-- [ ] Tenant provisioned via \`scripts/provision-tenant.ts\`
-- [ ] Adapters configured and health-checked
-- [ ] Data migration completed and reconciled
-- [ ] Smoke tests passed
-- [ ] Stakeholder approval obtained
-- [ ] DNS cutover completed
-- [ ] Post-launch monitoring active (first 24h)
-- [ ] Member activation emails sent
-- [ ] Support team briefed on institution specifics
-
-## Adapter Configuration
-
-Query current adapter status:
-
-\`\`\`sql
-SELECT domain, provider, is_connected, health, last_sync_at
-FROM firm_integrations
-WHERE firm_id = (SELECT id FROM firms WHERE slug = '${tenantName}');
-\`\`\`
-
-## Data Migration History
-
-\`\`\`sql
-SELECT label, entity_type, status, total_rows, valid_rows, error_rows, completed_at
-FROM migration_batches
-WHERE firm_id = (SELECT id FROM firms WHERE slug = '${tenantName}')
-ORDER BY created_at DESC;
-\`\`\`
-
-## Monitoring
-
-- Grafana dashboard: filter by \`tenant="${tenantName}"\`
-- Sentry: filter by tag \`tenant:${tenantName}\`
-- Audit log: Admin Console → Audit Log
-
-## Incident History
-
-Document incidents here after resolution:
-
-| Date | Severity | Summary | Resolution |
-|------|----------|---------|------------|
-| | | | |
-`;
-}
-
-// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -409,20 +430,26 @@ function main() {
   ensureDir(OUTPUT_DIR);
 
   writeRunbook("incident-response.md", generateIncidentResponse());
-  writeRunbook("adapter-troubleshooting.md", generateAdapterGuide());
   writeRunbook("backup-restore-sop.md", generateBackupSOP());
   writeRunbook("support-escalation.md", generateEscalationPlaybook());
 
   if (args.tenant) {
-    writeRunbook(`tenant-runbook-${args.tenant}.md`, generateTenantRunbook(args.tenant));
+    console.log(`\n  Tenant-specific runbook for: ${args.tenant}`);
+    writeRunbook(
+      `tenant-runbook-${args.tenant}.md`,
+      `# Tenant Runbook — ${args.tenant}\n\n> Generated: ${new Date().toISOString()}\n\nRefer to the incident-response.md and backup-restore-sop.md runbooks for operational procedures.\n`
+    );
   }
 
   if (args.all) {
-    // Generate a generic tenant template
-    writeRunbook("tenant-runbook-template.md", generateTenantRunbook("TEMPLATE"));
+    writeRunbook(
+      "tenant-runbook-template.md",
+      `# Tenant Runbook — TEMPLATE\n\n> Generated: ${new Date().toISOString()}\n\nCopy this file and fill in tenant-specific details when onboarding a new institution.\n`
+    );
   }
 
-  console.log(`\nDone. Runbooks written to ${OUTPUT_DIR}/`);
+  const generatedCount = 3 + (args.tenant ? 1 : 0) + (args.all ? 1 : 0);
+  console.log(`\nDone. ${generatedCount} runbooks written to ${OUTPUT_DIR}/`);
 }
 
 main();

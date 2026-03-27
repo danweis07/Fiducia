@@ -1,0 +1,41 @@
+{
+  "tenantId": "azfcu",
+  "appName": "AZ Federal CU",
+  "appNameShort": "AZFCU",
+  "ios": {
+    "bundleId": "com.azfcu.digitalbanking",
+    "teamId": "",
+    "appStoreId": ""
+  },
+  "android": {
+    "applicationId": "com.azfcu.digitalbanking",
+    "packageName": "com.azfcu.digitalbanking"
+  },
+  "branding": {
+    "primaryColor": "#1B4F72",
+    "accentColor": "#D4AC0D",
+    "logoPath": "assets/tenants/azfcu/logo.png",
+    "iconPath": "assets/tenants/azfcu/icon.png",
+    "splashPath": "assets/tenants/azfcu/splash.png"
+  },
+  "supabase": {
+    "url": "",
+    "anonKey": ""
+  },
+  "features": {
+    "rdc": true,
+    "billPay": true,
+    "p2p": false,
+    "cardControls": true,
+    "biometricLogin": true,
+    "pushNotifications": true
+  },
+  "appStore": {
+    "description": "Manage your accounts, transfer funds, deposit checks, and more with AZ Federal Credit Union's mobile banking app.",
+    "keywords": "credit union, banking, mobile banking, AZFCU, Arizona Federal",
+    "category": "Finance",
+    "privacyUrl": "https://azfcu.org/privacy",
+    "supportUrl": "https://azfcu.org/support",
+    "marketingUrl": "https://azfcu.org"
+  }
+}

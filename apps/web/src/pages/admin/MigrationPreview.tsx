@@ -50,8 +50,18 @@ export default function MigrationPreview() {
   if (batchQuery.isLoading || previewQuery.isLoading) return <PageSkeleton />;
 
   const batch = batchQuery.data?.batch;
-  const preview = previewQuery.data?.preview;
+  const previewRaw = previewQuery.data;
   const recon = reconQuery.data?.report;
+  // Flatten preview into shape the template expects
+  const preview = previewRaw
+    ? {
+        totalRows: previewRaw.validation.totalRows,
+        validRows: previewRaw.validation.validRows,
+        errorRows: previewRaw.validation.invalidRows,
+        warningRows: previewRaw.validation.warningRows,
+        sampleCreates: previewRaw.sampleRows,
+      }
+    : null;
 
   if (!batch || !preview) {
     return (
@@ -64,15 +74,18 @@ export default function MigrationPreview() {
   const validPct = preview.totalRows > 0 ? (preview.validRows / preview.totalRows) * 100 : 0;
 
   function handleExecute() {
-    executeMutation.mutate(batchId!, {
-      onSuccess: () => {
-        toast({
-          title: "Import complete",
-          description: `${formatNumber(preview!.validRows)} records imported successfully.`,
-        });
-        navigate("/admin/data-migration");
+    executeMutation.mutate(
+      { batchId: batchId! },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Import complete",
+            description: `${formatNumber(preview!.validRows)} records imported successfully.`,
+          });
+          navigate("/admin/data-migration");
+        },
       },
-    });
+    );
   }
 
   return (
@@ -231,17 +244,21 @@ export default function MigrationPreview() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  {Object.keys(preview.sampleCreates[0]).map((key) => (
-                    <TableHead key={key}>{key}</TableHead>
-                  ))}
+                  <TableHead>Row</TableHead>
+                  <TableHead>Action</TableHead>
+                  <TableHead>Table</TableHead>
+                  <TableHead>Fields</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {preview.sampleCreates.map((row, idx) => (
+                {preview.sampleCreates.map((row, idx: number) => (
                   <TableRow key={idx}>
-                    {Object.values(row).map((val, vIdx) => (
-                      <TableCell key={vIdx}>{String(val)}</TableCell>
-                    ))}
+                    <TableCell>{row.rowNumber}</TableCell>
+                    <TableCell>{row.action}</TableCell>
+                    <TableCell>{row.targetTable}</TableCell>
+                    <TableCell>{Object.keys(row.fields).length} fields</TableCell>
+                    <TableCell>{row.errors.length > 0 ? row.errors[0].message : "OK"}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

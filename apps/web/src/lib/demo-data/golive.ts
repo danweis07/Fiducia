@@ -2,7 +2,7 @@
  * Demo Data — Go-Live Orchestration
  *
  * Mock responses for go-live workflow, smoke tests, post-launch monitoring,
- * and canary deployment actions.
+ * canary deployments, adapter setup, and runbook generation.
  */
 
 import type {
@@ -12,19 +12,14 @@ import type {
   SmokeTestSuite,
   PostLaunchMetrics,
   TenantDeployment,
-  GoLiveStatusPublic,
-  ApprovalGate,
+  ApprovalRecord,
 } from "@/types/golive";
 
-function isoDate(daysAgo: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - daysAgo);
-  return d.toISOString();
-}
+import { ActionHandler, TENANT_ID, isoDate } from "./types";
 
-// ---------------------------------------------------------------------------
+// =============================================================================
 // GO-LIVE STEPS
-// ---------------------------------------------------------------------------
+// =============================================================================
 
 const STEP_DEFS: Array<Pick<GoLiveStep, "id" | "label" | "description">> = [
   {
@@ -64,32 +59,30 @@ function buildSteps(completedCount: number): GoLiveStep[] {
   return STEP_DEFS.map((def, i) => ({
     ...def,
     status: i < completedCount ? "completed" : i === completedCount ? "in_progress" : "pending",
-    startedAt: i <= completedCount ? isoDate(7 - i) : undefined,
-    completedAt: i < completedCount ? isoDate(7 - i) : undefined,
+    result: null,
+    canRollback: i < completedCount,
+    startedAt: i <= completedCount ? isoDate(7 - i) : null,
+    completedAt: i < completedCount ? isoDate(7 - i) : null,
   }));
 }
 
 const sampleWorkflow: GoLiveWorkflow = {
   id: "wf-001",
-  firmId: "demo-tenant",
+  firmId: TENANT_ID,
   status: "in_progress",
   currentStep: "smoke_tests",
   stepsCompleted: ["provision", "adapters", "data_import"],
-  stepResults: {
-    provision: { projectRef: "azfcu-prod", migrationsApplied: 43, edgeFunctionsDeployed: 11 },
-    adapters: { configured: 6, healthy: 6, degraded: 0, down: 0 },
-    data_import: { batches: 3, totalRecords: 37250, reconciliationPassed: true },
-    smoke_tests: {},
-    approval: {},
-    dns_cutover: {},
-    post_launch_monitor: {},
-  },
   steps: buildSteps(3),
   startedBy: "user-admin-001",
   startedAt: isoDate(7),
   completedAt: null,
-  metadata: { institutionName: "Arizona Federal Credit Union", template: "us-credit-union" },
-  createdAt: isoDate(7),
+  metadata: {
+    institutionName: "Arizona Federal Credit Union",
+    institutionType: "credit_union",
+    targetGoLiveDate: null,
+    stakeholderEmails: ["admin@azfcu.org"],
+    statusPageUrl: null,
+  },
 };
 
 const sampleEvents: GoLiveEvent[] = [
@@ -167,92 +160,96 @@ const sampleEvents: GoLiveEvent[] = [
 
 const sampleSmokeTests: SmokeTestSuite = {
   workflowId: "wf-001",
-  runAt: isoDate(3),
-  overallStatus: "pass",
-  tests: [
+  startedAt: isoDate(3),
+  completedAt: isoDate(3),
+  overallStatus: "failed",
+  totalTests: 8,
+  passedTests: 7,
+  failedTests: 1,
+  skippedTests: 0,
+  results: [
     {
-      name: "Authentication",
-      description: "Sign in with test credentials",
-      status: "pass",
+      testId: "auth_login",
+      label: "Authentication",
+      status: "passed",
       durationMs: 245,
+      message: null,
+      details: null,
     },
     {
-      name: "Account List",
-      description: "Fetch accounts.list and verify data",
-      status: "pass",
+      testId: "accounts_list",
+      label: "Account List",
+      status: "passed",
       durationMs: 132,
+      message: null,
+      details: null,
     },
     {
-      name: "Account Detail",
-      description: "Fetch individual account with balance",
-      status: "pass",
+      testId: "accounts_detail",
+      label: "Account Detail",
+      status: "passed",
       durationMs: 98,
+      message: null,
+      details: null,
     },
     {
-      name: "Internal Transfer",
-      description: "Dry-run transfer between accounts",
-      status: "pass",
+      testId: "transfer_dryrun",
+      label: "Internal Transfer",
+      status: "passed",
       durationMs: 310,
+      message: null,
+      details: null,
     },
     {
-      name: "Bill Pay Payees",
-      description: "List bill pay payees",
-      status: "pass",
+      testId: "billpay_payees",
+      label: "Bill Pay Payees",
+      status: "passed",
       durationMs: 87,
-    },
-    { name: "Card List", description: "Fetch card data", status: "pass", durationMs: 105 },
-    {
-      name: "RDC Upload",
-      description: "Test remote deposit capture flow",
-      status: "skip",
-      durationMs: 0,
-      details: { reason: "RDC adapter not configured" },
+      message: null,
+      details: null,
     },
     {
-      name: "Wire Transfer",
-      description: "Dry-run wire transfer",
-      status: "pass",
+      testId: "card_list",
+      label: "Card Controls",
+      status: "passed",
+      durationMs: 105,
+      message: null,
+      details: null,
+    },
+    {
+      testId: "adapter_health",
+      label: "Wire Transfer",
+      status: "passed",
       durationMs: 420,
+      message: null,
+      details: null,
     },
     {
-      name: "Adapter Health",
-      description: "All configured adapters responding",
-      status: "pass",
-      durationMs: 1200,
-    },
-    {
-      name: "Audit Logging",
-      description: "Verify audit entries created",
-      status: "pass",
-      durationMs: 67,
+      testId: "rdc_upload",
+      label: "RDC Upload",
+      status: "failed",
+      durationMs: 3200,
+      message: "Timeout waiting for RDC adapter response after 3000ms",
+      details: { error: "timeout" },
     },
   ],
-  passCount: 8,
-  failCount: 0,
-  skipCount: 1,
 };
 
-const sampleApproval: ApprovalGate = {
-  required: 2,
-  received: [
-    {
-      userId: "user-admin-001",
-      userName: "Jane Doe",
-      role: "owner",
-      approvedAt: isoDate(2),
-      comment: "All checks passed. Approved for cutover.",
-    },
-  ],
-  isApproved: false,
+const sampleApproval: ApprovalRecord = {
+  approverEmail: "jane.doe@azfcu.org",
+  approverName: "Jane Doe",
+  approvedAt: isoDate(2),
+  notes: "All checks passed. Approved for cutover.",
 };
 
 const samplePostLaunchMetrics: PostLaunchMetrics = {
   errorRate: 0.002,
   p95LatencyMs: 340,
   totalLogins: 3847,
+  uniqueUsers: 2103,
   totalTransactions: 12560,
-  activeUsers: 2103,
-  adapterHealth: {
+  failedTransactions: 25,
+  adapterHealthStatus: {
     "core-banking": "healthy",
     "card-services": "healthy",
     "bill-pay": "healthy",
@@ -260,24 +257,15 @@ const samplePostLaunchMetrics: PostLaunchMetrics = {
     rdc: "degraded",
     "wire-transfers": "healthy",
   },
-  alerts: [
-    {
-      id: "alert-001",
-      severity: "warning",
-      message: "RDC processing latency elevated (p95: 4.2s)",
-      timestamp: isoDate(0),
-      resolved: false,
-    },
-  ],
+  alertsFired: 1,
   uptimePercent: 99.97,
-  periodStart: isoDate(1),
-  periodEnd: new Date().toISOString(),
+  monitoringSince: isoDate(1),
 };
 
 const sampleDeployments: TenantDeployment[] = [
   {
     id: "deploy-001",
-    firmId: "demo-tenant",
+    firmId: TENANT_ID,
     version: "1.2.0",
     pinned: false,
     rolloutPercentage: 100,
@@ -289,7 +277,7 @@ const sampleDeployments: TenantDeployment[] = [
   },
   {
     id: "deploy-002",
-    firmId: "demo-tenant",
+    firmId: TENANT_ID,
     version: "1.3.0-rc.1",
     pinned: false,
     rolloutPercentage: 10,
@@ -301,7 +289,7 @@ const sampleDeployments: TenantDeployment[] = [
   },
 ];
 
-const samplePublicStatus: GoLiveStatusPublic = {
+const samplePublicStatus = {
   institutionName: "Arizona Federal Credit Union",
   workflowStatus: "in_progress",
   currentStepLabel: "Smoke Tests",
@@ -316,11 +304,11 @@ const samplePublicStatus: GoLiveStatusPublic = {
   lastUpdatedAt: isoDate(0),
 };
 
-// ---------------------------------------------------------------------------
+// =============================================================================
 // HANDLERS
-// ---------------------------------------------------------------------------
+// =============================================================================
 
-export const goliveHandlers: Record<string, (params: Record<string, unknown>) => unknown> = {
+export const goliveHandlers: Record<string, ActionHandler> = {
   "golive.start": () => ({
     workflow: {
       ...sampleWorkflow,
@@ -351,14 +339,13 @@ export const goliveHandlers: Record<string, (params: Record<string, unknown>) =>
   "golive.step.approve": () => ({
     approval: {
       ...sampleApproval,
-      received: [
-        ...sampleApproval.received,
+      approvals: [
+        sampleApproval,
         {
-          userId: "user-admin-002",
-          userName: "John Admin",
-          role: "admin",
+          approverEmail: "john@azfcu.org",
+          approverName: "John Admin",
           approvedAt: new Date().toISOString(),
-          comment: "Approved",
+          notes: "Approved",
         },
       ],
       isApproved: true,
@@ -377,31 +364,16 @@ export const goliveHandlers: Record<string, (params: Record<string, unknown>) =>
 
   "golive.status.public": () => ({ status: samplePublicStatus }),
 
-  // Canary deployments
-  "deployments.list": () => ({ deployments: sampleDeployments }),
-
-  "deployments.create": (params) => ({
-    deployment: {
-      ...sampleDeployments[1],
-      id: "deploy-new-" + Date.now(),
-      version: (params.version as string) ?? "1.3.0",
-      rolloutPercentage: (params.rolloutPercentage as number) ?? 10,
-    },
+  // Runbook generator
+  "admin.runbooks.list": () => ({
+    runbooks: [
+      { name: "incident-response.md", generatedAt: isoDate(1), sizeBytes: 24500 },
+      { name: "adapter-troubleshooting.md", generatedAt: isoDate(1), sizeBytes: 18200 },
+      { name: "backup-restore-sop.md", generatedAt: isoDate(1), sizeBytes: 8900 },
+      { name: "support-escalation.md", generatedAt: isoDate(1), sizeBytes: 6400 },
+    ],
   }),
 
-  "deployments.update": (params) => {
-    const dep = sampleDeployments.find((d) => d.id === params.deploymentId);
-    if (!dep) return { error: "Not found" };
-    return { deployment: { ...dep, ...params } };
-  },
-
-  "deployments.rollback": (params) => {
-    const dep = sampleDeployments.find((d) => d.id === params.deploymentId);
-    if (!dep) return { error: "Not found" };
-    return { deployment: { ...dep, status: "rolling_back", rolloutPercentage: 0 } };
-  },
-
-  // Runbook generator
   "admin.runbooks.generate": () => ({
     runbooks: [
       { name: "incident-response.md", generatedAt: new Date().toISOString(), sizeBytes: 24500 },
@@ -412,17 +384,105 @@ export const goliveHandlers: Record<string, (params: Record<string, unknown>) =>
       },
       { name: "backup-restore-sop.md", generatedAt: new Date().toISOString(), sizeBytes: 8900 },
       { name: "support-escalation.md", generatedAt: new Date().toISOString(), sizeBytes: 6400 },
-      { name: "tenant-runbook-demo.md", generatedAt: new Date().toISOString(), sizeBytes: 31000 },
     ],
   }),
 
-  "admin.runbooks.list": () => ({
-    runbooks: [
-      { name: "incident-response.md", generatedAt: isoDate(1), sizeBytes: 24500 },
-      { name: "adapter-troubleshooting.md", generatedAt: isoDate(1), sizeBytes: 18200 },
-      { name: "backup-restore-sop.md", generatedAt: isoDate(1), sizeBytes: 8900 },
-      { name: "support-escalation.md", generatedAt: isoDate(1), sizeBytes: 6400 },
-      { name: "tenant-runbook-demo.md", generatedAt: isoDate(1), sizeBytes: 31000 },
+  // Adapter setup
+  "adapters.setup.test": () => ({
+    results: [
+      {
+        adapter: "core-banking",
+        provider: "Symitar",
+        status: "healthy",
+        latencyMs: 145,
+        message: "Connection successful, API version 4.2 detected",
+      },
+      {
+        adapter: "card-services",
+        provider: "PSCU",
+        status: "healthy",
+        latencyMs: 210,
+        message: "Connection successful",
+      },
+      {
+        adapter: "bill-pay",
+        provider: "Payveris",
+        status: "healthy",
+        latencyMs: 98,
+        message: "Connection successful",
+      },
+      {
+        adapter: "kyc",
+        provider: "Alloy",
+        status: "healthy",
+        latencyMs: 320,
+        message: "Connection successful, sandbox mode",
+      },
+      {
+        adapter: "rdc",
+        provider: "Mitek",
+        status: "degraded",
+        latencyMs: 4200,
+        message: "Connection successful but latency exceeds 2000ms threshold",
+      },
+      {
+        adapter: "wire-transfers",
+        provider: "FedLine",
+        status: "healthy",
+        latencyMs: 180,
+        message: "Connection successful",
+      },
     ],
+    summary: { total: 6, healthy: 5, degraded: 1, down: 0 },
+    testedAt: new Date().toISOString(),
+  }),
+
+  "adapters.setup.save": () => ({
+    success: true,
+    savedAt: new Date().toISOString(),
+  }),
+
+  // Canary deployments
+  "canary.deployments.list": () => ({ deployments: sampleDeployments }),
+
+  "canary.deployments.update": (params) => {
+    const dep = sampleDeployments.find((d) => d.id === params.deploymentId);
+    if (!dep) return { error: "Deployment not found" };
+    return {
+      deployment: {
+        ...dep,
+        rolloutPercentage: (params.rolloutPercentage as number) ?? dep.rolloutPercentage,
+        ...(params.status ? { status: params.status } : {}),
+      },
+    };
+  },
+
+  "canary.metrics": () => ({
+    canary: {
+      version: "1.3.0-rc.1",
+      errorRate: 0.004,
+      p50LatencyMs: 120,
+      p95LatencyMs: 380,
+      p99LatencyMs: 920,
+      requestCount: 4520,
+      successCount: 4502,
+      failureCount: 18,
+      periodStart: isoDate(1),
+      periodEnd: new Date().toISOString(),
+    },
+    stable: {
+      version: "1.2.0",
+      errorRate: 0.001,
+      p50LatencyMs: 110,
+      p95LatencyMs: 340,
+      p99LatencyMs: 780,
+      requestCount: 45200,
+      successCount: 45155,
+      failureCount: 45,
+      periodStart: isoDate(1),
+      periodEnd: new Date().toISOString(),
+    },
+    verdict: "canary_acceptable",
+    comparedAt: new Date().toISOString(),
   }),
 };

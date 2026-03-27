@@ -1,12 +1,12 @@
 /**
  * Go-Live Orchestration Types
  *
- * Types for the go-live workflow, smoke tests, canary deployments,
- * and the stakeholder status page.
+ * Types for the sequenced go-live workflow, smoke testing,
+ * and canary deployment management.
  */
 
 // =============================================================================
-// WORKFLOW
+// GO-LIVE WORKFLOW
 // =============================================================================
 
 export type GoLiveWorkflowStatus =
@@ -38,9 +38,10 @@ export interface GoLiveStep {
   label: string;
   description: string;
   status: "pending" | "in_progress" | "completed" | "failed" | "skipped";
-  result?: Record<string, unknown>;
-  startedAt?: string;
-  completedAt?: string;
+  result: Record<string, unknown> | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  canRollback: boolean;
 }
 
 export interface GoLiveWorkflow {
@@ -48,14 +49,20 @@ export interface GoLiveWorkflow {
   firmId: string;
   status: GoLiveWorkflowStatus;
   currentStep: GoLiveStepId | null;
-  stepsCompleted: GoLiveStepId[];
-  stepResults: Record<GoLiveStepId, Record<string, unknown>>;
   steps: GoLiveStep[];
+  stepsCompleted: GoLiveStepId[];
   startedBy: string | null;
   startedAt: string | null;
   completedAt: string | null;
-  metadata: Record<string, unknown>;
-  createdAt: string;
+  metadata: GoLiveMetadata;
+}
+
+export interface GoLiveMetadata {
+  institutionName: string;
+  institutionType: "credit_union" | "community_bank" | "digital_bank";
+  targetGoLiveDate: string | null;
+  stakeholderEmails: string[];
+  statusPageUrl: string | null;
 }
 
 export interface GoLiveEvent {
@@ -73,25 +80,50 @@ export interface GoLiveEvent {
 // SMOKE TESTS
 // =============================================================================
 
-export type SmokeTestStatus = "pass" | "fail" | "skip" | "running";
+export type SmokeTestId =
+  | "auth_login"
+  | "auth_session"
+  | "accounts_list"
+  | "accounts_detail"
+  | "transfer_dryrun"
+  | "billpay_payees"
+  | "card_list"
+  | "adapter_health"
+  | "rdc_upload"
+  | "notifications";
+
+export type SmokeTestStatus = "pending" | "running" | "passed" | "failed" | "skipped";
 
 export interface SmokeTestResult {
-  name: string;
-  description: string;
+  testId: SmokeTestId;
+  label: string;
   status: SmokeTestStatus;
   durationMs: number;
-  error?: string;
-  details?: Record<string, unknown>;
+  message: string | null;
+  details: Record<string, unknown> | null;
 }
 
 export interface SmokeTestSuite {
   workflowId: string;
-  runAt: string;
-  overallStatus: "pass" | "fail";
-  tests: SmokeTestResult[];
-  passCount: number;
-  failCount: number;
-  skipCount: number;
+  results: SmokeTestResult[];
+  totalTests: number;
+  passedTests: number;
+  failedTests: number;
+  skippedTests: number;
+  startedAt: string;
+  completedAt: string | null;
+  overallStatus: "passed" | "failed" | "running";
+}
+
+// =============================================================================
+// APPROVAL GATE
+// =============================================================================
+
+export interface ApprovalRecord {
+  approverEmail: string;
+  approverName: string;
+  approvedAt: string;
+  notes: string;
 }
 
 // =============================================================================
@@ -102,21 +134,13 @@ export interface PostLaunchMetrics {
   errorRate: number;
   p95LatencyMs: number;
   totalLogins: number;
+  uniqueUsers: number;
   totalTransactions: number;
-  activeUsers: number;
-  adapterHealth: Record<string, "healthy" | "degraded" | "down">;
-  alerts: PostLaunchAlert[];
+  failedTransactions: number;
+  adapterHealthStatus: Record<string, "healthy" | "degraded" | "down">;
+  alertsFired: number;
   uptimePercent: number;
-  periodStart: string;
-  periodEnd: string;
-}
-
-export interface PostLaunchAlert {
-  id: string;
-  severity: "critical" | "warning" | "info";
-  message: string;
-  timestamp: string;
-  resolved: boolean;
+  monitoringSince: string;
 }
 
 // =============================================================================
@@ -138,38 +162,35 @@ export interface TenantDeployment {
   createdAt: string;
 }
 
-// =============================================================================
-// STAKEHOLDER STATUS
-// =============================================================================
-
-export interface GoLiveStatusPublic {
-  institutionName: string;
-  workflowStatus: GoLiveWorkflowStatus;
-  currentStepLabel: string;
-  stepsCompleted: number;
-  totalSteps: number;
-  steps: Array<{
-    label: string;
-    status: "pending" | "in_progress" | "completed" | "failed" | "skipped";
-  }>;
-  estimatedCompletionAt: string | null;
-  lastUpdatedAt: string;
+export interface CanaryMetrics {
+  deploymentId: string;
+  currentErrorRate: number;
+  thresholdExceeded: boolean;
+  requestsServed: number;
+  rolloutPercentage: number;
+  version: string;
+  comparisonVersion: string | null;
+  metrics: {
+    canary: { errorRate: number; p95Ms: number; requestCount: number };
+    stable: { errorRate: number; p95Ms: number; requestCount: number };
+  };
 }
 
 // =============================================================================
-// APPROVAL GATE
+// RUNBOOK GENERATOR
 // =============================================================================
 
-export interface ApprovalEntry {
-  userId: string;
-  userName: string;
-  role: string;
-  approvedAt: string;
-  comment: string;
-}
-
-export interface ApprovalGate {
-  required: number;
-  received: ApprovalEntry[];
-  isApproved: boolean;
+export interface GeneratedRunbook {
+  id: string;
+  name: string;
+  category:
+    | "incident_response"
+    | "adapter_troubleshooting"
+    | "backup_restore"
+    | "escalation"
+    | "tenant_specific";
+  generatedAt: string;
+  markdownContent: string;
+  sourceArtifacts: string[];
+  tenantSpecific: boolean;
 }

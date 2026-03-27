@@ -2,21 +2,62 @@
  * Go-Live Orchestration Hooks
  *
  * TanStack React Query hooks for go-live workflows, smoke tests,
- * post-launch monitoring, and canary deployments.
+ * canary deployments, runbooks, and adapter configuration.
  */
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { gateway } from "@/lib/gateway";
 import type {
   GoLiveWorkflow,
-  GoLiveEvent,
   GoLiveStepId,
   SmokeTestSuite,
   PostLaunchMetrics,
-  TenantDeployment,
-  GoLiveStatusPublic,
-  ApprovalGate,
+  ApprovalRecord,
 } from "@/types/golive";
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+export interface RunbookEntry {
+  name: string;
+  generatedAt: string;
+  sizeBytes: number;
+}
+
+export interface CanaryDeployment {
+  id: string;
+  version: string;
+  rolloutPercentage: number;
+  status: "pending" | "rolling_out" | "stable" | "rolled_back";
+  errorRate: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CanaryMetrics {
+  deploymentId: string;
+  errorRate: number;
+  p95LatencyMs: number;
+  requestCount: number;
+  rolloutPercentage: number;
+  sampledAt: string;
+}
+
+export interface AdapterConnectionResult {
+  domain: string;
+  provider: string;
+  connected: boolean;
+  latencyMs: number;
+  error?: string;
+}
+
+export interface AdapterConfig {
+  domain: string;
+  provider: string;
+  credentials: Record<string, unknown>;
+  options?: Record<string, unknown>;
+}
 
 // ---------------------------------------------------------------------------
 // GO-LIVE WORKFLOW
@@ -26,14 +67,6 @@ export function useGoLiveWorkflow() {
   return useQuery({
     queryKey: ["golive-workflow"],
     queryFn: () => gateway.request<{ workflow: GoLiveWorkflow }>("golive.status", {}),
-  });
-}
-
-export function useGoLiveEvents(workflowId: string) {
-  return useQuery({
-    queryKey: ["golive-events", workflowId],
-    queryFn: () => gateway.request<{ events: GoLiveEvent[] }>("golive.events.list", { workflowId }),
-    enabled: !!workflowId,
   });
 }
 
@@ -52,7 +85,6 @@ export function useExecuteGoLiveStep() {
       gateway.request<{ workflow: GoLiveWorkflow }>("golive.step.execute", { stepId }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["golive-workflow"] });
-      qc.invalidateQueries({ queryKey: ["golive-events"] });
     },
   });
 }
@@ -61,10 +93,9 @@ export function useApproveGoLiveStep() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (params: { comment: string }) =>
-      gateway.request<{ approval: ApprovalGate }>("golive.step.approve", params),
+      gateway.request<{ approval: ApprovalRecord }>("golive.step.approve", params),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["golive-workflow"] });
-      qc.invalidateQueries({ queryKey: ["golive-approval"] });
     },
   });
 }
@@ -90,96 +121,22 @@ export function useRunSmokeTests() {
 }
 
 // ---------------------------------------------------------------------------
-// APPROVAL GATE
-// ---------------------------------------------------------------------------
-
-export function useApprovalStatus() {
-  return useQuery({
-    queryKey: ["golive-approval"],
-    queryFn: () => gateway.request<{ approval: ApprovalGate }>("golive.approval.status", {}),
-  });
-}
-
-// ---------------------------------------------------------------------------
 // POST-LAUNCH MONITORING
 // ---------------------------------------------------------------------------
 
-export function usePostLaunchMetrics() {
+export function usePostLaunchMetrics(workflowId: string) {
   return useQuery({
-    queryKey: ["golive-post-launch-metrics"],
-    queryFn: () => gateway.request<{ metrics: PostLaunchMetrics }>("golive.monitor.dashboard", {}),
+    queryKey: ["golive-post-launch-metrics", workflowId],
+    queryFn: () =>
+      gateway.request<{ metrics: PostLaunchMetrics }>("golive.monitor.dashboard", { workflowId }),
+    enabled: !!workflowId,
     refetchInterval: 30_000,
   });
 }
 
 // ---------------------------------------------------------------------------
-// PUBLIC STATUS PAGE
+// RUNBOOKS
 // ---------------------------------------------------------------------------
-
-export function useGoLivePublicStatus(workflowId: string) {
-  return useQuery({
-    queryKey: ["golive-public-status", workflowId],
-    queryFn: () =>
-      gateway.request<{ status: GoLiveStatusPublic }>("golive.status.public", { workflowId }),
-    enabled: !!workflowId,
-    refetchInterval: 15_000,
-  });
-}
-
-// ---------------------------------------------------------------------------
-// CANARY DEPLOYMENTS
-// ---------------------------------------------------------------------------
-
-export function useDeployments() {
-  return useQuery({
-    queryKey: ["tenant-deployments"],
-    queryFn: () => gateway.request<{ deployments: TenantDeployment[] }>("deployments.list", {}),
-  });
-}
-
-export function useCreateDeployment() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (params: {
-      version: string;
-      rolloutPercentage: number;
-      errorRateThreshold?: number;
-    }) => gateway.request<{ deployment: TenantDeployment }>("deployments.create", params),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["tenant-deployments"] }),
-  });
-}
-
-export function useUpdateDeployment() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (params: {
-      deploymentId: string;
-      rolloutPercentage?: number;
-      pinned?: boolean;
-      autoRollback?: boolean;
-    }) => gateway.request<{ deployment: TenantDeployment }>("deployments.update", params),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["tenant-deployments"] }),
-  });
-}
-
-export function useRollbackDeployment() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (deploymentId: string) =>
-      gateway.request<{ deployment: TenantDeployment }>("deployments.rollback", { deploymentId }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["tenant-deployments"] }),
-  });
-}
-
-// ---------------------------------------------------------------------------
-// RUNBOOK GENERATOR
-// ---------------------------------------------------------------------------
-
-export interface RunbookEntry {
-  name: string;
-  generatedAt: string;
-  sizeBytes: number;
-}
 
 export function useRunbooks() {
   return useQuery({
@@ -193,5 +150,67 @@ export function useGenerateRunbooks() {
   return useMutation({
     mutationFn: () => gateway.request<{ runbooks: RunbookEntry[] }>("admin.runbooks.generate", {}),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-runbooks"] }),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// ADAPTER CONFIGURATION
+// ---------------------------------------------------------------------------
+
+export function useTestAdapterConnection() {
+  return useMutation({
+    mutationFn: (params: {
+      domain: string;
+      provider: string;
+      credentials: Record<string, unknown>;
+    }) =>
+      gateway.request<{ result: AdapterConnectionResult }>("adapters.setup.healthcheck", params),
+  });
+}
+
+export function useSaveAdapterConfig() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (params: AdapterConfig) =>
+      gateway.request<{ success: boolean }>("adapters.setup.save", {
+        ...params,
+      } as unknown as Record<string, unknown>),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["golive-workflow"] });
+    },
+  });
+}
+
+// ---------------------------------------------------------------------------
+// CANARY DEPLOYMENTS
+// ---------------------------------------------------------------------------
+
+export function useCanaryDeployments() {
+  return useQuery({
+    queryKey: ["canary-deployments"],
+    queryFn: () =>
+      gateway.request<{ deployments: CanaryDeployment[] }>("deployments.canary.list", {}),
+  });
+}
+
+export function useUpdateCanaryDeployment() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (params: {
+      deploymentId: string;
+      rolloutPercentage?: number;
+      status?: "rolling_out" | "stable" | "rolled_back";
+    }) => gateway.request<{ deployment: CanaryDeployment }>("deployments.canary.update", params),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["canary-deployments"] }),
+  });
+}
+
+export function useCanaryMetrics(deploymentId: string) {
+  return useQuery({
+    queryKey: ["canary-metrics", deploymentId],
+    queryFn: () =>
+      gateway.request<{ metrics: CanaryMetrics }>("deployments.canary.metrics", { deploymentId }),
+    enabled: !!deploymentId,
+    refetchInterval: 30_000,
   });
 }

@@ -4,16 +4,13 @@ import {
   Upload,
   FileSpreadsheet,
   CheckCircle2,
-  XCircle,
-  AlertTriangle,
   RotateCcw,
   Eye,
   Play,
   Loader2,
   Plus,
-  ArrowRight,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -53,9 +50,10 @@ import {
 } from "@/hooks/useDataMigration";
 import { PageSkeleton } from "@/components/common/LoadingSkeleton";
 import type {
+  MigrationBatch,
   MigrationBatchStatus,
   MigrationEntityType,
-  MigrationFileFormat,
+  MappingTemplate,
 } from "@/types/migration";
 
 const STATUS_CONFIG: Record<
@@ -102,7 +100,7 @@ export default function DataMigration() {
   const [uploadLabel, setUploadLabel] = useState("");
   const [uploadSource, setUploadSource] = useState("");
   const [uploadEntity, setUploadEntity] = useState<MigrationEntityType>("members");
-  const [uploadFormat, setUploadFormat] = useState<MigrationFileFormat>("csv");
+  const [uploadFormat, setUploadFormat] = useState<"csv" | "json">("csv");
 
   const batchesQuery = useMigrationBatches();
   const templatesQuery = useMappingTemplates();
@@ -113,12 +111,12 @@ export default function DataMigration() {
 
   if (batchesQuery.isLoading) return <PageSkeleton />;
 
-  const batches = batchesQuery.data?.data ?? [];
-  const templates = templatesQuery.data?.data ?? [];
+  const batches = batchesQuery.data?.batches ?? [];
+  const templates = templatesQuery.data?.templates ?? [];
 
-  const totalRecords = batches.reduce((sum, b) => sum + b.totalRows, 0);
-  const completedBatches = batches.filter((b) => b.status === "completed").length;
-  const failedBatches = batches.filter((b) => b.status === "failed").length;
+  const totalRecords = batches.reduce((sum: number, b: MigrationBatch) => sum + b.totalRows, 0);
+  const completedBatches = batches.filter((b: MigrationBatch) => b.status === "completed").length;
+  const failedBatches = batches.filter((b: MigrationBatch) => b.status === "failed").length;
 
   function handleUpload() {
     if (!uploadLabel || !uploadSource) {
@@ -136,7 +134,7 @@ export default function DataMigration() {
         entityType: uploadEntity,
         fileFormat: uploadFormat,
         fileName: `${uploadEntity}_export.${uploadFormat}`,
-        data: [],
+        fileContent: "",
       },
       {
         onSuccess: () => {
@@ -230,8 +228,8 @@ export default function DataMigration() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {batches.map((batch) => {
-                    const cfg = STATUS_CONFIG[batch.status];
+                  {batches.map((batch: MigrationBatch) => {
+                    const cfg = STATUS_CONFIG[batch.status as MigrationBatchStatus];
                     return (
                       <TableRow key={batch.id}>
                         <TableCell className="font-medium max-w-[200px] truncate">
@@ -270,7 +268,7 @@ export default function DataMigration() {
                                   size="icon"
                                   title="Validate"
                                   disabled={validateMutation.isPending}
-                                  onClick={() => validateMutation.mutate(batch.id)}
+                                  onClick={() => validateMutation.mutate({ batchId: batch.id })}
                                 >
                                   <CheckCircle2 className="h-4 w-4" />
                                 </Button>
@@ -294,9 +292,12 @@ export default function DataMigration() {
                                   title="Execute import"
                                   disabled={executeMutation.isPending}
                                   onClick={() =>
-                                    executeMutation.mutate(batch.id, {
-                                      onSuccess: () => toast({ title: "Import complete" }),
-                                    })
+                                    executeMutation.mutate(
+                                      { batchId: batch.id },
+                                      {
+                                        onSuccess: () => toast({ title: "Import complete" }),
+                                      },
+                                    )
                                   }
                                 >
                                   <Play className="h-4 w-4" />
@@ -310,9 +311,12 @@ export default function DataMigration() {
                                 title="Rollback"
                                 disabled={rollbackMutation.isPending}
                                 onClick={() =>
-                                  rollbackMutation.mutate(batch.id, {
-                                    onSuccess: () => toast({ title: "Batch rolled back" }),
-                                  })
+                                  rollbackMutation.mutate(
+                                    { batchId: batch.id },
+                                    {
+                                      onSuccess: () => toast({ title: "Batch rolled back" }),
+                                    },
+                                  )
                                 }
                               >
                                 <RotateCcw className="h-4 w-4" />
@@ -350,7 +354,7 @@ export default function DataMigration() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {templates.map((tmpl) => (
+                  {templates.map((tmpl: MappingTemplate) => (
                     <TableRow key={tmpl.id}>
                       <TableCell className="font-medium">{tmpl.name}</TableCell>
                       <TableCell>{tmpl.sourceSystem}</TableCell>
@@ -428,7 +432,7 @@ export default function DataMigration() {
               <Label>File Format</Label>
               <Select
                 value={uploadFormat}
-                onValueChange={(v) => setUploadFormat(v as MigrationFileFormat)}
+                onValueChange={(v) => setUploadFormat(v as "csv" | "json")}
               >
                 <SelectTrigger>
                   <SelectValue />

@@ -1,0 +1,47 @@
+# Deliverfile — App Store metadata management
+#
+# Reads metadata from ./fastlane/metadata/ directory structure.
+# Tenant-specific values are passed via environment variables so the
+# same Deliverfile works for every white-label build.
+#
+# Usage:
+#   bundle exec fastlane deliver
+#
+# See also: scripts/build-tenant-app.ts for automated tenant builds.
+
+app_identifier(ENV["APP_IDENTIFIER"] || "com.example.digitalbanking")
+username(ENV["APPLE_ID"] || "developer@example.com")
+team_id(ENV["TEAM_ID"])
+
+# Metadata
+copyright("#{Time.now.year} #{ENV['INSTITUTION_NAME'] || 'Fiducia Digital Banking'}")
+primary_category("Finance")
+secondary_category("Business")
+
+# Pricing
+price_tier(0) # Free
+
+# Review information
+app_review_information(
+  first_name: ENV["REVIEW_FIRST_NAME"] || "App",
+  last_name: ENV["REVIEW_LAST_NAME"] || "Review",
+  phone_number: ENV["REVIEW_PHONE"] || "+1-555-555-5555",
+  email_address: ENV["REVIEW_EMAIL"] || "appreview@example.com",
+  demo_user: ENV["REVIEW_DEMO_USER"] || "demo@fiducia.dev",
+  demo_password: ENV["REVIEW_DEMO_PASSWORD"] || "demo1234",
+  notes: "Demo mode is enabled for review. Use the credentials above to access all features."
+)
+
+# Submission
+submit_for_review(false)
+automatic_release(false)
+phased_release(true)
+
+# Skip upload if missing
+skip_screenshots(ENV["SKIP_SCREENSHOTS"] == "true")
+skip_metadata(ENV["SKIP_METADATA"] == "true")
+force(true) # Skip HTML report verification
+
+# Precheck
+precheck_include_in_app_purchases(false)
+run_precheck_before_submit(true)

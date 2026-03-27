@@ -1,279 +1,431 @@
 import { useState } from "react";
 import {
+  Rocket,
   GitBranch,
-  Plus,
+  ArrowUpCircle,
   RotateCcw,
+  Plus,
   Loader2,
-  CheckCircle2,
+  Pin,
   AlertTriangle,
   Activity,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import {
-  useDeployments,
-  useCreateDeployment,
-  useUpdateDeployment,
-  useRollbackDeployment,
-} from "@/hooks/useGoLive";
-import { PageSkeleton } from "@/components/common/LoadingSkeleton";
-import type { DeploymentStatus } from "@/types/golive";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { gateway } from "@/lib/gateway";
 
-const STATUS_CONFIG: Record<
-  DeploymentStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
-> = {
-  active: { label: "Active", variant: "default" },
-  canary: { label: "Canary", variant: "outline" },
-  rolling_back: { label: "Rolling Back", variant: "destructive" },
-  inactive: { label: "Inactive", variant: "secondary" },
+interface Deployment {
+  id: string;
+  version: string;
+  status: "canary" | "stable" | "rolling_out" | "rolled_back" | "promoted";
+  rolloutPct: number;
+  errorRate: number;
+  deployedAt: string;
+  autoRollback: boolean;
+  errorThreshold: number;
+  pinned: boolean;
+}
+
+interface CanaryMetrics {
+  canary: { errorRate: number; p95Latency: number; requestCount: number };
+  stable: { errorRate: number; p95Latency: number; requestCount: number };
+}
+
+const STATUS_STYLES: Record<string, string> = {
+  canary: "bg-amber-100 text-amber-800 border-amber-200",
+  stable: "bg-green-100 text-green-800 border-green-200",
+  rolling_out: "bg-blue-100 text-blue-800 border-blue-200",
+  rolled_back: "bg-red-100 text-red-800 border-red-200",
+  promoted: "bg-green-100 text-green-800 border-green-200",
 };
+
+function formatDate(ts: string): string {
+  return new Date(ts).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export default function CanaryDeployments() {
   const { toast } = useToast();
-  const [showCreate, setShowCreate] = useState(false);
+  const qc = useQueryClient();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [newVersion, setNewVersion] = useState("");
-  const [newRollout, setNewRollout] = useState(10);
-  const [newThreshold, setNewThreshold] = useState("0.05");
+  const [newRolloutPct, setNewRolloutPct] = useState([10]);
+  const [newErrorThreshold, setNewErrorThreshold] = useState("5");
+  const [newAutoRollback, setNewAutoRollback] = useState(true);
+  const [selectedDeployment, setSelectedDeployment] = useState<string | null>(null);
 
-  const deploymentsQuery = useDeployments();
-  const createMutation = useCreateDeployment();
-  const updateMutation = useUpdateDeployment();
-  const rollbackMutation = useRollbackDeployment();
+  const deploymentsQuery = useQuery({
+    queryKey: ["canary-deployments"],
+    queryFn: () => gateway.request<{ deployments: Deployment[] }>("canary.deployments.list", {}),
+  });
 
-  if (deploymentsQuery.isLoading) return <PageSkeleton />;
+  const metricsQuery = useQuery({
+    queryKey: ["canary-metrics", selectedDeployment],
+    queryFn: () =>
+      gateway.request<{ metrics: CanaryMetrics }>("canary.metrics", {
+        deploymentId: selectedDeployment,
+      }),
+    enabled: !!selectedDeployment,
+  });
+
+  const createDeployment = useMutation({
+    mutationFn: (params: {
+      version: string;
+      rolloutPct: number;
+      errorThreshold: number;
+      autoRollback: boolean;
+    }) => gateway.request("canary.deployments.update", { action: "create", ...params }),
+    onSuccess: () => {
+      toast({ title: "Deployment created", description: "Canary deployment is rolling out." });
+      qc.invalidateQueries({ queryKey: ["canary-deployments"] });
+      setDialogOpen(false);
+      resetForm();
+    },
+  });
+
+  const updateDeployment = useMutation({
+    mutationFn: (params: { deploymentId: string; action: string }) =>
+      gateway.request("canary.deployments.update", params),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["canary-deployments"] });
+    },
+  });
+
+  function resetForm() {
+    setNewVersion("");
+    setNewRolloutPct([10]);
+    setNewErrorThreshold("5");
+    setNewAutoRollback(true);
+  }
 
   const deployments = deploymentsQuery.data?.deployments ?? [];
-
-  function handleCreate() {
-    if (!newVersion) {
-      toast({ title: "Version required", variant: "destructive" });
-      return;
-    }
-    createMutation.mutate(
-      {
-        version: newVersion,
-        rolloutPercentage: newRollout,
-        errorRateThreshold: parseFloat(newThreshold),
-      },
-      {
-        onSuccess: () => {
-          toast({ title: "Canary deployment created" });
-          setShowCreate(false);
-          setNewVersion("");
-          setNewRollout(10);
-        },
-      },
-    );
-  }
-
-  function handleUpdateRollout(deploymentId: string, rolloutPercentage: number) {
-    updateMutation.mutate(
-      { deploymentId, rolloutPercentage },
-      {
-        onSuccess: () => toast({ title: `Rollout updated to ${rolloutPercentage}%` }),
-      },
-    );
-  }
-
-  function handleTogglePin(deploymentId: string, pinned: boolean) {
-    updateMutation.mutate(
-      { deploymentId, pinned },
-      {
-        onSuccess: () => toast({ title: pinned ? "Version pinned" : "Version unpinned" }),
-      },
-    );
-  }
-
-  function handleRollback(deploymentId: string) {
-    rollbackMutation.mutate(deploymentId, {
-      onSuccess: () => toast({ title: "Deployment rolled back", variant: "destructive" }),
-    });
-  }
+  const metrics = metricsQuery.data?.metrics;
+  const activeCount = deployments.filter(
+    (d) => d.status !== "rolled_back" && d.status !== "promoted",
+  ).length;
+  const canaryCount = deployments.filter(
+    (d) => d.status === "canary" || d.status === "rolling_out",
+  ).length;
+  const autoRollbackCount = deployments.filter((d) => d.autoRollback).length;
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-6">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Canary Deployments</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Canary Deployments</h1>
           <p className="text-muted-foreground">
-            Per-tenant version pinning, gradual rollout, and automatic rollback
+            Manage progressive rollouts with automatic rollback.
           </p>
         </div>
-        <Button onClick={() => setShowCreate(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Canary
-        </Button>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" /> New Deployment
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>New Canary Deployment</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-2">
+              <div className="grid gap-2">
+                <Label>Version</Label>
+                <Input
+                  value={newVersion}
+                  onChange={(e) => setNewVersion(e.target.value)}
+                  placeholder="v2.4.1"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Rollout Percentage: {newRolloutPct[0]}%</Label>
+                <Slider
+                  value={newRolloutPct}
+                  onValueChange={setNewRolloutPct}
+                  min={1}
+                  max={100}
+                  step={1}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Error Rate Threshold (%)</Label>
+                <Input
+                  type="number"
+                  value={newErrorThreshold}
+                  onChange={(e) => setNewErrorThreshold(e.target.value)}
+                  min={0}
+                  max={100}
+                  step={0.1}
+                />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border p-4">
+                <div>
+                  <p className="font-medium text-sm">Auto-Rollback</p>
+                  <p className="text-xs text-muted-foreground">
+                    Automatically rollback if error rate exceeds threshold
+                  </p>
+                </div>
+                <Switch checked={newAutoRollback} onCheckedChange={setNewAutoRollback} />
+              </div>
+              <Button
+                className="w-full"
+                onClick={() =>
+                  createDeployment.mutate({
+                    version: newVersion,
+                    rolloutPct: newRolloutPct[0],
+                    errorThreshold: Number(newErrorThreshold),
+                    autoRollback: newAutoRollback,
+                  })
+                }
+                disabled={!newVersion || createDeployment.isPending}
+              >
+                {createDeployment.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Rocket className="mr-2 h-4 w-4" /> Deploy
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* Active deployments */}
+      {/* Summary cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
+                <Rocket className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{activeCount}</p>
+                <p className="text-xs text-muted-foreground">Active Deployments</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-amber-100 p-2 dark:bg-amber-900/30">
+                <GitBranch className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{canaryCount}</p>
+                <p className="text-xs text-muted-foreground">Canary In Progress</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
+                <RotateCcw className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{autoRollbackCount}</p>
+                <p className="text-xs text-muted-foreground">Auto-Rollback Enabled</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Deployments table */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <GitBranch className="h-5 w-5" />
-            Deployments
-          </CardTitle>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Deployments</CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Version</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Rollout %</TableHead>
-                <TableHead>Error Threshold</TableHead>
-                <TableHead>Pinned</TableHead>
-                <TableHead>Auto-Rollback</TableHead>
-                <TableHead>Deployed</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {deployments.map((dep) => {
-                const cfg = STATUS_CONFIG[dep.status];
-                return (
-                  <TableRow key={dep.id}>
-                    <TableCell className="font-mono font-medium">{dep.version}</TableCell>
-                    <TableCell>
-                      <Badge variant={cfg.variant}>{cfg.label}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2 min-w-[140px]">
-                        <Slider
-                          value={[dep.rolloutPercentage]}
-                          min={0}
-                          max={100}
-                          step={5}
-                          className="flex-1"
-                          onValueCommit={(val) => handleUpdateRollout(dep.id, val[0])}
-                          disabled={dep.status !== "canary"}
-                        />
-                        <span className="text-sm w-10 text-right">{dep.rolloutPercentage}%</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{(dep.errorRateThreshold * 100).toFixed(1)}%</TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={dep.pinned}
-                        onCheckedChange={(checked) => handleTogglePin(dep.id, checked)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {dep.autoRollback ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <AlertTriangle className="h-4 w-4 text-amber-500" />
+        <CardContent>
+          <div className="rounded-lg border">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-4 py-2 text-left font-medium">Version</th>
+                  <th className="px-4 py-2 text-left font-medium">Status</th>
+                  <th className="px-4 py-2 text-left font-medium">Rollout</th>
+                  <th className="px-4 py-2 text-left font-medium">Error Rate</th>
+                  <th className="px-4 py-2 text-left font-medium">Deployed</th>
+                  <th className="px-4 py-2 text-left font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {deployments.map((dep) => (
+                  <tr
+                    key={dep.id}
+                    className={`border-b last:border-0 cursor-pointer hover:bg-muted/30 ${
+                      selectedDeployment === dep.id ? "bg-muted/50" : ""
+                    }`}
+                    onClick={() =>
+                      setSelectedDeployment(dep.id === selectedDeployment ? null : dep.id)
+                    }
+                  >
+                    <td className="px-4 py-3 font-mono font-medium">{dep.version}</td>
+                    <td className="px-4 py-3">
+                      <Badge
+                        variant="outline"
+                        className={`text-xs capitalize ${STATUS_STYLES[dep.status] ?? ""}`}
+                      >
+                        {dep.status.replace("_", " ")}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3">{dep.rolloutPct}%</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={
+                          dep.errorRate > dep.errorThreshold ? "text-red-600 font-medium" : ""
+                        }
+                      >
+                        {dep.errorRate}%
+                      </span>
+                      {dep.errorRate > dep.errorThreshold && (
+                        <AlertTriangle className="inline ml-1 h-3.5 w-3.5 text-red-500" />
                       )}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(dep.deployedAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {dep.status === "canary" && (
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {formatDate(dep.deployedAt)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        {(dep.status === "canary" || dep.status === "rolling_out") && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              title="Promote to 100%"
+                              onClick={() =>
+                                updateDeployment.mutate({
+                                  deploymentId: dep.id,
+                                  action: "promote",
+                                })
+                              }
+                            >
+                              <ArrowUpCircle className="h-4 w-4 text-green-600" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              title="Rollback"
+                              onClick={() =>
+                                updateDeployment.mutate({
+                                  deploymentId: dep.id,
+                                  action: "rollback",
+                                })
+                              }
+                            >
+                              <RotateCcw className="h-4 w-4 text-red-600" />
+                            </Button>
+                          </>
+                        )}
                         <Button
                           variant="ghost"
-                          size="sm"
-                          onClick={() => handleRollback(dep.id)}
-                          disabled={rollbackMutation.isPending}
+                          size="icon"
+                          className="h-7 w-7"
+                          title={dep.pinned ? "Unpin version" : "Pin version"}
+                          onClick={() =>
+                            updateDeployment.mutate({
+                              deploymentId: dep.id,
+                              action: dep.pinned ? "unpin" : "pin",
+                            })
+                          }
                         >
-                          <RotateCcw className="h-4 w-4 mr-1" />
-                          Rollback
+                          <Pin
+                            className={`h-4 w-4 ${dep.pinned ? "text-primary" : "text-muted-foreground"}`}
+                          />
                         </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {deployments.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
-                    No deployments configured. Click "New Canary" to start a gradual rollout.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {deployments.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                      No deployments found. Create a new canary deployment to get started.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Create dialog */}
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>New Canary Deployment</DialogTitle>
-            <DialogDescription>
-              Deploy a new version to a percentage of traffic with automatic rollback.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Version</Label>
-              <Input
-                placeholder="e.g. 1.3.0-rc.1"
-                value={newVersion}
-                onChange={(e) => setNewVersion(e.target.value)}
-              />
+      {/* Metrics comparison */}
+      {selectedDeployment && metrics && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              Canary vs Stable Metrics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="rounded-lg border p-4 space-y-3">
+                <p className="text-sm font-medium text-center">Error Rate</p>
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="bg-amber-50 dark:bg-amber-950/20 rounded p-2">
+                    <p className="text-lg font-bold">{metrics.canary.errorRate}%</p>
+                    <p className="text-xs text-muted-foreground">Canary</p>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-950/20 rounded p-2">
+                    <p className="text-lg font-bold">{metrics.stable.errorRate}%</p>
+                    <p className="text-xs text-muted-foreground">Stable</p>
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-lg border p-4 space-y-3">
+                <p className="text-sm font-medium text-center">P95 Latency</p>
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="bg-amber-50 dark:bg-amber-950/20 rounded p-2">
+                    <p className="text-lg font-bold">{metrics.canary.p95Latency}ms</p>
+                    <p className="text-xs text-muted-foreground">Canary</p>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-950/20 rounded p-2">
+                    <p className="text-lg font-bold">{metrics.stable.p95Latency}ms</p>
+                    <p className="text-xs text-muted-foreground">Stable</p>
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-lg border p-4 space-y-3">
+                <p className="text-sm font-medium text-center">Request Count</p>
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="bg-amber-50 dark:bg-amber-950/20 rounded p-2">
+                    <p className="text-lg font-bold">
+                      {metrics.canary.requestCount.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Canary</p>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-950/20 rounded p-2">
+                    <p className="text-lg font-bold">
+                      {metrics.stable.requestCount.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Stable</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <Label>Initial Rollout Percentage: {newRollout}%</Label>
-              <Slider
-                value={[newRollout]}
-                min={1}
-                max={100}
-                step={1}
-                onValueChange={(val) => setNewRollout(val[0])}
-                className="mt-2"
-              />
-            </div>
-            <div>
-              <Label>Error Rate Threshold</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0.01"
-                max="1"
-                value={newThreshold}
-                onChange={(e) => setNewThreshold(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Auto-rollback if error rate exceeds this threshold (e.g. 0.05 = 5%)
-              </p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreate(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleCreate} disabled={createMutation.isPending}>
-              {createMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              <GitBranch className="h-4 w-4 mr-2" />
-              Deploy Canary
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

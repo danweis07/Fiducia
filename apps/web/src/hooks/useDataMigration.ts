@@ -1,9 +1,3 @@
-/**
- * Data Migration Hooks
- *
- * TanStack React Query hooks for the data migration toolkit.
- */
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { gateway } from "@/lib/gateway";
 import type {
@@ -11,56 +5,44 @@ import type {
   MigrationBatchRow,
   MappingTemplate,
   ReconciliationReport,
-  DryRunPreview,
-  MigrationUploadParams,
-  FieldMapping,
-  MigrationEntityType,
+  ImportPreview,
+  ValidationSummary,
 } from "@/types/migration";
 
-// ---------------------------------------------------------------------------
-// BATCH QUERIES
-// ---------------------------------------------------------------------------
-
-export function useMigrationBatches(page = 1) {
+export function useMigrationBatches() {
   return useQuery({
-    queryKey: ["migration-batches", page],
+    queryKey: ["migration-batches"],
     queryFn: () =>
-      gateway.request<{
-        data: MigrationBatch[];
-        _pagination: { page: number; perPage: number; total: number; totalPages: number };
-      }>("migration.batches.list", { page }),
+      gateway.request<{ batches: MigrationBatch[]; _pagination: { total: number } }>(
+        "migration.batches.list",
+        {},
+      ),
   });
 }
 
 export function useMigrationBatch(batchId: string) {
   return useQuery({
     queryKey: ["migration-batch", batchId],
-    queryFn: () => gateway.request<{ batch: MigrationBatch }>("migration.batches.get", { batchId }),
-    enabled: !!batchId,
-  });
-}
-
-export function useMigrationRows(batchId: string, page = 1) {
-  return useQuery({
-    queryKey: ["migration-rows", batchId, page],
     queryFn: () =>
-      gateway.request<{
-        data: MigrationBatchRow[];
-        _pagination: { page: number; perPage: number; total: number; totalPages: number };
-      }>("migration.rows.list", { batchId, page }),
+      gateway.request<{ batch: MigrationBatch; rows: MigrationBatchRow[] }>(
+        "migration.batches.get",
+        { batchId },
+      ),
     enabled: !!batchId,
   });
 }
-
-// ---------------------------------------------------------------------------
-// BATCH MUTATIONS
-// ---------------------------------------------------------------------------
 
 export function useUploadMigration() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (params: MigrationUploadParams) =>
-      gateway.request<{ batch: MigrationBatch }>("migration.upload", params),
+    mutationFn: (params: {
+      fileName: string;
+      fileFormat: "csv" | "json";
+      entityType: string;
+      sourceSystem: string;
+      label: string;
+      fileContent: string;
+    }) => gateway.request<{ batch: MigrationBatch }>("migration.upload", params),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["migration-batches"] }),
   });
 }
@@ -68,14 +50,14 @@ export function useUploadMigration() {
 export function useValidateBatch() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (batchId: string) =>
-      gateway.request<{ batch: MigrationBatch; errors: MigrationBatchRow[] }>(
+    mutationFn: (params: { batchId: string; mappingTemplateId?: string }) =>
+      gateway.request<{ batch: MigrationBatch; validation: ValidationSummary }>(
         "migration.validate",
-        { batchId },
+        params,
       ),
-    onSuccess: (_data, batchId) => {
-      qc.invalidateQueries({ queryKey: ["migration-batch", batchId] });
+    onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["migration-batches"] });
+      qc.invalidateQueries({ queryKey: ["migration-batch", vars.batchId] });
     },
   });
 }
@@ -83,7 +65,7 @@ export function useValidateBatch() {
 export function useMigrationPreview(batchId: string) {
   return useQuery({
     queryKey: ["migration-preview", batchId],
-    queryFn: () => gateway.request<{ preview: DryRunPreview }>("migration.preview", { batchId }),
+    queryFn: () => gateway.request<ImportPreview>("migration.preview", { batchId }),
     enabled: !!batchId,
   });
 }
@@ -91,11 +73,11 @@ export function useMigrationPreview(batchId: string) {
 export function useExecuteBatch() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (batchId: string) =>
-      gateway.request<{ batch: MigrationBatch }>("migration.execute", { batchId }),
-    onSuccess: (_data, batchId) => {
-      qc.invalidateQueries({ queryKey: ["migration-batch", batchId] });
+    mutationFn: (params: { batchId: string }) =>
+      gateway.request<{ batch: MigrationBatch }>("migration.execute", params),
+    onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["migration-batches"] });
+      qc.invalidateQueries({ queryKey: ["migration-batch", vars.batchId] });
     },
   });
 }
@@ -103,18 +85,14 @@ export function useExecuteBatch() {
 export function useRollbackBatch() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (batchId: string) =>
-      gateway.request<{ batch: MigrationBatch }>("migration.rollback", { batchId }),
-    onSuccess: (_data, batchId) => {
-      qc.invalidateQueries({ queryKey: ["migration-batch", batchId] });
+    mutationFn: (params: { batchId: string }) =>
+      gateway.request<{ batch: MigrationBatch }>("migration.rollback", params),
+    onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["migration-batches"] });
+      qc.invalidateQueries({ queryKey: ["migration-batch", vars.batchId] });
     },
   });
 }
-
-// ---------------------------------------------------------------------------
-// RECONCILIATION
-// ---------------------------------------------------------------------------
 
 export function useReconciliationReport(batchId: string) {
   return useQuery({
@@ -125,18 +103,10 @@ export function useReconciliationReport(batchId: string) {
   });
 }
 
-// ---------------------------------------------------------------------------
-// MAPPING TEMPLATES
-// ---------------------------------------------------------------------------
-
 export function useMappingTemplates() {
   return useQuery({
     queryKey: ["migration-mapping-templates"],
-    queryFn: () =>
-      gateway.request<{
-        data: MappingTemplate[];
-        _pagination: { page: number; perPage: number; total: number; totalPages: number };
-      }>("migration.mappings.list", {}),
+    queryFn: () => gateway.request<{ templates: MappingTemplate[] }>("migration.mappings.list", {}),
   });
 }
 
@@ -146,8 +116,8 @@ export function useSaveMappingTemplate() {
     mutationFn: (params: {
       name: string;
       sourceSystem: string;
-      entityType: MigrationEntityType;
-      fieldMappings: FieldMapping[];
+      entityType: string;
+      fieldMappings: unknown[];
     }) => gateway.request<{ template: MappingTemplate }>("migration.mappings.save", params),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["migration-mapping-templates"] }),
   });
@@ -156,8 +126,8 @@ export function useSaveMappingTemplate() {
 export function useDeleteMappingTemplate() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (templateId: string) =>
-      gateway.request<{ success: boolean }>("migration.mappings.delete", { templateId }),
+    mutationFn: (params: { templateId: string }) =>
+      gateway.request("migration.mappings.delete", params),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["migration-mapping-templates"] }),
   });
 }

@@ -1,0 +1,32 @@
+# Snapfile — automated App Store screenshot generation
+#
+# Captures screenshots across multiple device sizes and languages
+# for App Store Connect submission.
+#
+# Usage:
+#   bundle exec fastlane snapshot
+#
+# Requires UI test target "RunnerUITests" with snapshot helper calls.
+
+devices([
+  "iPhone 16 Pro Max",        # 6.7" display
+  "iPhone 16 Pro",            # 6.3" display
+  "iPhone SE (3rd generation)", # 4.7" display
+  "iPad Pro 13-inch (M4)",    # 12.9" tablet
+])
+
+languages([
+  "en-US",
+  "es-ES",
+  "fr-FR",
+])
+
+scheme("Runner")
+output_directory("./fastlane/screenshots")
+clear_previous_screenshots(true)
+override_status_bar(true)
+localize_simulator(true)
+dark_mode(false)
+number_of_retries(2)
+stop_after_first_error(false)
+concurrent_simulators(true)
