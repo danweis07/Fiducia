@@ -59,7 +59,9 @@ describe("useSCAConfig", () => {
   });
 
   it("fetches config successfully", async () => {
-    vi.mocked(gateway.sca.getConfig).mockResolvedValue({ factors: ["sms", "totp"] });
+    vi.mocked(gateway.intlSca.getConfig).mockResolvedValue({
+      config: { factors: ["sms", "totp"] },
+    } as never);
 
     const { result } = renderHook(() => useSCAConfig(), { wrapper: createWrapper() });
 
@@ -68,7 +70,7 @@ describe("useSCAConfig", () => {
   });
 
   it("handles error", async () => {
-    vi.mocked(gateway.sca.getConfig).mockRejectedValue(new Error("fail"));
+    vi.mocked(gateway.intlSca.getConfig).mockRejectedValue(new Error("fail"));
 
     const { result } = renderHook(() => useSCAConfig(), { wrapper: createWrapper() });
 
@@ -104,7 +106,7 @@ describe("useSCATrustedDevices", () => {
   });
 
   it("fetches trusted devices successfully", async () => {
-    vi.mocked(gateway.sca.listTrustedDevices).mockResolvedValue({ devices: [] });
+    vi.mocked(gateway.intlSca.listTrustedDevices).mockResolvedValue({ devices: [] });
 
     const { result } = renderHook(() => useSCATrustedDevices(), { wrapper: createWrapper() });
 
@@ -112,7 +114,7 @@ describe("useSCATrustedDevices", () => {
   });
 
   it("handles error", async () => {
-    vi.mocked(gateway.sca.listTrustedDevices).mockRejectedValue(new Error("fail"));
+    vi.mocked(gateway.intlSca.listTrustedDevices).mockRejectedValue(new Error("fail"));
 
     const { result } = renderHook(() => useSCATrustedDevices(), { wrapper: createWrapper() });
 

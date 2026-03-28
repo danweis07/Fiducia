@@ -32,7 +32,7 @@ describe("useSessions", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches session list", async () => {
-    const mockSessions = [{ id: "s-1", device: "Chrome", ip: "192.168.1.1" }];
+    const mockSessions = [{ id: "s-1", device: "Chrome", ip: "192.168.1.1" }] as never[];
     vi.mocked(gateway.sessions.list).mockResolvedValue({ sessions: mockSessions });
 
     const { result } = renderHook(() => useSessions(), { wrapper: createWrapper() });
@@ -46,13 +46,12 @@ describe("useSessionActivity", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches session activity", async () => {
-    const mockActivity = [{ id: "a-1", action: "login", timestamp: "2026-01-01T00:00:00Z" }];
-    vi.mocked(gateway.sessions.activity).mockResolvedValue({ activity: mockActivity });
+    vi.mocked(gateway.sessions.activity).mockResolvedValue({ activeSessions: 1, sessions: [] });
 
     const { result } = renderHook(() => useSessionActivity(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.activity).toHaveLength(1);
+    expect(result.current.data?.activeSessions).toBe(1);
   });
 });
 

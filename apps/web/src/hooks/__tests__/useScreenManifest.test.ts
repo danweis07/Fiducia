@@ -29,7 +29,7 @@ describe("sduiKeys", () => {
   });
 
   it("has correct screen key", () => {
-    expect(sduiKeys.screen("dashboard" as unknown)).toEqual(["sdui", "screen", "dashboard"]);
+    expect(sduiKeys.screen("dashboard" as string)).toEqual(["sdui", "screen", "dashboard"]);
   });
 
   it("has correct persona key", () => {
@@ -43,9 +43,12 @@ describe("useScreenManifest", () => {
   });
 
   it("fetches screen manifest successfully", async () => {
-    vi.mocked(gateway.sdui.resolve).mockResolvedValue({ screen: "dashboard", components: [] });
+    vi.mocked(gateway.sdui.resolve).mockResolvedValue({
+      screenId: "dashboard",
+      components: [],
+    } as never);
 
-    const { result } = renderHook(() => useScreenManifest("dashboard" as unknown), {
+    const { result } = renderHook(() => useScreenManifest("dashboard" as string), {
       wrapper: createWrapper(),
     });
 
@@ -55,7 +58,7 @@ describe("useScreenManifest", () => {
   it("handles error", async () => {
     vi.mocked(gateway.sdui.resolve).mockRejectedValue(new Error("fail"));
 
-    const { result } = renderHook(() => useScreenManifest("dashboard" as unknown), {
+    const { result } = renderHook(() => useScreenManifest("dashboard" as string), {
       wrapper: createWrapper(),
     });
 
@@ -69,7 +72,11 @@ describe("useCurrentPersona", () => {
   });
 
   it("fetches persona successfully", async () => {
-    vi.mocked(gateway.sdui.persona).mockResolvedValue({ personaId: "default", segments: [] });
+    vi.mocked(gateway.sdui.persona).mockResolvedValue({
+      personaId: "default",
+      personaLabel: "Default",
+      traits: {},
+    });
 
     const { result } = renderHook(() => useCurrentPersona(), { wrapper: createWrapper() });
 

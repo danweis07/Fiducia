@@ -36,7 +36,7 @@ describe("useSafeguarding", () => {
   });
 
   it("fetches safeguarding data successfully", async () => {
-    vi.mocked(gateway.regulatory.getSafeguarding).mockResolvedValue({ safeguarded: true });
+    vi.mocked(gateway.regulatory.getSafeguarding).mockResolvedValue({ safeguarding: [] });
 
     const { result } = renderHook(() => useSafeguarding("UK"), { wrapper: createWrapper() });
 
@@ -58,7 +58,12 @@ describe("useInterestWithholding", () => {
   });
 
   it("fetches withholding data successfully", async () => {
-    vi.mocked(gateway.regulatory.listWithholding).mockResolvedValue({ records: [] });
+    vi.mocked(gateway.regulatory.listWithholding).mockResolvedValue({
+      entries: [],
+      totalGrossInterestCents: 0,
+      totalTaxWithheldCents: 0,
+      totalNetInterestCents: 0,
+    });
 
     const { result } = renderHook(() => useInterestWithholding(), { wrapper: createWrapper() });
 
@@ -80,7 +85,7 @@ describe("useCarbonFootprint", () => {
   });
 
   it("fetches carbon footprint successfully", async () => {
-    vi.mocked(gateway.regulatory.getCarbonFootprint).mockResolvedValue({ carbonKg: 2.5 });
+    vi.mocked(gateway.regulatory.getCarbonFootprint).mockResolvedValue({ carbonKg: 2.5 } as never);
 
     const { result } = renderHook(() => useCarbonFootprint("txn-1"), { wrapper: createWrapper() });
 
@@ -107,7 +112,9 @@ describe("useCarbonSummary", () => {
   });
 
   it("fetches carbon summary successfully", async () => {
-    vi.mocked(gateway.regulatory.getCarbonSummary).mockResolvedValue({ totalCarbonKg: 50.0 });
+    vi.mocked(gateway.regulatory.getCarbonSummary).mockResolvedValue({
+      totalCarbonKg: 50.0,
+    } as never);
 
     const { result } = renderHook(() => useCarbonSummary("2026-01-01", "2026-03-01"), {
       wrapper: createWrapper(),

@@ -66,7 +66,10 @@ describe("useCurrencyPot", () => {
   });
 
   it("fetches single pot successfully", async () => {
-    vi.mocked(gateway.currencyPots.get).mockResolvedValue({ potId: "pot-1", currency: "EUR" });
+    vi.mocked(gateway.currencyPots.get).mockResolvedValue({
+      potId: "pot-1",
+      currency: "EUR",
+    } as never);
 
     const { result } = renderHook(() => useCurrencyPot("pot-1"), { wrapper: createWrapper() });
 
@@ -127,8 +130,18 @@ describe("useSwapQuote", () => {
 
   it("fetches swap quote successfully", async () => {
     vi.mocked(gateway.currencyPots.getSwapQuote).mockResolvedValue({
-      rate: 1.12,
+      quoteId: "q-1",
+      fromCurrency: "USD",
+      toCurrency: "EUR",
+      fromAmountCents: 10000,
       toAmountCents: 11200,
+      exchangeRate: 1.12,
+      inverseRate: 0.89,
+      midMarketRate: 1.13,
+      markup: 0.01,
+      feeAmountCents: 50,
+      feeCurrency: "USD",
+      expiresAt: "2026-01-01T00:00:00Z",
     });
 
     const { result } = renderHook(() => useSwapQuote("pot-1", "pot-2", 10000), {
@@ -173,7 +186,12 @@ describe("useSwapHistory", () => {
   });
 
   it("fetches swap history successfully", async () => {
-    vi.mocked(gateway.currencyPots.listSwaps).mockResolvedValue({ swaps: [] });
+    vi.mocked(gateway.currencyPots.listSwaps).mockResolvedValue({
+      swaps: [],
+      total: 0,
+      hasMore: false,
+      nextCursor: null,
+    });
 
     const { result } = renderHook(() => useSwapHistory("pot-1"), { wrapper: createWrapper() });
 

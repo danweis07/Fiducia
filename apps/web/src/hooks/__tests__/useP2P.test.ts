@@ -49,10 +49,14 @@ describe("useP2PEnrollment", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches enrollment status", async () => {
-    vi.mocked(gateway.p2p.getEnrollment).mockResolvedValue({ enrolled: true, type: "email" });
+    vi.mocked(gateway.p2p.getEnrollment).mockResolvedValue({
+      enrollment: { enrolled: true, type: "email" },
+    } as never);
     const { result } = renderHook(() => useP2PEnrollment(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.enrolled).toBe(true);
+    expect(
+      (result.current.data as never as { enrollment: { enrolled: boolean } })?.enrollment?.enrolled,
+    ).toBe(true);
   });
 });
 
@@ -60,7 +64,7 @@ describe("useEnrollP2P", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("enrolls user in P2P", async () => {
-    vi.mocked(gateway.p2p.enroll).mockResolvedValue({ success: true });
+    vi.mocked(gateway.p2p.enroll).mockResolvedValue({ enrollment: {} } as never);
     const { result } = renderHook(() => useEnrollP2P(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({
@@ -77,7 +81,9 @@ describe("useSendP2P", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("sends money via P2P", async () => {
-    vi.mocked(gateway.p2p.send).mockResolvedValue({ transactionId: "txn-1" });
+    vi.mocked(gateway.p2p.send).mockResolvedValue({
+      transaction: { transactionId: "txn-1" },
+    } as never);
     const { result } = renderHook(() => useSendP2P(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({
@@ -94,7 +100,9 @@ describe("useRequestP2P", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("requests money", async () => {
-    vi.mocked(gateway.p2p.requestMoney).mockResolvedValue({ requestId: "req-1" });
+    vi.mocked(gateway.p2p.requestMoney).mockResolvedValue({
+      transaction: { requestId: "req-1" },
+    } as never);
     const { result } = renderHook(() => useRequestP2P(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({
@@ -134,9 +142,14 @@ describe("useP2PLimits", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches limits", async () => {
-    vi.mocked(gateway.p2p.getLimits).mockResolvedValue({ dailyLimitCents: 100000 });
+    vi.mocked(gateway.p2p.getLimits).mockResolvedValue({
+      limits: { dailyLimitCents: 100000 },
+    } as never);
     const { result } = renderHook(() => useP2PLimits(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.dailyLimitCents).toBe(100000);
+    expect(
+      (result.current.data as never as { limits: { dailyLimitCents: number } })?.limits
+        ?.dailyLimitCents,
+    ).toBe(100000);
   });
 });

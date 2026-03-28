@@ -41,11 +41,9 @@ describe("openBankingKeys", () => {
   });
 
   it("has correct consents key", () => {
-    expect(openBankingKeys.consents("active" as unknown)).toEqual([
-      "openBanking",
-      "consents",
-      "active",
-    ]);
+    expect(
+      openBankingKeys.consents("active" as import("@/types").OpenBankingConsentStatus),
+    ).toEqual(["openBanking", "consents", "active"]);
   });
 
   it("has correct consent key", () => {
@@ -89,7 +87,9 @@ describe("useOpenBankingConsent", () => {
   });
 
   it("fetches consent by id", async () => {
-    vi.mocked(gateway.openBanking.getConsent).mockResolvedValue({ id: "c-1", status: "active" });
+    vi.mocked(gateway.openBanking.getConsent).mockResolvedValue({
+      consent: { id: "c-1", status: "active" },
+    } as never);
 
     const { result } = renderHook(() => useOpenBankingConsent("c-1"), { wrapper: createWrapper() });
 
@@ -116,7 +116,7 @@ describe("useOpenBankingAccessLogs", () => {
   });
 
   it("fetches access logs successfully", async () => {
-    vi.mocked(gateway.openBanking.listAccessLogs).mockResolvedValue({ logs: [] });
+    vi.mocked(gateway.openBanking.listAccessLogs).mockResolvedValue({ accessLogs: [] });
 
     const { result } = renderHook(() => useOpenBankingAccessLogs("c-1"), {
       wrapper: createWrapper(),
@@ -142,7 +142,9 @@ describe("useOpenBankingConsentSummary", () => {
   });
 
   it("fetches consent summary successfully", async () => {
-    vi.mocked(gateway.openBanking.getConsentSummary).mockResolvedValue({ totalActive: 5 });
+    vi.mocked(gateway.openBanking.getConsentSummary).mockResolvedValue({
+      summary: { totalActive: 5 },
+    } as never);
 
     const { result } = renderHook(() => useOpenBankingConsentSummary(), {
       wrapper: createWrapper(),

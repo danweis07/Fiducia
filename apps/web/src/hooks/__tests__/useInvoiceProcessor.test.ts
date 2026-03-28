@@ -60,7 +60,8 @@ describe("useInvoice", () => {
   });
 
   it("fetches single invoice", async () => {
-    vi.mocked(gateway.invoiceProcessor.get).mockResolvedValue({ id: "inv-1", status: "pending" });
+    const mockResult = { invoice: { id: "inv-1", status: "pending" } } as never;
+    vi.mocked(gateway.invoiceProcessor.get).mockResolvedValue(mockResult);
 
     const { result } = renderHook(() => useInvoice("inv-1"), { wrapper: createWrapper() });
 

@@ -40,23 +40,23 @@ function createWrapper() {
 const mockLoans = [
   {
     id: "loan-1",
-    loanType: "auto",
+    productName: "auto",
     loanNumberMasked: "****5678",
-    balanceCents: 2450000,
+    outstandingBalanceCents: 2450000,
     principalCents: 2500000,
     interestRateBps: 549,
     status: "active",
   },
   {
     id: "loan-2",
-    loanType: "mortgage",
+    productName: "mortgage",
     loanNumberMasked: "****9012",
-    balanceCents: 28500000,
+    outstandingBalanceCents: 28500000,
     principalCents: 30000000,
     interestRateBps: 625,
     status: "active",
   },
-];
+] as unknown as import("@/types").Loan[];
 
 describe("loanKeys", () => {
   it("has correct all key", () => {
@@ -92,7 +92,7 @@ describe("useLoans", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.loans).toHaveLength(2);
-    expect(result.current.data?.loans[0].loanType).toBe("auto");
+    expect(result.current.data?.loans[0].productName).toBe("auto");
   });
 
   it("passes status filter", async () => {
@@ -129,7 +129,7 @@ describe("useLoans", () => {
     const { result } = renderHook(() => useLoans(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    const types = result.current.data?.loans.map((l: { loanType: string }) => l.loanType);
+    const types = result.current.data?.loans.map((l: { productName?: string }) => l.productName);
     expect(types).toContain("auto");
     expect(types).toContain("mortgage");
   });
@@ -141,9 +141,13 @@ describe("useLoan", () => {
   });
 
   it("fetches single loan", async () => {
-    vi.mocked(gateway.loans.get).mockResolvedValue({
-      loan: { id: "loan-1", loanType: "auto", balanceCents: 2450000, status: "active" },
-    } as never);
+    const mockLoan = {
+      id: "loan-1",
+      productName: "auto",
+      outstandingBalanceCents: 2450000,
+      status: "active",
+    } as unknown as import("@/types").Loan;
+    vi.mocked(gateway.loans.get).mockResolvedValue({ loan: mockLoan });
 
     const { result } = renderHook(() => useLoan("loan-1"), { wrapper: createWrapper() });
 
@@ -175,16 +179,40 @@ describe("useLoanSchedule", () => {
   it("fetches loan schedule", async () => {
     vi.mocked(gateway.loans.schedule).mockResolvedValue({
       schedule: [
-        { month: 1, paymentCents: 47500, principalCents: 36000, interestCents: 11500 },
-        { month: 2, paymentCents: 47500, principalCents: 36200, interestCents: 11300 },
-      ],
+        {
+          id: "s-1",
+          loanId: "loan-1",
+          installmentNumber: 1,
+          dueDate: "2026-04-01",
+          principalCents: 36000,
+          interestCents: 11500,
+          feeCents: 0,
+          totalCents: 47500,
+          paidCents: 0,
+          paidAt: null,
+          status: "upcoming" as const,
+        },
+        {
+          id: "s-2",
+          loanId: "loan-1",
+          installmentNumber: 2,
+          dueDate: "2026-05-01",
+          principalCents: 36200,
+          interestCents: 11300,
+          feeCents: 0,
+          totalCents: 47500,
+          paidCents: 0,
+          paidAt: null,
+          status: "upcoming" as const,
+        },
+      ] satisfies import("@/types").LoanScheduleItem[],
     });
 
     const { result } = renderHook(() => useLoanSchedule("loan-1"), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.schedule).toHaveLength(2);
-    expect(result.current.data?.schedule[0].paymentCents).toBe(47500);
+    expect(result.current.data?.schedule[0].totalCents).toBe(47500);
   });
 
   it("does not fetch when loanId is empty", () => {
@@ -220,9 +248,9 @@ describe("useLoanPayments", () => {
   it("fetches loan payments", async () => {
     vi.mocked(gateway.loans.payments).mockResolvedValue({
       payments: [
-        { id: "pmt-1", amountCents: 47500, date: "2026-03-01", status: "completed" },
-        { id: "pmt-2", amountCents: 47500, date: "2026-02-01", status: "completed" },
-      ],
+        { id: "pmt-1", amountCents: 47500, scheduledDate: "2026-03-01", status: "completed" },
+        { id: "pmt-2", amountCents: 47500, scheduledDate: "2026-02-01", status: "completed" },
+      ] as unknown as import("@/types").LoanPayment[],
     });
 
     const { result } = renderHook(() => useLoanPayments("loan-1"), { wrapper: createWrapper() });

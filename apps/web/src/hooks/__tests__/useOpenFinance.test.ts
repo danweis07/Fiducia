@@ -152,7 +152,9 @@ describe("useOpenFinanceNetWorth", () => {
   });
 
   it("fetches net worth successfully", async () => {
-    vi.mocked(gateway.openFinance.getNetWorth).mockResolvedValue({ totalCents: 500000 });
+    vi.mocked(gateway.openFinance.getNetWorth).mockResolvedValue({
+      netWorth: { totalCents: 500000 },
+    } as never);
 
     const { result } = renderHook(() => useOpenFinanceNetWorth(), { wrapper: createWrapper() });
 
@@ -174,7 +176,9 @@ describe("useAlternativeCreditData", () => {
   });
 
   it("fetches alternative credit data successfully", async () => {
-    vi.mocked(gateway.openFinance.getAlternativeCreditData).mockResolvedValue({ score: 720 });
+    vi.mocked(gateway.openFinance.getAlternativeCreditData).mockResolvedValue({
+      creditData: { score: 720 },
+    } as never);
 
     const { result } = renderHook(() => useAlternativeCreditData(), { wrapper: createWrapper() });
 

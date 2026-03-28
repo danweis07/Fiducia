@@ -31,26 +31,37 @@ function createWrapper() {
     createElement(QueryClientProvider, { client: queryClient }, children);
 }
 
-const mockNotifications = [
+const baseNotification = {
+  userId: "u-1",
+  tenantId: "t-1",
+  type: "system" as const,
+  body: "",
+  actionUrl: null as string | null,
+};
+
+const mockNotifications: import("@/types").Notification[] = [
   {
+    ...baseNotification,
     id: "n-1",
     title: "Transfer Complete",
-    message: "Your $500 transfer is done",
-    read: false,
+    body: "Your $500 transfer is done",
+    isRead: false,
     createdAt: "2026-03-14T10:00:00Z",
   },
   {
+    ...baseNotification,
     id: "n-2",
     title: "Low Balance Alert",
-    message: "Checking below $100",
-    read: false,
+    body: "Checking below $100",
+    isRead: false,
     createdAt: "2026-03-13T08:00:00Z",
   },
   {
+    ...baseNotification,
     id: "n-3",
     title: "Statement Ready",
-    message: "February statement available",
-    read: true,
+    body: "February statement available",
+    isRead: true,
     createdAt: "2026-03-01T12:00:00Z",
   },
 ];

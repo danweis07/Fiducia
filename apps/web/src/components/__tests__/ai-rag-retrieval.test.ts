@@ -60,8 +60,8 @@ describe("chunkDocument", () => {
       const tailOfFirst = chunks[0].slice(-50);
       // The beginning of chunk 1 should share some content with the tail of chunk 0
       // Due to word-boundary alignment, we check for partial overlap
-      const words = tailOfFirst.split(/\s+/).filter((w) => w.length > 3);
-      const hasOverlap = words.some((word) => chunks[1].includes(word));
+      const words = tailOfFirst.split(/\s+/).filter((w: string) => w.length > 3);
+      const hasOverlap = words.some((word: string) => chunks[1].includes(word));
       expect(hasOverlap).toBe(true);
     }
   });

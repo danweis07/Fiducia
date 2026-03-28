@@ -618,7 +618,7 @@ describe("generateInsights", () => {
     });
     const insights = generateInsights(ctx);
     expect(insights.length).toBeGreaterThanOrEqual(1);
-    const types = insights.map((i) => i.type);
+    const types = insights.map((i: { type: string }) => i.type);
     // Should include at least overdraft_prediction or payment_failure_risk
     expect(types.includes("overdraft_prediction") || types.includes("payment_failure_risk")).toBe(
       true,

@@ -55,7 +55,9 @@ describe("useJointOwners", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches owners for account", async () => {
-    const owners = [{ id: "owner-1", name: "Alice" }];
+    const owners = [
+      { id: "owner-1", name: "Alice" },
+    ] as unknown as import("@/types").JointAccountOwner[];
     vi.mocked(gateway.jointAccounts.listOwners).mockResolvedValue({ owners });
     const { result } = renderHook(() => useJointOwners("acct-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -72,7 +74,8 @@ describe("useAddJointOwner", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway addOwner", async () => {
-    vi.mocked(gateway.jointAccounts.addOwner).mockResolvedValue({ success: true });
+    const mockInvitation = {} as import("@/types").JointAccountInvitation;
+    vi.mocked(gateway.jointAccounts.addOwner).mockResolvedValue({ invitation: mockInvitation });
     const { result } = renderHook(() => useAddJointOwner(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({
@@ -80,8 +83,8 @@ describe("useAddJointOwner", () => {
         email: "bob@test.com",
         firstName: "Bob",
         lastName: "Smith",
-        relationship: "spouse" as Record<string, unknown>,
-        permissions: "full" as Record<string, unknown>,
+        relationship: "spouse" as import("@/types").JointOwnerRelationship,
+        permissions: "full" as import("@/types").JointOwnerPermission,
       });
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -117,7 +120,10 @@ describe("useAcceptInvitation", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway acceptInvitation", async () => {
-    vi.mocked(gateway.jointAccounts.acceptInvitation).mockResolvedValue({ success: true });
+    vi.mocked(gateway.jointAccounts.acceptInvitation).mockResolvedValue({
+      success: true,
+      invitationId: "inv-1",
+    });
     const { result } = renderHook(() => useAcceptInvitation(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate("inv-1");
@@ -130,7 +136,10 @@ describe("useDeclineInvitation", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway declineInvitation", async () => {
-    vi.mocked(gateway.jointAccounts.declineInvitation).mockResolvedValue({ success: true });
+    vi.mocked(gateway.jointAccounts.declineInvitation).mockResolvedValue({
+      success: true,
+      invitationId: "inv-1",
+    });
     const { result } = renderHook(() => useDeclineInvitation(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate("inv-1");
@@ -143,7 +152,14 @@ describe("useJointAccountSummary", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches summary", async () => {
-    const summary = { totalJointAccounts: 3, pendingInvitations: 1 };
+    const summary = {
+      summary: {
+        primaryAccountCount: 2,
+        jointAccountCount: 3,
+        totalAccountCount: 5,
+        pendingInvitationCount: 1,
+      },
+    };
     vi.mocked(gateway.jointAccounts.summary).mockResolvedValue(summary);
     const { result } = renderHook(() => useJointAccountSummary(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

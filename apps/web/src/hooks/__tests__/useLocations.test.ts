@@ -38,7 +38,9 @@ describe("useLocationSearch", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches locations when params provided", async () => {
-    const mockLocations = [{ id: "loc-1", name: "Main Branch", latitude: 40.7, longitude: -74.0 }];
+    const mockLocations = [
+      { id: "loc-1", name: "Main Branch", latitude: 40.7, longitude: -74.0 },
+    ] as unknown as import("@/types").BranchLocation[];
     vi.mocked(gateway.locations.search).mockResolvedValue({ locations: mockLocations });
 
     const { result } = renderHook(

@@ -80,7 +80,13 @@ describe("useTreasurySummary", () => {
   });
 
   it("fetches summary successfully", async () => {
-    vi.mocked(gateway.treasury.getSummary).mockResolvedValue({ totalBalanceCents: 10000000 });
+    const mockSummary = {
+      totalVaultBalanceCents: 10000000,
+      totalAccruedInterestCents: 0,
+      weightedAvgApyBps: 450,
+      vaults: [],
+    } as import("@/types/business").TreasurySummary;
+    vi.mocked(gateway.treasury.getSummary).mockResolvedValue({ summary: mockSummary });
 
     const { result } = renderHook(() => useTreasurySummary(), { wrapper: createWrapper() });
 

@@ -73,7 +73,7 @@ describe("useTransactions", () => {
 
   it("fetches transactions list", async () => {
     vi.mocked(gateway.transactions.list).mockResolvedValue({
-      transactions: mockTransactions,
+      transactions: mockTransactions as never[],
       _pagination: { total: 3, limit: 50, offset: 0, hasMore: false },
     });
 
@@ -84,7 +84,9 @@ describe("useTransactions", () => {
   });
 
   it("passes accountId filter", async () => {
-    vi.mocked(gateway.transactions.list).mockResolvedValue({ transactions: [mockTransactions[0]] });
+    vi.mocked(gateway.transactions.list).mockResolvedValue({
+      transactions: [mockTransactions[0]] as never[],
+    });
 
     const { result } = renderHook(() => useTransactions({ accountId: "acct-1" }), {
       wrapper: createWrapper(),

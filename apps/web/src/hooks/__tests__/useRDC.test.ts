@@ -53,7 +53,12 @@ describe("useSubmitDeposit", () => {
 
   it("submits a deposit", async () => {
     vi.mocked(gateway.rdc.deposit).mockResolvedValue({
-      deposit: { id: "dep-1", status: "processing", amountCents: 50000, accountId: "acct-1" },
+      deposit: {
+        id: "dep-1",
+        status: "reviewing",
+        amountCents: 50000,
+        accountId: "acct-1",
+      } as never,
     });
 
     const { result } = renderHook(() => useSubmitDeposit(), { wrapper: createWrapper() });
@@ -79,7 +84,7 @@ describe("useSubmitDeposit", () => {
 
   it("submits deposit without check number", async () => {
     vi.mocked(gateway.rdc.deposit).mockResolvedValue({
-      deposit: { id: "dep-2", status: "processing" },
+      deposit: { id: "dep-2", status: "reviewing" } as never,
     });
 
     const { result } = renderHook(() => useSubmitDeposit(), { wrapper: createWrapper() });
@@ -158,7 +163,7 @@ describe("useDepositStatus", () => {
 
   it("fetches deposit status", async () => {
     vi.mocked(gateway.rdc.status).mockResolvedValue({
-      deposit: { id: "dep-1", status: "approved", amountCents: 50000 },
+      deposit: { id: "dep-1", status: "accepted", amountCents: 50000 } as never,
     });
 
     const { result } = renderHook(() => useDepositStatus("dep-1"), { wrapper: createWrapper() });
@@ -175,7 +180,7 @@ describe("useDepositStatus", () => {
 
   it("returns processing status", async () => {
     vi.mocked(gateway.rdc.status).mockResolvedValue({
-      deposit: { id: "dep-2", status: "processing" },
+      deposit: { id: "dep-2", status: "reviewing" } as never,
     });
 
     const { result } = renderHook(() => useDepositStatus("dep-2"), { wrapper: createWrapper() });
@@ -186,7 +191,7 @@ describe("useDepositStatus", () => {
 
   it("returns rejected status", async () => {
     vi.mocked(gateway.rdc.status).mockResolvedValue({
-      deposit: { id: "dep-3", status: "rejected", reason: "Illegible check" },
+      deposit: { id: "dep-3", status: "rejected" } as never,
     });
 
     const { result } = renderHook(() => useDepositStatus("dep-3"), { wrapper: createWrapper() });
@@ -212,8 +217,8 @@ describe("useDepositHistory", () => {
   it("fetches deposit history", async () => {
     vi.mocked(gateway.rdc.history).mockResolvedValue({
       deposits: [
-        { id: "dep-1", status: "approved", amountCents: 50000, createdAt: "2026-03-10" },
-        { id: "dep-2", status: "rejected", amountCents: 25000, createdAt: "2026-03-08" },
+        { id: "dep-1", status: "accepted", amountCents: 50000, createdAt: "2026-03-10" } as never,
+        { id: "dep-2", status: "rejected", amountCents: 25000, createdAt: "2026-03-08" } as never,
       ],
     });
 

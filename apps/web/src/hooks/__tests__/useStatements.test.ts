@@ -49,7 +49,9 @@ describe("useStatements", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches statements for an account", async () => {
-    const mockStatements = [{ id: "stmt-1", period: "2026-01", accountId: "acct-1" }];
+    const mockStatements = [
+      { id: "stmt-1", period: "2026-01", accountId: "acct-1" },
+    ] as unknown as import("@/types").AccountStatement[];
     vi.mocked(gateway.statements.list).mockResolvedValue({ statements: mockStatements });
 
     const { result } = renderHook(() => useStatements("acct-1"), { wrapper: createWrapper() });
@@ -69,7 +71,11 @@ describe("useStatementDetail", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches statement detail by id", async () => {
-    vi.mocked(gateway.statements.get).mockResolvedValue({ id: "stmt-1", transactions: [] });
+    const mockDetail = {
+      id: "stmt-1",
+      transactions: [],
+    } as unknown as import("@/types").StatementDetail;
+    vi.mocked(gateway.statements.get).mockResolvedValue({ statement: mockDetail });
 
     const { result } = renderHook(() => useStatementDetail("stmt-1"), { wrapper: createWrapper() });
 
@@ -87,7 +93,7 @@ describe("useStatementConfig", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches statement config", async () => {
-    const mockConfig = { deliveryMethod: "electronic", retentionMonths: 84 };
+    const mockConfig = { config: { deliveryMethod: "electronic", retentionMonths: 84 } } as never;
     vi.mocked(gateway.statements.config).mockResolvedValue(mockConfig);
 
     const { result } = renderHook(() => useStatementConfig(), { wrapper: createWrapper() });

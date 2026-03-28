@@ -55,8 +55,11 @@ describe("useLoanProducts", () => {
   });
 
   it("fetches loan products successfully", async () => {
+    const mockProducts = [
+      { id: "p1", name: "Auto Loan" },
+    ] as unknown as import("@/types").LoanProduct[];
     vi.mocked(gateway.loanProducts.list).mockResolvedValue({
-      products: [{ id: "p1", name: "Auto Loan" }],
+      products: mockProducts,
     });
 
     const { result } = renderHook(() => useLoanProducts(), { wrapper: createWrapper() });
@@ -80,9 +83,12 @@ describe("useGetLoanApplication", () => {
   });
 
   it("fetches application by id", async () => {
-    vi.mocked(gateway.loanOrigination.getApplication).mockResolvedValue({
-      applicationId: "app-1",
+    const mockApp = {
+      id: "app-1",
       status: "submitted",
+    } as unknown as import("@/types").LoanApplication;
+    vi.mocked(gateway.loanOrigination.getApplication).mockResolvedValue({
+      application: mockApp,
     });
 
     const { result } = renderHook(() => useGetLoanApplication("app-1"), {

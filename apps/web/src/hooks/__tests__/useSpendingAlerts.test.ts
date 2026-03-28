@@ -46,12 +46,12 @@ describe("useCreateAlert", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("creates an alert", async () => {
-    vi.mocked(gateway.spendingAlerts.create).mockResolvedValue({ alertId: "a-new" });
+    vi.mocked(gateway.spendingAlerts.create).mockResolvedValue({ alert: { id: "a-new" } } as never);
     const { result } = renderHook(() => useCreateAlert(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({
         name: "High Spend",
-        alertType: "threshold" as Record<string, unknown>,
+        alertType: "threshold" as unknown as import("@/types").SpendingAlertType,
         thresholdCents: 50000,
         channels: ["push", "email"],
       });
@@ -64,7 +64,7 @@ describe("useUpdateAlert", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("updates an alert", async () => {
-    vi.mocked(gateway.spendingAlerts.update).mockResolvedValue({ success: true });
+    vi.mocked(gateway.spendingAlerts.update).mockResolvedValue({ alert: {} } as never);
     const { result } = renderHook(() => useUpdateAlert(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({ alertId: "a-1", isEnabled: false });
@@ -101,11 +101,10 @@ describe("useAlertSummary", () => {
 
   it("fetches summary", async () => {
     vi.mocked(gateway.spendingAlerts.summary).mockResolvedValue({
-      activeAlerts: 3,
-      triggeredToday: 1,
+      summary: { activeRules: 3, triggeredThisWeek: 1, triggeredThisMonth: 5 },
     });
     const { result } = renderHook(() => useAlertSummary(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.activeAlerts).toBe(3);
+    expect(result.current.data?.summary.activeRules).toBe(3);
   });
 });

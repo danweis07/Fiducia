@@ -61,7 +61,10 @@ describe("useThread", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches a thread", async () => {
-    vi.mocked(gateway.messaging.getThread).mockResolvedValue({ id: "t-1", messages: [] });
+    vi.mocked(gateway.messaging.getThread).mockResolvedValue({
+      thread: { id: "t-1" } as never,
+      messages: [],
+    });
     const { result } = renderHook(() => useThread("t-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
@@ -76,7 +79,9 @@ describe("useCreateThread", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("creates a thread", async () => {
-    vi.mocked(gateway.messaging.createThread).mockResolvedValue({ threadId: "t-new" });
+    vi.mocked(gateway.messaging.createThread).mockResolvedValue({
+      thread: { id: "t-new" },
+    } as never);
     const { result } = renderHook(() => useCreateThread(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({ subject: "Help", body: "I need assistance" });
@@ -89,7 +94,7 @@ describe("useReplyToThread", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("replies to thread", async () => {
-    vi.mocked(gateway.messaging.reply).mockResolvedValue({ messageId: "m-new" });
+    vi.mocked(gateway.messaging.reply).mockResolvedValue({ message: { id: "m-new" } } as never);
     const { result } = renderHook(() => useReplyToThread(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({ threadId: "t-1", body: "Thanks!" });
@@ -129,7 +134,7 @@ describe("useMessageDepartments", () => {
 
   it("fetches departments", async () => {
     vi.mocked(gateway.messaging.listDepartments).mockResolvedValue({
-      departments: [{ id: "d-1", name: "Support" }],
+      departments: [{ id: "d-1", name: "Support", description: "General support", isActive: true }],
     });
     const { result } = renderHook(() => useMessageDepartments(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
