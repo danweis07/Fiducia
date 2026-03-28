@@ -137,3 +137,29 @@ export function saveTheme(config: ThemeConfig): void {
     // storage full — silently ignore
   }
 }
+
+// =============================================================================
+// DESIGN SYSTEM RE-EXPORTS
+// =============================================================================
+
+export { hexToHsl, hslToHex, parseHslString, hslToString } from "./color-utils";
+export { deriveLightPalette, deriveDarkPalette, deriveFullPalette } from "./color-derivation";
+export { applyDesignSystem } from "./apply-design-system";
+export {
+  DESIGN_PRESETS,
+  PRESET_LABELS as DESIGN_PRESET_LABELS,
+  PRESET_DESCRIPTIONS,
+  DEFAULT_DESIGN_SYSTEM,
+} from "./presets";
+
+/** Map human-readable font names to ThemeFont keys for the font loader */
+export const FONT_NAME_TO_KEY: Record<string, ThemeFont> = {
+  Inter: "inter",
+  Roboto: "roboto",
+  "Open Sans": "open-sans",
+  "DM Sans": "dm-sans",
+  Nunito: "nunito",
+};
+
+/** Available font names for the design system editor */
+export const AVAILABLE_FONTS = ["Inter", "Roboto", "Open Sans", "DM Sans", "Nunito"] as const;

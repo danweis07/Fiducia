@@ -24,4 +24,5 @@ export interface TenantTheme {
   primaryColor: string;
   accentColor: string;
   faviconUrl: string | null;
+  designSystem?: import("./admin").DesignSystemConfig;
 }

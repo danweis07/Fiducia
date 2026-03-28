@@ -1453,6 +1453,7 @@ export async function getTenantTheme(ctx: GatewayContext): Promise<GatewayRespon
             primaryColor: data.primary_color,
             accentColor: data.accent_color,
             faviconUrl: data.favicon_url,
+            designSystem: data.design_system ?? undefined,
           },
         },
       };

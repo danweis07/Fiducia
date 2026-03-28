@@ -2,8 +2,9 @@
  * useSiteConfig — Frontend hook for tenant configuration
  *
  * Merges static defaults from tenant.config.ts with any database overrides
- * fetched via the config.theme gateway action. Components should use this
- * hook instead of hardcoding institution-specific content.
+ * fetched via the config.theme gateway action. When a DesignSystemConfig
+ * is present in the response, it is passed to ThemeContext for runtime
+ * CSS variable application.
  *
  * Usage:
  *   const { config } = useSiteConfig();
@@ -11,9 +12,12 @@
  *   <a href={`tel:${config.phone}`}>{config.phoneFormatted}</a>
  */
 
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { gateway } from "@/lib/gateway";
 import { tenantConfig, type TenantConfig } from "@/lib/tenant.config";
+import { useTheme } from "@/contexts/ThemeContext";
+import type { DesignSystemConfig } from "@/types/admin";
 
 interface ThemeResponse {
   theme?: {
@@ -22,17 +26,27 @@ interface ThemeResponse {
     primaryColor?: string;
     accentColor?: string;
     faviconUrl?: string | null;
+    designSystem?: DesignSystemConfig;
     [key: string]: unknown;
   };
 }
 
 export function useSiteConfig(): { config: TenantConfig; isLoading: boolean } {
+  const { setTenantDesignSystem } = useTheme();
+
   const { data, isLoading } = useQuery({
     queryKey: ["site-config"],
     queryFn: () => gateway.request<ThemeResponse>("config.theme"),
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     retry: 1,
   });
+
+  // Feed design system to ThemeContext when available
+  useEffect(() => {
+    if (data?.theme?.designSystem) {
+      setTenantDesignSystem(data.theme.designSystem);
+    }
+  }, [data, setTenantDesignSystem]);
 
   const config: TenantConfig = {
     ...tenantConfig,
