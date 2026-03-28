@@ -8,7 +8,7 @@ vi.mock("@/lib/gateway", () => ({
     instantPayments: {
       list: vi.fn(),
       get: vi.fn(),
-      limits: vi.fn(),
+      getLimits: vi.fn(),
       checkReceiver: vi.fn(),
       send: vi.fn(),
       requestPayment: vi.fn(),
@@ -88,7 +88,16 @@ describe("useInstantPayment", () => {
 
   it("fetches single payment", async () => {
     vi.mocked(gateway.instantPayments.get).mockResolvedValue({
-      payment: { id: "p-1", status: "completed" },
+      payment: {
+        paymentId: "p-1",
+        status: "completed",
+        rail: "fps",
+        amountCents: 1000,
+        senderName: "Test",
+        receiverName: "Test2",
+        createdAt: "2024-01-01T00:00:00Z",
+        completedAt: null,
+      },
     });
 
     const { result } = renderHook(() => useInstantPayment("p-1"), { wrapper: createWrapper() });
@@ -116,7 +125,11 @@ describe("useInstantPaymentLimits", () => {
   });
 
   it("fetches limits successfully", async () => {
-    vi.mocked(gateway.instantPayments.limits).mockResolvedValue({ dailyLimitCents: 2500000 });
+    vi.mocked(gateway.instantPayments.getLimits).mockResolvedValue({
+      limits: { dailyLimitCents: 2500000 } as never,
+      supportedCurrencies: ["USD"],
+      supportedRails: ["fps"],
+    });
 
     const { result } = renderHook(() => useInstantPaymentLimits(), { wrapper: createWrapper() });
 
@@ -124,7 +137,7 @@ describe("useInstantPaymentLimits", () => {
   });
 
   it("handles error", async () => {
-    vi.mocked(gateway.instantPayments.limits).mockRejectedValue(new Error("fail"));
+    vi.mocked(gateway.instantPayments.getLimits).mockRejectedValue(new Error("fail"));
 
     const { result } = renderHook(() => useInstantPaymentLimits(), { wrapper: createWrapper() });
 
@@ -138,7 +151,11 @@ describe("useCheckReceiver", () => {
   });
 
   it("fetches receiver check when routing number is valid", async () => {
-    vi.mocked(gateway.instantPayments.checkReceiver).mockResolvedValue({ supported: true });
+    vi.mocked(gateway.instantPayments.checkReceiver).mockResolvedValue({
+      eligible: true,
+      availableRails: ["fps"],
+      institutionName: "Chase",
+    });
 
     const { result } = renderHook(() => useCheckReceiver("021000021"), {
       wrapper: createWrapper(),

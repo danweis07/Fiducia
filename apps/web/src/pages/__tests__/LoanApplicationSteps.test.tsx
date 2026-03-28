@@ -100,7 +100,7 @@ describe("Loan Application Steps", () => {
     const { container } = render(
       createElement(LoanDetailsStep, {
         form: mockForm,
-        selectedProduct: mockProduct as unknown,
+        selectedProduct: mockProduct as never,
         termOptions: [12, 24, 36, 48, 60],
         fieldError,
         updateField: noop,
@@ -132,7 +132,7 @@ describe("Loan Application Steps", () => {
     const { container } = render(
       createElement(ReviewStep, {
         form: mockForm,
-        selectedProduct: mockProduct as unknown,
+        selectedProduct: mockProduct as never,
         documents: [{ name: "id.pdf", uploaded: true }],
         errors: {},
         isSubmitting: false,

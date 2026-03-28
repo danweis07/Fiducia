@@ -39,11 +39,9 @@ describe("internationalConsentKeys", () => {
   });
 
   it("has correct consents key", () => {
-    expect(internationalConsentKeys.consents("active" as unknown)).toEqual([
-      "internationalConsents",
-      "consents",
-      "active",
-    ]);
+    expect(
+      internationalConsentKeys.consents("active" as import("@/types").InternationalConsentStatus),
+    ).toEqual(["internationalConsents", "consents", "active"]);
   });
 
   it("has correct accessLogs key", () => {
@@ -87,7 +85,7 @@ describe("useInternationalConsentAccessLogs", () => {
   });
 
   it("fetches access logs successfully", async () => {
-    vi.mocked(gateway.internationalConsents.accessLogs).mockResolvedValue({ logs: [] });
+    vi.mocked(gateway.internationalConsents.accessLogs).mockResolvedValue({ accessLogs: [] });
 
     const { result } = renderHook(() => useInternationalConsentAccessLogs("c-1"), {
       wrapper: createWrapper(),
@@ -113,7 +111,9 @@ describe("useInternationalConsentSummary", () => {
   });
 
   it("fetches summary successfully", async () => {
-    vi.mocked(gateway.internationalConsents.summary).mockResolvedValue({ totalActive: 3 });
+    vi.mocked(gateway.internationalConsents.summary).mockResolvedValue({
+      summary: { totalActive: 3 },
+    } as never);
 
     const { result } = renderHook(() => useInternationalConsentSummary(), {
       wrapper: createWrapper(),

@@ -75,7 +75,7 @@ export default function InstantPayments() {
   const [preferredRail, setPreferredRail] = useState<InstantPaymentRail>("fednow");
 
   const { toast } = useToast();
-  const handleError = useErrorHandler();
+  const { handleError } = useErrorHandler();
 
   const { data: accountsData, isLoading: accountsLoading } = useAccounts();
   const { data: paymentsData, isLoading: paymentsLoading } = useInstantPayments();
@@ -377,7 +377,7 @@ export default function InstantPayments() {
             ) : (
               <div className="space-y-3">
                 {payments.map((p) => {
-                  const style = STATUS_STYLES[p.status];
+                  const style = STATUS_STYLES[p.status as InstantPaymentStatus];
                   const isOutbound = p.direction === "outbound";
                   return (
                     <Card key={p.paymentId}>
@@ -397,7 +397,7 @@ export default function InstantPayments() {
                             </p>
                             <div className="flex items-center gap-2 mt-1">
                               <Badge variant="outline" className="text-xs">
-                                {RAIL_LABELS[p.rail]}
+                                {RAIL_LABELS[p.rail as InstantPaymentRail]}
                               </Badge>
                               {p.iso20022MessageType && (
                                 <Badge variant="outline" className="text-xs font-mono">

@@ -38,10 +38,15 @@ describe("useCDMaturity", () => {
 
   it("fetches CD maturity info for an account", async () => {
     const mockMaturity = {
-      maturityDate: "2027-01-15",
-      maturityAction: "renew",
-      termMonths: 12,
-      rateBps: 450,
+      maturity: {
+        accountId: "acct-1",
+        maturityDate: "2027-01-15",
+        maturityAction: "renew_same_term" as const,
+        maturityTransferAccountId: null,
+        originalTermMonths: 12,
+        penaltyWithdrawnCents: 0,
+        productId: null,
+      },
     };
     vi.mocked(gateway.cd.maturity).mockResolvedValue(mockMaturity);
 

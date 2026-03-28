@@ -90,10 +90,8 @@ class TokenBucket {
 export class GatewayThrottle {
   private defaultBucket: TokenBucket;
   private domainBuckets: Map<string, TokenBucket> = new Map();
-  private config: RateLimitConfig;
 
   constructor(config: RateLimitConfig) {
-    this.config = config;
     this.defaultBucket = new TokenBucket(config.defaultRpm);
 
     if (config.domainOverrides) {
@@ -121,7 +119,6 @@ export class GatewayThrottle {
   /** Update configuration (e.g., when tenant settings change) */
   updateConfig(config: RateLimitConfig): void {
     this.destroy();
-    this.config = config;
     this.defaultBucket = new TokenBucket(config.defaultRpm);
     this.domainBuckets.clear();
 

@@ -164,15 +164,15 @@ export default function SCAManagement() {
               <div>
                 <span className="text-muted-foreground">SCA Enabled</span>
                 <div className="mt-1">
-                  <Badge variant={config.enabled ? "default" : "destructive"}>
-                    {config.enabled ? "Enabled" : "Disabled"}
+                  <Badge variant={config.scaEnabled ? "default" : "destructive"}>
+                    {config.scaEnabled ? "Enabled" : "Disabled"}
                   </Badge>
                 </div>
               </div>
               <div>
                 <span className="text-muted-foreground">Default Threshold</span>
                 <p className="font-semibold mt-1">
-                  &euro;{(config.defaultThreshold / 100).toFixed(2)}
+                  &euro;{(config.defaultThresholdCents / 100).toFixed(2)}
                 </p>
               </div>
               <div>
@@ -291,7 +291,7 @@ export default function SCAManagement() {
               const Icon = deviceTypeIcons[device.deviceType] ?? Monitor;
 
               return (
-                <Card key={device.id}>
+                <Card key={device.deviceId}>
                   <CardContent className="py-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
@@ -321,7 +321,7 @@ export default function SCAManagement() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setConfirmUnbind(device.id)}
+                        onClick={() => setConfirmUnbind(device.deviceId)}
                         title="Remove device"
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />

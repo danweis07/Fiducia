@@ -469,7 +469,7 @@ export default function InvoiceProcessorPage() {
                       <SelectContent>
                         {accounts.map((acc) => (
                           <SelectItem key={acc.id} value={acc.id}>
-                            {acc.name} ({formatCurrency(acc.availableBalance ?? 0)})
+                            {acc.name} ({formatCurrency(acc.availableBalanceCents ?? 0)})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -488,12 +488,12 @@ export default function InvoiceProcessorPage() {
                 {/* Sufficiency Warning */}
                 {selectedAccount &&
                   reviewInvoice.amountCents > 0 &&
-                  (selectedAccount.availableBalance ?? 0) < reviewInvoice.amountCents && (
+                  (selectedAccount.availableBalanceCents ?? 0) < reviewInvoice.amountCents && (
                     <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 flex items-start gap-2">
                       <AlertCircle className="w-4 h-4 text-destructive mt-0.5" />
                       <p className="text-sm text-destructive">
                         {t("invoiceProcessor.insufficientFunds", {
-                          balance: formatCurrency(selectedAccount.availableBalance ?? 0),
+                          balance: formatCurrency(selectedAccount.availableBalanceCents ?? 0),
                         })}
                       </p>
                     </div>

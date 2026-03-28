@@ -41,7 +41,6 @@ interface RudderAnalyticsSDK {
 export class RudderStackProvider implements AnalyticsProvider {
   readonly name = "rudderstack";
 
-  private _initialized = false;
   private _optedOut = false;
   private _timedEvents = new Map<string, number>();
 
@@ -95,7 +94,7 @@ export class RudderStackProvider implements AnalyticsProvider {
         sendAdblockPage: false,
         sendAdblockPageOptions: {},
       });
-      this._initialized = true;
+      // initialized
     };
 
     const firstScript = document.getElementsByTagName("script")[0];

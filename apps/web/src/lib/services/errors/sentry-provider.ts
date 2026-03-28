@@ -121,7 +121,7 @@ export class SentryProvider implements ErrorTrackingProvider {
       if (context) {
         this.Sentry.withScope((scope: { setExtras: (extras: Record<string, unknown>) => void }) => {
           scope.setExtras(context);
-          this.Sentry.captureException(error);
+          this.Sentry!.captureException(error);
         });
       } else {
         this.Sentry.captureException(error);

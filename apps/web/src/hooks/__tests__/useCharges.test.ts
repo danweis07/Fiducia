@@ -52,19 +52,21 @@ describe("useChargeDefinitions", () => {
 
   it("fetches charge definitions successfully", async () => {
     const mockDefs = [{ id: "cd-1", name: "Monthly Fee", amountCents: 500 }];
-    vi.mocked(gateway.charges.definitions).mockResolvedValue(mockDefs);
+    vi.mocked(gateway.charges.definitions).mockResolvedValue({
+      chargeDefinitions: mockDefs as never[],
+    });
 
     const { result } = renderHook(() => useChargeDefinitions({ appliesTo: "checking" }), {
       wrapper: createWrapper(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.chargeDefinitions).toHaveLength(1);
     expect(gateway.charges.definitions).toHaveBeenCalledWith({ appliesTo: "checking" });
   });
 
   it("fetches with empty params", async () => {
-    vi.mocked(gateway.charges.definitions).mockResolvedValue([]);
+    vi.mocked(gateway.charges.definitions).mockResolvedValue({ chargeDefinitions: [] });
 
     const { result } = renderHook(() => useChargeDefinitions(), { wrapper: createWrapper() });
 
@@ -80,14 +82,14 @@ describe("useCharges", () => {
 
   it("fetches charges when accountId is provided", async () => {
     const mockCharges = [{ id: "ch-1", amountCents: 1000, status: "pending" }];
-    vi.mocked(gateway.charges.list).mockResolvedValue(mockCharges);
+    vi.mocked(gateway.charges.list).mockResolvedValue({ charges: mockCharges as never[] });
 
     const { result } = renderHook(() => useCharges({ accountId: "acct-1", status: "pending" }), {
       wrapper: createWrapper(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.charges).toHaveLength(1);
     expect(gateway.charges.list).toHaveBeenCalledWith({ accountId: "acct-1", status: "pending" });
   });
 

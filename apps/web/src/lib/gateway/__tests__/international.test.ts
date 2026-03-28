@@ -413,7 +413,7 @@ describe("InternationalDomain", () => {
 
     it("revokeScope calls intl.consents.revokeScope", async () => {
       const invoke = mockInvoke({ consent: {} });
-      const params = { consentId: "con1", scope: "accounts" as unknown };
+      const params = { consentId: "con1", scope: "accounts" as never };
       await gateway.internationalConsents.revokeScope(params);
       expect(invoke).toHaveBeenCalledWith("intl.consents.revokeScope", params);
     });
@@ -528,10 +528,10 @@ describe("InternationalDomain", () => {
     it("createAlias calls intl.payments.aliases.create", async () => {
       const invoke = mockInvoke({ alias: {} });
       const params = {
-        aliasType: "vpa" as unknown,
+        aliasType: "vpa" as never,
         aliasValue: "user@upi",
         linkedAccountId: "a1",
-        network: "upi" as unknown,
+        network: "upi" as never,
       };
       await gateway.intlPaymentAliases.createAlias(params);
       expect(invoke).toHaveBeenCalledWith("intl.payments.aliases.create", params);
@@ -547,8 +547,8 @@ describe("InternationalDomain", () => {
       const invoke = mockInvoke({ confirmation: {} });
       const params = {
         aliasValue: "user@upi",
-        aliasType: "vpa" as unknown,
-        network: "upi" as unknown,
+        aliasType: "vpa" as never,
+        network: "upi" as never,
       };
       await gateway.intlPaymentAliases.confirmPayee(params);
       expect(invoke).toHaveBeenCalledWith("intl.payments.confirmPayee", params);
@@ -558,10 +558,10 @@ describe("InternationalDomain", () => {
       const invoke = mockInvoke({ payment: {} });
       const params = {
         recipientAlias: "user@upi",
-        recipientAliasType: "vpa" as unknown,
+        recipientAliasType: "vpa" as never,
         amountCents: 5000,
         currencyCode: "INR",
-        network: "upi" as unknown,
+        network: "upi" as never,
       };
       await gateway.intlPaymentAliases.send(params);
       expect(invoke).toHaveBeenCalledWith("intl.payments.send", params);

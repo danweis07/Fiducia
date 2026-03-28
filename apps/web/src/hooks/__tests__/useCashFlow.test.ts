@@ -29,7 +29,26 @@ describe("useCashFlowForecast", () => {
 
   it("fetches forecast successfully", async () => {
     vi.mocked(gateway.cashFlow.getForecast).mockResolvedValue({
-      forecast: [{ date: "2026-03-18", projectedBalanceCents: 500000 }],
+      forecast: {
+        currentBalanceCents: 500000,
+        projectedBalanceCents: 500000,
+        projectedDate: "2026-04-17",
+        avgDailyInflowCents: 10000,
+        avgDailyOutflowCents: 8000,
+        upcomingPayrollCents: 0,
+        upcomingBillsCents: 0,
+        runwayDays: 60,
+        dataPoints: [
+          {
+            date: "2026-03-18",
+            balanceCents: 500000,
+            inflowCents: 0,
+            outflowCents: 0,
+            isProjected: true,
+          },
+        ],
+        insights: [],
+      },
     });
 
     const { result } = renderHook(() => useCashFlowForecast("acct-1", 30), {
@@ -37,7 +56,7 @@ describe("useCashFlowForecast", () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.forecast).toHaveLength(1);
+    expect(result.current.data?.forecast.dataPoints).toHaveLength(1);
   });
 
   it("handles error", async () => {
@@ -51,7 +70,20 @@ describe("useCashFlowForecast", () => {
   });
 
   it("works without parameters", async () => {
-    vi.mocked(gateway.cashFlow.getForecast).mockResolvedValue({ forecast: [] });
+    vi.mocked(gateway.cashFlow.getForecast).mockResolvedValue({
+      forecast: {
+        currentBalanceCents: 0,
+        projectedBalanceCents: 0,
+        projectedDate: "2026-04-17",
+        avgDailyInflowCents: 0,
+        avgDailyOutflowCents: 0,
+        upcomingPayrollCents: 0,
+        upcomingBillsCents: 0,
+        runwayDays: 0,
+        dataPoints: [],
+        insights: [],
+      },
+    });
 
     const { result } = renderHook(() => useCashFlowForecast(), { wrapper: createWrapper() });
 

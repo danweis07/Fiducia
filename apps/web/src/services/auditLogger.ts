@@ -448,18 +448,18 @@ class AuditLogger {
         Record<string, unknown>
       >;
       return entries.map((row) => ({
-        id: row.id,
-        timestamp: row.timestamp,
+        id: row.id as string,
+        timestamp: row.timestamp as string,
         severity: row.severity as AuditSeverity,
         action: row.action as AuditAction,
         entity: (row.entityType ?? row.entity_type) as AuditEntity,
-        entityId: row.entityId ?? row.entity_id,
-        userId: row.userId ?? row.user_id,
-        firmId: row.firmId ?? row.firm_id,
-        message: row.message,
-        metadata: row.metadata,
-        ipAddress: row.ipAddress ?? row.ip_address,
-        userAgent: row.userAgent ?? row.user_agent,
+        entityId: (row.entityId ?? row.entity_id) as string,
+        userId: (row.userId ?? row.user_id) as string,
+        firmId: (row.firmId ?? row.firm_id) as string,
+        message: row.message as string,
+        metadata: row.metadata as Record<string, unknown> | undefined,
+        ipAddress: (row.ipAddress ?? row.ip_address) as string | undefined,
+        userAgent: (row.userAgent ?? row.user_agent) as string | undefined,
       }));
     } catch (error) {
       console.error("Failed to query audit logs:", error);

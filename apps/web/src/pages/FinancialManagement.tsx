@@ -25,6 +25,7 @@ import { PageSkeleton } from "@/components/common/LoadingSkeleton";
 interface SpendingCategory {
   category: string;
   totalCents: number;
+  transactionCount: number;
   percentOfTotal: number;
   trend: string;
   changeFromPreviousCents: number;
@@ -35,9 +36,10 @@ interface SpendingData {
   totalSpendingCents: number;
   totalIncomeCents: number;
   netCashFlowCents: number;
+  avgDailySpendingCents: number;
   periodStart: string;
   periodEnd: string;
-  categories: SpendingCategory[];
+  byCategory: SpendingCategory[];
 }
 
 interface TrendItem {
@@ -66,7 +68,7 @@ interface BudgetsData {
 }
 
 interface RecurringItem {
-  id: string;
+  recurringId: string;
   merchantName: string;
   merchantLogoUrl?: string;
   category: string;
@@ -80,7 +82,7 @@ interface RecurringItem {
 }
 
 interface RecurringData {
-  subscriptions: RecurringItem[];
+  recurring: RecurringItem[];
   totalMonthlyCents: number;
   totalAnnualCents: number;
 }
@@ -190,10 +192,10 @@ export default function FinancialManagement() {
     );
   }
 
-  const categories = spendingData?.categories ?? [];
+  const categories = spendingData?.byCategory ?? [];
   const trends = trendsData?.trends ?? [];
   const budgets = budgetsData?.budgets ?? [];
-  const subscriptions = recurringData?.subscriptions ?? [];
+  const subscriptions = recurringData?.recurring ?? [];
   const accounts = netWorthData?.accounts ?? [];
 
   return (
@@ -475,7 +477,10 @@ export default function FinancialManagement() {
           ) : (
             <div className="divide-y">
               {subscriptions.map((sub) => (
-                <div key={sub.id} className="flex items-center gap-4 py-3 first:pt-0 last:pb-0">
+                <div
+                  key={sub.recurringId}
+                  className="flex items-center gap-4 py-3 first:pt-0 last:pb-0"
+                >
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                     {sub.merchantLogoUrl ? (
                       <img

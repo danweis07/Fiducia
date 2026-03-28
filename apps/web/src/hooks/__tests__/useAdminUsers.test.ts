@@ -50,19 +50,19 @@ describe("useAdminUsers", () => {
       { id: "u-1", email: "admin@example.com", status: "active", role: "admin" },
       { id: "u-2", email: "user@example.com", status: "active", role: "member" },
     ];
-    vi.mocked(gateway.adminUsers.list).mockResolvedValue(mockUsers);
+    vi.mocked(gateway.adminUsers.list).mockResolvedValue({ users: mockUsers as never[] });
 
     const { result } = renderHook(() => useAdminUsers({ status: "active" }), {
       wrapper: createWrapper(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(2);
+    expect(result.current.data?.users).toHaveLength(2);
     expect(gateway.adminUsers.list).toHaveBeenCalledWith({ status: "active" });
   });
 
   it("fetches with default empty params", async () => {
-    vi.mocked(gateway.adminUsers.list).mockResolvedValue([]);
+    vi.mocked(gateway.adminUsers.list).mockResolvedValue({ users: [] });
 
     const { result } = renderHook(() => useAdminUsers(), { wrapper: createWrapper() });
 
@@ -80,7 +80,7 @@ describe("useAdminUsers", () => {
   });
 
   it("passes search and pagination params", async () => {
-    vi.mocked(gateway.adminUsers.list).mockResolvedValue([]);
+    vi.mocked(gateway.adminUsers.list).mockResolvedValue({ users: [] });
 
     const { result } = renderHook(() => useAdminUsers({ search: "john", limit: 25, offset: 50 }), {
       wrapper: createWrapper(),

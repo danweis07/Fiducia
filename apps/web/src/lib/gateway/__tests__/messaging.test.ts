@@ -132,13 +132,13 @@ describe("MessagingDomain", () => {
   describe("vault", () => {
     it("list calls vault.documents.list", async () => {
       const invoke = mockInvoke({ documents: [] });
-      await gateway.vault.list({ category: "tax" as unknown });
+      await gateway.vault.list({ category: "tax" as never });
       expect(invoke).toHaveBeenCalledWith("vault.documents.list", { category: "tax" });
     });
 
     it("upload calls vault.documents.upload", async () => {
       const invoke = mockInvoke({ document: {}, uploadUrl: "https://upload.url" });
-      const params = { name: "W2", category: "tax" as unknown };
+      const params = { name: "W2", category: "tax" as never };
       await gateway.vault.upload(params);
       expect(invoke).toHaveBeenCalledWith("vault.documents.upload", params);
     });
@@ -223,8 +223,8 @@ describe("MessagingDomain", () => {
         email: "a@b.com",
         firstName: "Jane",
         lastName: "Doe",
-        relationship: "spouse" as unknown,
-        permissions: "full" as unknown,
+        relationship: "spouse" as never,
+        permissions: "full" as never,
       };
       await gateway.jointAccounts.addOwner(params);
       expect(invoke).toHaveBeenCalledWith("jointAccounts.owners.add", params);
@@ -241,7 +241,7 @@ describe("MessagingDomain", () => {
 
     it("updatePermissions calls jointAccounts.owners.updatePermissions", async () => {
       const invoke = mockInvoke({ owner: {} });
-      await gateway.jointAccounts.updatePermissions("acc1", "o1", "readOnly" as unknown);
+      await gateway.jointAccounts.updatePermissions("acc1", "o1", "readOnly" as never);
       expect(invoke).toHaveBeenCalledWith("jointAccounts.owners.updatePermissions", {
         accountId: "acc1",
         ownerId: "o1",

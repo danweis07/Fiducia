@@ -28,12 +28,12 @@ function trackerScripts(): HTMLScriptElement[] {
 
 describe("trackEvent", () => {
   afterEach(() => {
-    delete (window as Record<string, unknown>).gtag;
+    delete (window as unknown as Record<string, unknown>).gtag;
   });
 
   it("calls window.gtag when available", () => {
     const gtag = vi.fn();
-    (window as Record<string, unknown>).gtag = gtag;
+    (window as unknown as Record<string, unknown>).gtag = gtag;
 
     trackEvent("category1", "action1", "label1", 42);
 
@@ -52,12 +52,12 @@ describe("trackEvent", () => {
 
 describe("trackConversion", () => {
   afterEach(() => {
-    delete (window as Record<string, unknown>).gtag;
+    delete (window as unknown as Record<string, unknown>).gtag;
   });
 
   it("calls window.gtag with conversion event", () => {
     const gtag = vi.fn();
-    (window as Record<string, unknown>).gtag = gtag;
+    (window as unknown as Record<string, unknown>).gtag = gtag;
 
     trackConversion("AW-123/abc");
 

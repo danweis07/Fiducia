@@ -113,8 +113,8 @@ export default function OpenFinanceHub() {
     }
     try {
       await createConnection.mutateAsync({
-        institutionQuery: searchQuery,
-        countryCode: countryCode || undefined,
+        institutionId: searchQuery,
+        countryCode: countryCode || "US",
       });
       toast({
         title: "Connection initiated",
@@ -172,52 +172,51 @@ export default function OpenFinanceHub() {
           <p className="text-muted-foreground">See all your bank accounts in one place</p>
         </div>
         <EmptyState
-          icon={<LinkIcon className="h-10 w-10" />}
+          icon={LinkIcon}
           title="No connected accounts"
           description="Connect your first bank account to see all your finances in one place"
-        >
-          <Dialog open={addOpen} onOpenChange={setAddOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Connect Bank Account
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Connect Bank Account</DialogTitle>
-                <DialogDescription>Search for your bank or financial institution</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Institution Name</Label>
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for your bank..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Country Code (optional)</Label>
-                  <Input
-                    value={countryCode}
-                    onChange={(e) => setCountryCode(e.target.value.toUpperCase())}
-                    placeholder="e.g. US, GB, BR"
-                    maxLength={2}
-                  />
-                </div>
+        />
+        <Dialog open={addOpen} onOpenChange={setAddOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Connect Bank Account
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Connect Bank Account</DialogTitle>
+              <DialogDescription>Search for your bank or financial institution</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Institution Name</Label>
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for your bank..."
+                />
               </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setAddOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddConnection} disabled={createConnection.isPending}>
-                  {createConnection.isPending ? "Connecting..." : "Connect"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </EmptyState>
+              <div className="space-y-2">
+                <Label>Country Code (optional)</Label>
+                <Input
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value.toUpperCase())}
+                  placeholder="e.g. US, GB, BR"
+                  maxLength={2}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setAddOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddConnection} disabled={createConnection.isPending}>
+                {createConnection.isPending ? "Connecting..." : "Connect"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -283,7 +282,7 @@ export default function OpenFinanceHub() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-3xl font-bold">{formatCurrency(netWorth.totalNetWorthCents)}</p>
+            <p className="text-3xl font-bold">{formatCurrency(netWorth.netWorthCents)}</p>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">Total Assets</span>
@@ -301,8 +300,8 @@ export default function OpenFinanceHub() {
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span>{netWorth.connectionCount} connections</span>
               <span>{netWorth.accountCount} accounts</span>
-              {netWorth.lastUpdated && (
-                <span>Updated {new Date(netWorth.lastUpdated).toLocaleString()}</span>
+              {netWorth.lastUpdatedAt && (
+                <span>Updated {new Date(netWorth.lastUpdatedAt).toLocaleString()}</span>
               )}
             </div>
           </CardContent>
@@ -314,7 +313,7 @@ export default function OpenFinanceHub() {
         <h2 className="text-lg font-semibold mb-3">Connected Institutions</h2>
         <div className="grid gap-4 md:grid-cols-2">
           {connections.map((conn: OpenFinanceConnection) => (
-            <Card key={conn.id}>
+            <Card key={conn.connectionId}>
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -356,7 +355,7 @@ export default function OpenFinanceHub() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleRefresh(conn.id)}
+                    onClick={() => handleRefresh(conn.connectionId)}
                     disabled={refreshConnection.isPending}
                   >
                     <RefreshCw className="h-4 w-4 mr-1" />
@@ -366,7 +365,7 @@ export default function OpenFinanceHub() {
                     variant="ghost"
                     size="sm"
                     className="text-destructive"
-                    onClick={() => setRemoveConnectionId(conn.id)}
+                    onClick={() => setRemoveConnectionId(conn.connectionId)}
                   >
                     <Trash2 className="h-4 w-4 mr-1" />
                     Remove
@@ -396,7 +395,7 @@ export default function OpenFinanceHub() {
                   <div className="space-y-2">
                     {instAccounts.map((account: OpenFinanceAggregatedAccount) => (
                       <div
-                        key={account.id}
+                        key={account.accountId}
                         className="flex items-center justify-between p-3 rounded-lg border"
                       >
                         <div className="flex items-center gap-3">
@@ -413,10 +412,10 @@ export default function OpenFinanceHub() {
                             <p className="font-medium text-sm">{account.name}</p>
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <span className="capitalize">{account.type}</span>
-                              {account.maskedNumber && <span>{account.maskedNumber}</span>}
-                              {account.currency && (
+                              {account.mask && <span>{account.mask}</span>}
+                              {account.currencyCode && (
                                 <Badge variant="outline" className="text-xs">
-                                  {account.currency}
+                                  {account.currencyCode}
                                 </Badge>
                               )}
                             </div>
@@ -468,9 +467,9 @@ export default function OpenFinanceHub() {
                   <div className="space-y-1">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Confidence Score</span>
-                      <span className="font-semibold">{altCredit.confidenceScore}%</span>
+                      <span className="font-semibold">{altCredit.incomeConfidenceScore}%</span>
                     </div>
-                    <Progress value={altCredit.confidenceScore} />
+                    <Progress value={altCredit.incomeConfidenceScore} />
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Months Analyzed</span>
@@ -488,7 +487,7 @@ export default function OpenFinanceHub() {
                       {formatCurrency(altCredit.avgMonthlyBalanceCents)}
                     </span>
                   </div>
-                  {altCredit.meetsRequirements && (
+                  {altCredit.meetsMinimumRequirements && (
                     <Badge variant="default" className="mt-2">
                       <DollarSign className="h-3 w-3 mr-1" />
                       Meets Requirements

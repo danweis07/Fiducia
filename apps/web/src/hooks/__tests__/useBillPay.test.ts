@@ -33,8 +33,20 @@ function createWrapper() {
     createElement(QueryClientProvider, { client: queryClient }, children);
 }
 
-const mockBills = [
+const baseBill = {
+  tenantId: "t-1",
+  userId: "u-1",
+  payeeAccountNumberMasked: "****1234",
+  autopay: false,
+  recurringRule: null,
+  fromAccountId: "acct-1",
+  paidAt: null,
+  createdAt: "2024-01-01T00:00:00Z",
+};
+
+const mockBills: import("@/types").Bill[] = [
   {
+    ...baseBill,
     id: "bill-1",
     payeeName: "Electric Company",
     amountCents: 15000,
@@ -42,6 +54,7 @@ const mockBills = [
     status: "scheduled",
   },
   {
+    ...baseBill,
     id: "bill-2",
     payeeName: "Internet Provider",
     amountCents: 8999,
@@ -49,11 +62,13 @@ const mockBills = [
     status: "scheduled",
   },
   {
+    ...baseBill,
     id: "bill-3",
     payeeName: "Water Utility",
     amountCents: 4500,
     dueDate: "2026-03-15",
     status: "paid",
+    paidAt: "2026-03-15T00:00:00Z",
   },
 ];
 
@@ -139,9 +154,11 @@ describe("useCreateBill", () => {
   it("creates a bill payment", async () => {
     vi.mocked(gateway.bills.create).mockResolvedValue({
       bill: {
+        ...baseBill,
         id: "bill-new",
         payeeName: "Electric Company",
         amountCents: 15000,
+        dueDate: "2026-03-20",
         status: "scheduled",
       },
     });
@@ -171,7 +188,14 @@ describe("useCreateBill", () => {
 
   it("creates a bill with autopay", async () => {
     vi.mocked(gateway.bills.create).mockResolvedValue({
-      bill: { id: "bill-ap", status: "scheduled" },
+      bill: {
+        ...baseBill,
+        id: "bill-ap",
+        dueDate: "2026-04-01",
+        payeeName: "Internet Provider",
+        amountCents: 8999,
+        status: "scheduled" as const,
+      },
     });
 
     const { result } = renderHook(() => useCreateBill(), { wrapper: createWrapper() });
@@ -192,7 +216,14 @@ describe("useCreateBill", () => {
 
   it("creates a recurring bill", async () => {
     vi.mocked(gateway.bills.create).mockResolvedValue({
-      bill: { id: "bill-rec", status: "scheduled" },
+      bill: {
+        ...baseBill,
+        id: "bill-rec",
+        dueDate: "2026-04-01",
+        payeeName: "Rent",
+        amountCents: 120000,
+        status: "scheduled" as const,
+      },
     });
 
     const { result } = renderHook(() => useCreateBill(), { wrapper: createWrapper() });

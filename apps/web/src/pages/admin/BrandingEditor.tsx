@@ -63,7 +63,10 @@ export default function BrandingEditor() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await gateway.request("admin.branding.update", branding);
+      await gateway.request(
+        "admin.branding.update",
+        branding as unknown as Record<string, unknown>,
+      );
       toast({
         title: t("brandingEditor.toast.saved"),
         description: t("brandingEditor.toast.savedDescription"),

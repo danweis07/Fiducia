@@ -31,12 +31,11 @@ export default function AutomationRules() {
 
   const { data: rulesData, isLoading } = useQuery({
     queryKey: ["ai-platform", "automation", "rules"],
-    queryFn: () => gateway.aiPlatform.automation.listRules(),
+    queryFn: () => gateway.aiPlatform.automation.list(),
   });
 
   const createRule = useMutation({
-    mutationFn: (params: { description: string }) =>
-      gateway.aiPlatform.automation.createRule(params),
+    mutationFn: (params: { description: string }) => gateway.aiPlatform.automation.create(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ai-platform", "automation", "rules"] });
       setCreateOpen(false);
@@ -53,7 +52,9 @@ export default function AutomationRules() {
 
   const toggleRule = useMutation({
     mutationFn: (params: { ruleId: string; active: boolean }) =>
-      gateway.aiPlatform.automation.toggleRule(params),
+      gateway.aiPlatform.automation.update(params.ruleId, {
+        status: params.active ? "active" : "disabled",
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ai-platform", "automation", "rules"] });
     },
@@ -63,7 +64,7 @@ export default function AutomationRules() {
   });
 
   const deleteRule = useMutation({
-    mutationFn: (ruleId: string) => gateway.aiPlatform.automation.deleteRule({ ruleId }),
+    mutationFn: (ruleId: string) => gateway.aiPlatform.automation.remove(ruleId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ai-platform", "automation", "rules"] });
       toast({ title: t("automationRules.ruleDeleted") });
@@ -153,68 +154,80 @@ export default function AutomationRules() {
             />
           ) : (
             <div className="grid gap-4">
-              {rules.map((rule) => (
-                <Card key={rule.id}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-3 min-w-0">
-                        <Zap
-                          className={`h-5 w-5 mt-0.5 shrink-0 ${rule.active ? "text-primary" : "text-muted-foreground"}`}
-                        />
-                        <div className="min-w-0">
-                          <CardTitle className="text-base">{rule.name}</CardTitle>
-                          <CardDescription className="mt-1">{rule.description}</CardDescription>
+              {rules.map(
+                (rule: {
+                  id: string;
+                  name: string;
+                  description: string;
+                  triggerType: string;
+                  status: string;
+                  totalExecutions: number;
+                  lastExecutedAt: string | null;
+                }) => (
+                  <Card key={rule.id}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <Zap
+                            className={`h-5 w-5 mt-0.5 shrink-0 ${rule.status === "active" ? "text-primary" : "text-muted-foreground"}`}
+                          />
+                          <div className="min-w-0">
+                            <CardTitle className="text-base">{rule.name}</CardTitle>
+                            <CardDescription className="mt-1">{rule.description}</CardDescription>
+                          </div>
+                        </div>
+                        <Badge variant={rule.status === "active" ? "default" : "outline"}>
+                          {rule.status === "active"
+                            ? t("automationRules.active")
+                            : t("automationRules.paused")}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm text-muted-foreground">
+                          {t("automationRules.executed", { count: rule.totalExecutions })}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              toggleRule.mutate({
+                                ruleId: rule.id,
+                                active: rule.status !== "active",
+                              })
+                            }
+                            disabled={toggleRule.isPending}
+                          >
+                            {rule.status === "active" ? (
+                              <>
+                                <Pause className="h-4 w-4 mr-1" />
+                                {t("automationRules.pause")}
+                              </>
+                            ) : (
+                              <>
+                                <Play className="h-4 w-4 mr-1" />
+                                {t("automationRules.resume")}
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => deleteRule.mutate(rule.id)}
+                            disabled={deleteRule.isPending}
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            {t("automationRules.delete")}
+                          </Button>
                         </div>
                       </div>
-                      <Badge variant={rule.active ? "default" : "outline"}>
-                        {rule.active ? t("automationRules.active") : t("automationRules.paused")}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
-                        {t("automationRules.executed", { count: rule.executionCount })}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            toggleRule.mutate({
-                              ruleId: rule.id,
-                              active: !rule.active,
-                            })
-                          }
-                          disabled={toggleRule.isPending}
-                        >
-                          {rule.active ? (
-                            <>
-                              <Pause className="h-4 w-4 mr-1" />
-                              {t("automationRules.pause")}
-                            </>
-                          ) : (
-                            <>
-                              <Play className="h-4 w-4 mr-1" />
-                              {t("automationRules.resume")}
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-destructive hover:text-destructive"
-                          onClick={() => deleteRule.mutate(rule.id)}
-                          disabled={deleteRule.isPending}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          {t("automationRules.delete")}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ),
+              )}
             </div>
           )}
         </div>

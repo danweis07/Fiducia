@@ -311,13 +311,13 @@ describe("REST Backend Provider", () => {
           json: () => Promise.resolve({ data: { user: { name: "Test" } } }),
         });
 
-        const result = await provider.gateway.graphql("query { user { name } }");
+        const result = await provider.gateway.graphql!("query { user { name } }");
         expect(result.data).toBeDefined();
       });
 
       it("returns error on failure", async () => {
         globalThis.fetch = vi.fn().mockRejectedValue(new Error("fail"));
-        const result = await provider.gateway.graphql("{}");
+        const result = await provider.gateway.graphql!("{}");
         expect(result.error?.code).toBe("INVOKE_ERROR");
       });
     });

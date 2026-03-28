@@ -62,7 +62,7 @@ describe("CardsDomain", () => {
 
     it("checkEligibility calls cardProvisioning.checkEligibility", async () => {
       const invoke = mockInvoke({ eligibility: {} });
-      await gateway.cardProvisioning.checkEligibility("c1", "apple_pay" as unknown);
+      await gateway.cardProvisioning.checkEligibility("c1", "apple_pay" as never);
       expect(invoke).toHaveBeenCalledWith("cardProvisioning.checkEligibility", {
         cardId: "c1",
         walletProvider: "apple_pay",
@@ -71,7 +71,7 @@ describe("CardsDomain", () => {
 
     it("initiate calls cardProvisioning.initiate", async () => {
       const invoke = mockInvoke({ provisioningId: "prov1" });
-      await gateway.cardProvisioning.initiate("c1", "apple_pay" as unknown, "dev1");
+      await gateway.cardProvisioning.initiate("c1", "apple_pay" as never, "dev1");
       expect(invoke).toHaveBeenCalledWith("cardProvisioning.initiate", {
         cardId: "c1",
         walletProvider: "apple_pay",
@@ -81,7 +81,7 @@ describe("CardsDomain", () => {
 
     it("complete calls cardProvisioning.complete", async () => {
       const invoke = mockInvoke({ status: "completed" });
-      await gateway.cardProvisioning.complete("prov1", "c1", "apple_pay" as unknown, "wallet-tok");
+      await gateway.cardProvisioning.complete("prov1", "c1", "apple_pay" as never, "wallet-tok");
       expect(invoke).toHaveBeenCalledWith("cardProvisioning.complete", {
         provisioningId: "prov1",
         cardId: "c1",
@@ -142,7 +142,7 @@ describe("CardsDomain", () => {
       const invoke = mockInvoke({ replacement: {} });
       const params = {
         cardId: "c1",
-        reason: "damaged" as unknown,
+        reason: "damaged" as never,
         shippingMethod: "standard" as const,
       };
       await gateway.cardReplacements.request(params);

@@ -29,10 +29,9 @@ describe("SDUIRenderer", () => {
 
   it("renders fallback when no manifest data", () => {
     const fallback = createElement("div", null, "Fallback Content");
-    const { getByText } = render(
-      createElement(SDUIRenderer, { screenKey: "home" as unknown, fallback }),
-      { wrapper: createWrapper() },
-    );
+    const { getByText } = render(createElement(SDUIRenderer, { screenKey: "home", fallback }), {
+      wrapper: createWrapper(),
+    });
     expect(getByText("Fallback Content")).toBeTruthy();
   });
 
@@ -44,10 +43,9 @@ describe("SDUIRenderer", () => {
     });
 
     const fallback = createElement("div", null, "Loading Fallback");
-    const { getByText } = render(
-      createElement(SDUIRenderer, { screenKey: "home" as unknown, fallback }),
-      { wrapper: createWrapper() },
-    );
+    const { getByText } = render(createElement(SDUIRenderer, { screenKey: "home", fallback }), {
+      wrapper: createWrapper(),
+    });
     expect(getByText("Loading Fallback")).toBeTruthy();
   });
 
@@ -66,7 +64,7 @@ describe("SDUIRenderer", () => {
       isLoading: false,
     });
 
-    const { container } = render(createElement(SDUIRenderer, { screenKey: "home" as unknown }), {
+    const { container } = render(createElement(SDUIRenderer, { screenKey: "home" }), {
       wrapper: createWrapper(),
     });
     // Unknown component renders nothing in non-DEV or a placeholder in DEV

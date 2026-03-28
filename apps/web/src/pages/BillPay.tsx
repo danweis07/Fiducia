@@ -122,7 +122,7 @@ export default function BillPay() {
 
   const payees: BillPayPayee[] = (payeesData as { payees?: BillPayPayee[] })?.payees ?? [];
   const payments: BillPayPayment[] =
-    (paymentsData as { payments?: BillPayPayment[] })?.payments ?? [];
+    (paymentsData as unknown as { payments?: BillPayPayment[] })?.payments ?? [];
   const billers = billersData?.billers ?? [];
 
   const upcomingPayees = payees.filter((p) => p.nextDueDate);

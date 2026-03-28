@@ -26,7 +26,7 @@ describe("FeatureGate", () => {
     render(
       createElement(
         FeatureGate,
-        { feature: "wires" as unknown },
+        { feature: "wires" } as never,
         createElement("span", null, "Wire Transfer"),
       ),
     );
@@ -37,7 +37,7 @@ describe("FeatureGate", () => {
     render(
       createElement(
         FeatureGate,
-        { feature: "p2p" as unknown, fallback: createElement("span", null, "Upgrade") },
+        { feature: "p2p", fallback: createElement("span", null, "Upgrade") } as never,
         createElement("span", null, "P2P Transfers"),
       ),
     );
@@ -49,7 +49,7 @@ describe("FeatureGate", () => {
     render(
       createElement(
         FeatureGate,
-        { region: "us" as unknown },
+        { region: "us" } as never,
         createElement("span", null, "US Content"),
       ),
     );
@@ -60,7 +60,7 @@ describe("FeatureGate", () => {
     render(
       createElement(
         FeatureGate,
-        { region: "eu" as unknown },
+        { region: "eu" } as never,
         createElement("span", null, "EU Content"),
       ),
     );
@@ -68,7 +68,7 @@ describe("FeatureGate", () => {
   });
 
   it("renders children when no feature or region specified", () => {
-    render(createElement(FeatureGate, {}, createElement("span", null, "Always Visible")));
+    render(createElement(FeatureGate, {} as never, createElement("span", null, "Always Visible")));
     expect(screen.getByText("Always Visible")).toBeTruthy();
   });
 });

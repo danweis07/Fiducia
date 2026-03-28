@@ -374,6 +374,10 @@ export function createPaymentsDomain(callGateway: CallGatewayFn) {
             amountCents: number;
             direction: string;
             createdAt: string;
+            receiverName?: string;
+            senderName?: string;
+            description?: string;
+            iso20022MessageType?: string;
           }>;
         }>("instantPayments.list", params);
       },

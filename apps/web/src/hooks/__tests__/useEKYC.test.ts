@@ -92,7 +92,9 @@ describe("useEKYCStatus", () => {
   });
 
   it("fetches verification status successfully", async () => {
-    vi.mocked(gateway.ekyc.getStatus).mockResolvedValue({ status: "completed" });
+    vi.mocked(gateway.ekyc.getStatus).mockResolvedValue({
+      verification: { status: "completed" },
+    } as never);
 
     const { result } = renderHook(() => useEKYCStatus("v-1"), { wrapper: createWrapper() });
 

@@ -432,7 +432,7 @@ describe("Gateway Client", () => {
       }));
 
       // The call should not go to the backend
-      const _backend = getBackend();
+      void getBackend();
       try {
         await gateway.accounts.list();
       } catch {
@@ -848,7 +848,7 @@ describe("Gateway Client", () => {
   describe("experiments", () => {
     it("list passes status filter", async () => {
       const invoke = mockInvoke([]);
-      await gateway.experiments.list({ status: "running" as Record<string, unknown> });
+      await gateway.experiments.list({ status: "running" as never });
       expect(invoke).toHaveBeenCalledWith("experiments.list", { status: "running" });
     });
 

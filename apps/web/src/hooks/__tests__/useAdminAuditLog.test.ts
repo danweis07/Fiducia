@@ -42,7 +42,7 @@ describe("useAdminAuditLog", () => {
   });
 
   it("fetches audit log successfully", async () => {
-    vi.mocked(gateway.adminAudit.log).mockResolvedValue({ entries: [], total: 0 });
+    vi.mocked(gateway.adminAudit.log).mockResolvedValue({ entries: [] });
 
     const { result } = renderHook(() => useAdminAuditLog(), { wrapper: createWrapper() });
 
@@ -50,7 +50,7 @@ describe("useAdminAuditLog", () => {
   });
 
   it("fetches with params", async () => {
-    vi.mocked(gateway.adminAudit.log).mockResolvedValue({ entries: [], total: 0 });
+    vi.mocked(gateway.adminAudit.log).mockResolvedValue({ entries: [] });
 
     const { result } = renderHook(() => useAdminAuditLog({ action: "transfer", limit: 50 }), {
       wrapper: createWrapper(),

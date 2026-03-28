@@ -76,8 +76,8 @@ export default function SSOConfiguration() {
   const { isLoading } = useQuery({
     queryKey: ["sso-providers"],
     queryFn: () => gateway.sso.list(),
-    select: (data: { providers?: SSOProviderConfig[] }) => {
-      const providers = data?.providers ?? [];
+    select: (data: { providers?: Array<Record<string, unknown>> }) => {
+      const providers = (data?.providers ?? []) as unknown as SSOProviderConfig[];
       const samlProvider = providers.find((p) => p.providerType === "saml");
       const oidcProvider = providers.find((p) => p.providerType === "oidc");
       if (samlProvider) setSaml({ ...emptySaml, ...samlProvider });
@@ -89,9 +89,9 @@ export default function SSOConfiguration() {
   const saveMutation = useMutation({
     mutationFn: async (config: SSOProviderConfig) => {
       if (config.id) {
-        return gateway.sso.update(config.id, config);
+        return gateway.sso.update(config.id, config as unknown as Record<string, unknown>);
       }
-      return gateway.sso.create(config);
+      return gateway.sso.create(config as unknown as Record<string, unknown>);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sso-providers"] });

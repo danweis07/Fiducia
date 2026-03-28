@@ -275,7 +275,7 @@ describe("demo mode isolation", () => {
       getDemoResponse: vi.fn().mockReturnValue({ accounts: [{ id: "demo" }] }),
     }));
 
-    const _backend = getBackend();
+    void getBackend();
     try {
       await gateway.accounts.list();
     } catch {

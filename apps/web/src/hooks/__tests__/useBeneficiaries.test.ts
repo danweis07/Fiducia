@@ -42,12 +42,12 @@ describe("useBeneficiaries", () => {
       { id: "ben-1", name: "John Doe", accountNumberMasked: "****1234" },
       { id: "ben-2", name: "Jane Smith", accountNumberMasked: "****5678" },
     ];
-    vi.mocked(gateway.beneficiaries.list).mockResolvedValue(mockData);
+    vi.mocked(gateway.beneficiaries.list).mockResolvedValue({ beneficiaries: mockData as never[] });
 
     const { result } = renderHook(() => useBeneficiaries(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(2);
+    expect(result.current.data?.beneficiaries).toHaveLength(2);
     expect(gateway.beneficiaries.list).toHaveBeenCalledTimes(1);
   });
 

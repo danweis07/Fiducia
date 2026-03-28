@@ -45,7 +45,7 @@ describe("useEmployers", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches employers", async () => {
-    const data = { employers: [{ id: "e-1", name: "Acme Corp" }] };
+    const data = { employers: [{ id: "e-1", name: "Acme Corp" }] as never[] };
     vi.mocked(gateway.directDeposit.employers).mockResolvedValue(data);
     const { result } = renderHook(() => useEmployers(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -66,7 +66,7 @@ describe("useSwitchStatus", () => {
 
   it("fetches status for switch", async () => {
     vi.mocked(gateway.directDeposit.status).mockResolvedValue({
-      switch: { id: "s-1", status: "completed" },
+      switch: { id: "s-1", status: "completed" } as never,
     });
     const { result } = renderHook(() => useSwitchStatus("s-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -82,13 +82,17 @@ describe("useInitiateSwitch", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("initiates a switch", async () => {
-    vi.mocked(gateway.directDeposit.initiate).mockResolvedValue({ switchId: "s-new" });
+    vi.mocked(gateway.directDeposit.initiate).mockResolvedValue({
+      switch: {} as never,
+      widgetUrl: "https://example.com",
+      linkToken: "token-1",
+    });
     const { result } = renderHook(() => useInitiateSwitch(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({
         accountId: "acct-1",
         employerId: "e-1",
-        allocationType: "full" as Record<string, unknown>,
+        allocationType: "full" as unknown as import("@/types").AllocationTypeValue,
       });
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -112,7 +116,7 @@ describe("useConfirmSwitch", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("confirms a switch", async () => {
-    vi.mocked(gateway.directDeposit.confirm).mockResolvedValue({ success: true });
+    vi.mocked(gateway.directDeposit.confirm).mockResolvedValue({ switch: {} as never });
     const { result } = renderHook(() => useConfirmSwitch(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({ switchId: "s-1", providerConfirmationId: "conf-1" });

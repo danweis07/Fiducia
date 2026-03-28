@@ -9,7 +9,7 @@ import {
   NAV_GROUP_LABELS,
 } from "../nav-config";
 import type { NavItem, NavGroup } from "../nav-config";
-import type { TenantFeatures, TenantRegion } from "@/types/tenant";
+import type { TenantFeatures } from "@/types/tenant";
 
 function allFeaturesEnabled(): TenantFeatures {
   return {

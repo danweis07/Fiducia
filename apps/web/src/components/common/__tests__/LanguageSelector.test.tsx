@@ -28,7 +28,7 @@ describe("LanguageSelector", () => {
   });
 
   it("renders select groups for language regions", async () => {
-    const { container } = render(<LanguageSelector />);
+    render(<LanguageSelector />);
     // Open the select dropdown by clicking on the trigger
     const trigger = screen.getByRole("combobox");
     const { fireEvent } = await import("@testing-library/react");

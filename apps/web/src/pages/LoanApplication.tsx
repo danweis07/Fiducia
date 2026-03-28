@@ -39,7 +39,8 @@ export default function LoanApplication() {
 
   const { data: productsData, isLoading: productsLoading } = useLoanProducts();
   const createApplication = useCreateLoanApplication();
-  const _uploadDocument = useUploadLoanDocument();
+  const uploadDocument = useUploadLoanDocument();
+  void uploadDocument; // reserved for document upload feature
 
   const products = useMemo(() => {
     const list = (productsData as { products?: LoanProduct[] })?.products;

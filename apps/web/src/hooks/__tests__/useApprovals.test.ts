@@ -70,7 +70,9 @@ describe("useApprovalRequest", () => {
   });
 
   it("fetches single request", async () => {
-    vi.mocked(gateway.approvals.getRequest).mockResolvedValue({ id: "r-1", status: "pending" });
+    vi.mocked(gateway.approvals.getRequest).mockResolvedValue({
+      request: { id: "r-1", status: "pending" },
+    } as never);
 
     const { result } = renderHook(() => useApprovalRequest("r-1"), { wrapper: createWrapper() });
 
@@ -185,7 +187,15 @@ describe("useApprovalSummary", () => {
   });
 
   it("fetches summary successfully", async () => {
-    vi.mocked(gateway.approvals.getSummary).mockResolvedValue({ pendingCount: 5 });
+    vi.mocked(gateway.approvals.getSummary).mockResolvedValue({
+      summary: {
+        pendingCount: 5,
+        approvedToday: 0,
+        deniedToday: 0,
+        avgResponseMinutes: 0,
+        policies: [],
+      },
+    });
 
     const { result } = renderHook(() => useApprovalSummary(), { wrapper: createWrapper() });
 

@@ -28,10 +28,25 @@ describe("useCMSContent", () => {
   });
 
   it("fetches CMS content with default params", async () => {
+    const baseCMS = {
+      slug: "test",
+      body: "body",
+      status: "published" as const,
+      channels: ["web_portal"],
+      metadata: {},
+      locale: "en",
+      authorId: null,
+      publishedAt: "2024-01-01T00:00:00Z",
+      scheduledAt: null,
+      expiresAt: null,
+      version: 1,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z",
+    };
     const mockContent = {
       content: [
-        { id: "cms-1", title: "Welcome Banner", contentType: "banner" },
-        { id: "cms-2", title: "Announcement", contentType: "announcement" },
+        { ...baseCMS, id: "cms-1", title: "Welcome Banner", contentType: "banner" as const },
+        { ...baseCMS, id: "cms-2", title: "Announcement", contentType: "announcement" as const },
       ],
     };
     vi.mocked(gateway.cms.listContent).mockResolvedValue(mockContent);
@@ -58,7 +73,7 @@ describe("useCMSContent", () => {
   });
 
   it("returns empty array when content is undefined", async () => {
-    vi.mocked(gateway.cms.listContent).mockResolvedValue({});
+    vi.mocked(gateway.cms.listContent).mockResolvedValue({ content: [] });
 
     const { result } = renderHook(() => useCMSContent(), { wrapper: createWrapper() });
 
@@ -99,7 +114,26 @@ describe("useCMSBanners", () => {
 
   it("fetches banners with correct contentType", async () => {
     vi.mocked(gateway.cms.listContent).mockResolvedValue({
-      content: [{ id: "b-1", contentType: "banner" }],
+      content: [
+        {
+          id: "b-1",
+          slug: "b",
+          title: "B",
+          body: "",
+          contentType: "banner" as const,
+          status: "published" as const,
+          channels: [],
+          metadata: {},
+          locale: "en",
+          authorId: null,
+          publishedAt: null,
+          scheduledAt: null,
+          expiresAt: null,
+          version: 1,
+          createdAt: "2024-01-01T00:00:00Z",
+          updatedAt: "2024-01-01T00:00:00Z",
+        },
+      ],
     });
 
     const { result } = renderHook(() => useCMSBanners(), { wrapper: createWrapper() });
@@ -118,7 +152,26 @@ describe("useCMSAnnouncements", () => {
 
   it("fetches announcements with correct contentType", async () => {
     vi.mocked(gateway.cms.listContent).mockResolvedValue({
-      content: [{ id: "a-1", contentType: "announcement" }],
+      content: [
+        {
+          id: "a-1",
+          slug: "a",
+          title: "A",
+          body: "",
+          contentType: "announcement" as const,
+          status: "published" as const,
+          channels: [],
+          metadata: {},
+          locale: "en",
+          authorId: null,
+          publishedAt: null,
+          scheduledAt: null,
+          expiresAt: null,
+          version: 1,
+          createdAt: "2024-01-01T00:00:00Z",
+          updatedAt: "2024-01-01T00:00:00Z",
+        },
+      ],
     });
 
     const { result } = renderHook(() => useCMSAnnouncements(), { wrapper: createWrapper() });

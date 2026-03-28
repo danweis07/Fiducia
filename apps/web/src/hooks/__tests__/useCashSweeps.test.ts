@@ -130,7 +130,15 @@ describe("useSweepSummary", () => {
   });
 
   it("fetches summary successfully", async () => {
-    vi.mocked(gateway.cashSweeps.getSummary).mockResolvedValue({ totalSweptCents: 500000 });
+    vi.mocked(gateway.cashSweeps.getSummary).mockResolvedValue({
+      summary: {
+        activeRules: 1,
+        totalSweptCents: 500000,
+        totalSweepCount: 10,
+        estimatedYieldCents: 5000,
+        recentExecutions: [],
+      },
+    });
 
     const { result } = renderHook(() => useSweepSummary(), { wrapper: createWrapper() });
 

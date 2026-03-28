@@ -64,7 +64,7 @@ function p2pStatusStyle(status: P2PTransactionStatus) {
     cancelled: "neutral",
     expired: "neutral",
   };
-  return getStatusStyle(map[status] ?? "neutral");
+  return getStatusStyle(map[status] ?? "neutral").badge;
 }
 
 // ---------------------------------------------------------------------------
@@ -541,7 +541,7 @@ export default function P2PTransfers() {
                   </div>
                 ) : transactions.length === 0 ? (
                   <EmptyState
-                    icon={<DollarSign className="h-10 w-10" />}
+                    icon={DollarSign}
                     title={t("p2pTransfers.noTransactions")}
                     description={t("p2pTransfers.noTransactionsDesc")}
                   />

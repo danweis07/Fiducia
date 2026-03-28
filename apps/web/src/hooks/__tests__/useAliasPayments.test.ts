@@ -114,7 +114,12 @@ describe("useInboundR2P", () => {
   });
 
   it("fetches inbound R2P successfully", async () => {
-    vi.mocked(gateway.alias.listInboundR2P).mockResolvedValue({ requests: [] });
+    vi.mocked(gateway.alias.listInboundR2P).mockResolvedValue({
+      requests: [],
+      total: 0,
+      hasMore: false,
+      nextCursor: null,
+    });
 
     const { result } = renderHook(() => useInboundR2P(), { wrapper: createWrapper() });
 
@@ -147,7 +152,12 @@ describe("useOutboundR2P", () => {
   });
 
   it("fetches outbound R2P successfully", async () => {
-    vi.mocked(gateway.alias.listOutboundR2P).mockResolvedValue({ requests: [] });
+    vi.mocked(gateway.alias.listOutboundR2P).mockResolvedValue({
+      requests: [],
+      total: 0,
+      hasMore: false,
+      nextCursor: null,
+    });
 
     const { result } = renderHook(() => useOutboundR2P(), { wrapper: createWrapper() });
 

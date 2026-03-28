@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import { GatewayThrottle, extractDomain, DEFAULT_RATE_LIMIT } from "../throttle";
 
 describe("extractDomain", () => {

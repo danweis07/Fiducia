@@ -351,7 +351,7 @@ export default function SavingsGoals() {
         {/* Goals Grid */}
         {goals.length === 0 ? (
           <EmptyState
-            icon={<Target className="h-10 w-10" />}
+            icon={Target}
             title={t("savingsGoals.noGoals")}
             description={t("savingsGoals.noGoalsDesc")}
           />

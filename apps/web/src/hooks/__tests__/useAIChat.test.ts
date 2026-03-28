@@ -47,6 +47,9 @@ describe("useAIChat", () => {
   it("sends a message and receives reply", async () => {
     vi.mocked(gateway.ai.chat).mockResolvedValue({
       reply: "Hello! How can I help?",
+      provider: "openai",
+      model: "gpt-4",
+      needsEscalation: false,
       sessionId: "session-abc",
     });
 
@@ -74,6 +77,9 @@ describe("useAIChat", () => {
   it("clears chat history", async () => {
     vi.mocked(gateway.ai.chat).mockResolvedValue({
       reply: "Response",
+      provider: "openai",
+      model: "gpt-4",
+      needsEscalation: false,
       sessionId: "session-1",
     });
 

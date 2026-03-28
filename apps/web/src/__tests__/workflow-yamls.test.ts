@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+// @ts-expect-error js-yaml has no type declarations in this project
 import yaml from "js-yaml";
 
 const WORKFLOWS_DIR = path.resolve(__dirname, "../../../../.github/workflows");
