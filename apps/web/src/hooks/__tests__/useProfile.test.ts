@@ -46,7 +46,7 @@ describe("useProfile", () => {
       email: "john@example.com",
       phone: "5551234567",
     };
-    vi.mocked(gateway.auth.profile).mockResolvedValue(mockProfile);
+    vi.mocked(gateway.auth.profile).mockResolvedValue({ user: mockProfile } as never);
 
     const { result } = renderHook(() => useProfile(), { wrapper: createWrapper() });
 
@@ -80,7 +80,7 @@ describe("useUpdateProfile", () => {
   });
 
   it("updates profile successfully", async () => {
-    vi.mocked(gateway.auth.updateProfile).mockResolvedValue({ success: true });
+    vi.mocked(gateway.auth.updateProfile).mockResolvedValue({ user: {} } as never);
 
     const { result } = renderHook(() => useUpdateProfile(), { wrapper: createWrapper() });
 

@@ -49,7 +49,7 @@ describe("useSavingsGoals", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches goals list", async () => {
-    const goals = [{ id: "g-1", name: "Vacation", targetAmountCents: 500000 }];
+    const goals = [{ id: "g-1", name: "Vacation", targetAmountCents: 500000 }] as never[];
     vi.mocked(gateway.goals.list).mockResolvedValue({ goals });
     const { result } = renderHook(() => useSavingsGoals(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -61,7 +61,7 @@ describe("useSavingsGoal", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches single goal", async () => {
-    const goal = { id: "g-1", name: "Vacation" };
+    const goal = { goal: { id: "g-1", name: "Vacation" } as never, contributions: [] };
     vi.mocked(gateway.goals.get).mockResolvedValue(goal);
     const { result } = renderHook(() => useSavingsGoal("g-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -78,7 +78,7 @@ describe("useCreateSavingsGoal", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("creates a goal", async () => {
-    vi.mocked(gateway.goals.create).mockResolvedValue({ id: "g-new" });
+    vi.mocked(gateway.goals.create).mockResolvedValue({ goal: { id: "g-new" } } as never);
     const { result } = renderHook(() => useCreateSavingsGoal(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({ name: "Car", targetAmountCents: 1000000, accountId: "acct-1" });
@@ -105,7 +105,10 @@ describe("useContributeToGoal", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("contributes to a goal", async () => {
-    vi.mocked(gateway.goals.contribute).mockResolvedValue({ success: true });
+    vi.mocked(gateway.goals.contribute).mockResolvedValue({
+      contribution: {} as never,
+      goal: null,
+    });
     const { result } = renderHook(() => useContributeToGoal(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({ goalId: "g-1", amountCents: 5000 });
@@ -119,7 +122,7 @@ describe("useWithdrawFromGoal", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("withdraws from a goal", async () => {
-    vi.mocked(gateway.goals.withdraw).mockResolvedValue({ success: true });
+    vi.mocked(gateway.goals.withdraw).mockResolvedValue({ contribution: {} as never, goal: null });
     const { result } = renderHook(() => useWithdrawFromGoal(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({ goalId: "g-1", amountCents: 2000 });
@@ -132,7 +135,7 @@ describe("useGoalSummary", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches summary", async () => {
-    const summary = { totalGoals: 3, totalSavedCents: 150000 };
+    const summary = { summary: { totalGoals: 3, totalSavedCents: 150000 } } as never;
     vi.mocked(gateway.goals.summary).mockResolvedValue(summary);
     const { result } = renderHook(() => useGoalSummary(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

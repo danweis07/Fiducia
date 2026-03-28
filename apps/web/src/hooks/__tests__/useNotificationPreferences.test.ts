@@ -38,7 +38,7 @@ describe("useNotificationPreferences", () => {
       channels: { email: true, sms: false, push: true },
       categories: { security: { enabled: true, channels: ["email", "push"] } },
     };
-    vi.mocked(gateway.notificationPreferences.get).mockResolvedValue(mockPrefs);
+    vi.mocked(gateway.notificationPreferences.get).mockResolvedValue({ preferences: mockPrefs });
 
     const { result } = renderHook(() => useNotificationPreferences(), { wrapper: createWrapper() });
 
@@ -62,7 +62,9 @@ describe("useUpdateNotificationPreferences", () => {
   });
 
   it("updates preferences successfully", async () => {
-    vi.mocked(gateway.notificationPreferences.update).mockResolvedValue({ success: true });
+    vi.mocked(gateway.notificationPreferences.update).mockResolvedValue({
+      preferences: { channels: {}, categories: {} },
+    });
 
     const { result } = renderHook(() => useUpdateNotificationPreferences(), {
       wrapper: createWrapper(),
@@ -85,7 +87,11 @@ describe("useTestNotification", () => {
   });
 
   it("sends test notification successfully", async () => {
-    vi.mocked(gateway.notificationPreferences.test).mockResolvedValue({ sent: true });
+    vi.mocked(gateway.notificationPreferences.test).mockResolvedValue({
+      sent: true,
+      channel: "email",
+      message: "Test notification sent",
+    });
 
     const { result } = renderHook(() => useTestNotification(), { wrapper: createWrapper() });
 

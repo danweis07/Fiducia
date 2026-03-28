@@ -65,7 +65,9 @@ describe("useMemberAddresses", () => {
         zip: "62701",
       },
     ];
-    vi.mocked(gateway.member.addresses).mockResolvedValue(mockAddresses);
+    vi.mocked(gateway.member.addresses).mockResolvedValue({
+      addresses: mockAddresses as unknown as import("@/types").MemberAddress[],
+    });
 
     const { result } = renderHook(() => useMemberAddresses(), { wrapper: createWrapper() });
 
@@ -89,7 +91,8 @@ describe("useUpdateMemberAddress", () => {
   });
 
   it("updates address successfully", async () => {
-    vi.mocked(gateway.member.updateAddress).mockResolvedValue({ id: "addr-1" });
+    const mockAddr = { id: "addr-1" } as unknown as import("@/types").MemberAddress;
+    vi.mocked(gateway.member.updateAddress).mockResolvedValue({ address: mockAddr });
 
     const { result } = renderHook(() => useUpdateMemberAddress(), { wrapper: createWrapper() });
 
@@ -112,12 +115,14 @@ describe("useMemberDocuments", () => {
 
   it("fetches documents successfully", async () => {
     const mockDocs = [{ id: "doc-1", type: "id_card", status: "verified" }];
-    vi.mocked(gateway.member.documents).mockResolvedValue(mockDocs);
+    vi.mocked(gateway.member.documents).mockResolvedValue({
+      documents: mockDocs as unknown as import("@/types").MemberDocument[],
+    });
 
     const { result } = renderHook(() => useMemberDocuments(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.documents).toHaveLength(1);
   });
 });
 
@@ -128,11 +133,13 @@ describe("useMemberIdentifiers", () => {
 
   it("fetches identifiers successfully", async () => {
     const mockIds = [{ id: "ident-1", type: "ssn", valueMasked: "****1234" }];
-    vi.mocked(gateway.member.identifiers).mockResolvedValue(mockIds);
+    vi.mocked(gateway.member.identifiers).mockResolvedValue({
+      identifiers: mockIds as unknown as import("@/types").MemberIdentifier[],
+    });
 
     const { result } = renderHook(() => useMemberIdentifiers(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.identifiers).toHaveLength(1);
   });
 });

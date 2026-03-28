@@ -37,7 +37,7 @@ describe("useOverdraftSettings", () => {
       protectionType: "linked_account",
       linkedAccountId: "acct-2",
     };
-    vi.mocked(gateway.overdraft.getSettings).mockResolvedValue(mockSettings);
+    vi.mocked(gateway.overdraft.getSettings).mockResolvedValue({ settings: mockSettings } as never);
 
     const { result } = renderHook(() => useOverdraftSettings("acct-1"), {
       wrapper: createWrapper(),
@@ -61,14 +61,14 @@ describe("useUpdateOverdraftSettings", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway.overdraft.updateSettings on mutate", async () => {
-    vi.mocked(gateway.overdraft.updateSettings).mockResolvedValue({ success: true });
+    vi.mocked(gateway.overdraft.updateSettings).mockResolvedValue({ settings: {} } as never);
 
     const { result } = renderHook(() => useUpdateOverdraftSettings(), { wrapper: createWrapper() });
 
     const params = {
       accountId: "acct-1",
       isEnabled: true,
-      protectionType: "linked_account" as const,
+      protectionType: "transfer" as const,
     };
     await act(async () => {
       result.current.mutate(params);
@@ -83,7 +83,9 @@ describe("useOverdraftHistory", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches overdraft history for an account", async () => {
-    const mockHistory = { events: [{ id: "e-1", amountCents: 3500, date: "2026-01-15" }] };
+    const mockHistory = {
+      events: [{ id: "e-1", amountCents: 3500, date: "2026-01-15" }] as never[],
+    };
     vi.mocked(gateway.overdraft.getHistory).mockResolvedValue(mockHistory);
 
     const { result } = renderHook(() => useOverdraftHistory("acct-1", 10, 0), {
@@ -106,7 +108,18 @@ describe("useOverdraftFeeSchedule", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches fee schedule", async () => {
-    const mockSchedule = { overdraftFeeCents: 3500, courtesyPayFeeCents: 2800 };
+    const mockSchedule = {
+      feeSchedule: [
+        {
+          chargeType: "overdraft",
+          name: "Overdraft Fee",
+          amountCents: 3500,
+          description: null,
+          isPercentage: false,
+          maxPerDay: null,
+        },
+      ],
+    };
     vi.mocked(gateway.overdraft.getFeeSchedule).mockResolvedValue(mockSchedule);
 
     const { result } = renderHook(() => useOverdraftFeeSchedule(), { wrapper: createWrapper() });

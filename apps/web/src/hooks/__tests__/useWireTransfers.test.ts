@@ -61,7 +61,9 @@ describe("useWires", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches wire list successfully", async () => {
-    const mockWires = [{ id: "w-1", amountCents: 50000, status: "pending" }];
+    const mockWires = [
+      { id: "w-1", amountCents: 50000, status: "pending" },
+    ] as unknown as import("@/types").WireTransfer[];
     vi.mocked(gateway.wires.list).mockResolvedValue({ wires: mockWires });
 
     const { result } = renderHook(() => useWires({ status: "pending" }), {
@@ -78,7 +80,8 @@ describe("useWire", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches single wire by id", async () => {
-    vi.mocked(gateway.wires.get).mockResolvedValue({ id: "w-1", amountCents: 50000 });
+    const mockWire = { id: "w-1", amountCents: 50000 } as unknown as import("@/types").WireTransfer;
+    vi.mocked(gateway.wires.get).mockResolvedValue({ wire: mockWire });
 
     const { result } = renderHook(() => useWire("w-1"), { wrapper: createWrapper() });
 
@@ -97,7 +100,8 @@ describe("useCreateDomesticWire", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway.wires.createDomestic on mutate", async () => {
-    vi.mocked(gateway.wires.createDomestic).mockResolvedValue({ id: "w-2" });
+    const mockWire = { id: "w-2" } as unknown as import("@/types").WireTransfer;
+    vi.mocked(gateway.wires.createDomestic).mockResolvedValue({ wire: mockWire });
 
     const { result } = renderHook(() => useCreateDomesticWire(), { wrapper: createWrapper() });
 
@@ -122,7 +126,8 @@ describe("useCreateInternationalWire", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway.wires.createInternational on mutate", async () => {
-    vi.mocked(gateway.wires.createInternational).mockResolvedValue({ id: "w-3" });
+    const mockWire = { id: "w-3" } as unknown as import("@/types").WireTransfer;
+    vi.mocked(gateway.wires.createInternational).mockResolvedValue({ wire: mockWire });
 
     const { result } = renderHook(() => useCreateInternationalWire(), { wrapper: createWrapper() });
 
@@ -166,13 +171,18 @@ describe("useWireFees", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches wire fee schedule", async () => {
-    const mockFees = { fees: { domesticCents: 2500, internationalCents: 4500 } };
-    vi.mocked(gateway.wires.fees).mockResolvedValue(mockFees);
+    const mockFees = {
+      domesticFeeCents: 2500,
+      internationalFeeCents: 4500,
+      expeditedDomesticFeeCents: 5000,
+      expeditedInternationalFeeCents: 7500,
+    } satisfies import("@/types").WireFeeSchedule;
+    vi.mocked(gateway.wires.fees).mockResolvedValue({ fees: mockFees });
 
     const { result } = renderHook(() => useWireFees(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(mockFees);
+    expect(result.current.data?.fees).toEqual(mockFees);
   });
 });
 
@@ -180,12 +190,17 @@ describe("useWireLimits", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches wire limits", async () => {
-    const mockLimits = { limits: { dailyLimitCents: 10000000, perTransactionLimitCents: 5000000 } };
-    vi.mocked(gateway.wires.limits).mockResolvedValue(mockLimits);
+    const mockLimits = {
+      dailyLimitCents: 10000000,
+      perTransactionLimitCents: 5000000,
+      usedTodayCents: 0,
+      remainingDailyCents: 10000000,
+    } satisfies import("@/types").WireLimits;
+    vi.mocked(gateway.wires.limits).mockResolvedValue({ limits: mockLimits });
 
     const { result } = renderHook(() => useWireLimits(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(mockLimits);
+    expect(result.current.data?.limits).toEqual(mockLimits);
   });
 });

@@ -78,6 +78,6 @@ describe("useSystemHealth", () => {
       wrapper: createWrapper(),
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.health.status).toBe("healthy");
+    expect(result.current.data?.health.overallStatus).toBe("healthy");
   });
 });

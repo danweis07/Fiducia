@@ -55,7 +55,8 @@ describe("useStopPayment", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches single stop payment", async () => {
-    vi.mocked(gateway.stopPayments.get).mockResolvedValue({ id: "sp-1" });
+    const mockSP = { id: "sp-1" } as unknown as import("@/types").StopPayment;
+    vi.mocked(gateway.stopPayments.get).mockResolvedValue({ stopPayment: mockSP });
     const { result } = renderHook(() => useStopPayment("sp-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
@@ -65,7 +66,8 @@ describe("useCreateStopPayment", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("creates a stop payment", async () => {
-    vi.mocked(gateway.stopPayments.create).mockResolvedValue({ id: "sp-new" });
+    const mockSP = { id: "sp-new" } as unknown as import("@/types").StopPayment;
+    vi.mocked(gateway.stopPayments.create).mockResolvedValue({ stopPayment: mockSP });
     const { result } = renderHook(() => useCreateStopPayment(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({
@@ -96,7 +98,8 @@ describe("useRenewStopPayment", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("renews a stop payment", async () => {
-    vi.mocked(gateway.stopPayments.renew).mockResolvedValue({ success: true });
+    const mockSP = {} as unknown as import("@/types").StopPayment;
+    vi.mocked(gateway.stopPayments.renew).mockResolvedValue({ stopPayment: mockSP });
     const { result } = renderHook(() => useRenewStopPayment(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({ stopPaymentId: "sp-1", duration: "12months" });

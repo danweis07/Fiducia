@@ -62,7 +62,7 @@ describe("useTransfers", () => {
           amountCents: 50000,
           status: "completed",
           type: "internal",
-        },
+        } as never,
       ],
       _pagination: { total: 1, limit: 50, offset: 0, hasMore: false },
     });

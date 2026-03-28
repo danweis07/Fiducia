@@ -49,15 +49,17 @@ describe("useStandingInstructions", () => {
   });
 
   it("fetches standing instructions successfully", async () => {
-    const mockData = [{ id: "si-1", name: "Monthly Savings", amountCents: 50000 }];
-    vi.mocked(gateway.standingInstructions.list).mockResolvedValue(mockData);
+    const mockData = [
+      { id: "si-1", name: "Monthly Savings", amountCents: 50000 },
+    ] as unknown as import("@/types").StandingInstruction[];
+    vi.mocked(gateway.standingInstructions.list).mockResolvedValue({ instructions: mockData });
 
     const { result } = renderHook(() => useStandingInstructions({ status: "active" }), {
       wrapper: createWrapper(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.instructions).toHaveLength(1);
     expect(gateway.standingInstructions.list).toHaveBeenCalledWith({ status: "active" });
   });
 
@@ -76,7 +78,9 @@ describe("useCreateStandingInstruction", () => {
   });
 
   it("creates standing instruction successfully", async () => {
-    vi.mocked(gateway.standingInstructions.create).mockResolvedValue({ id: "si-new" });
+    vi.mocked(gateway.standingInstructions.create).mockResolvedValue({
+      instruction: { id: "si-new" },
+    } as never);
 
     const { result } = renderHook(() => useCreateStandingInstruction(), {
       wrapper: createWrapper(),
@@ -105,7 +109,10 @@ describe("useUpdateStandingInstruction", () => {
   });
 
   it("updates standing instruction successfully", async () => {
-    vi.mocked(gateway.standingInstructions.update).mockResolvedValue({ id: "si-1" });
+    const mockInstruction = { id: "si-1" } as unknown as import("@/types").StandingInstruction;
+    vi.mocked(gateway.standingInstructions.update).mockResolvedValue({
+      instruction: mockInstruction,
+    });
 
     const { result } = renderHook(() => useUpdateStandingInstruction(), {
       wrapper: createWrapper(),
