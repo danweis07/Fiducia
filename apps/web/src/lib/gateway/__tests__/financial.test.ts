@@ -251,7 +251,7 @@ describe("Financial Domain", () => {
       const params = {
         accountId: "a1",
         isEnabled: false,
-        protectionType: "linked_account" as const,
+        protectionType: "linked_account" as never,
       };
       await gateway.overdraft.updateSettings(params);
       expect(invoke).toHaveBeenCalledWith("overdraft.settings.update", params);
@@ -289,9 +289,9 @@ describe("Financial Domain", () => {
       const invoke = mockInvoke({ alert: { id: "al1" } });
       const params = {
         name: "High spend",
-        alertType: "threshold" as const,
+        alertType: "threshold" as never,
         thresholdCents: 100000,
-        channels: ["push" as const],
+        channels: ["push" as never],
       };
       await gateway.spendingAlerts.create(params);
       expect(invoke).toHaveBeenCalledWith("alerts.create", params);

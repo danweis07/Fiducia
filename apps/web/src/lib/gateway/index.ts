@@ -11,7 +11,7 @@
 
 import { isDemoMode } from "@/lib/demo";
 import { getBackend } from "@/lib/backend";
-import { callGateway, GatewayApiError } from "./client";
+import { callGateway, GatewayApiError, type Pagination } from "./client";
 import { createAccountsDomain } from "./accounts";
 import { createPaymentsDomain } from "./payments";
 import { createCardsDomain } from "./cards";

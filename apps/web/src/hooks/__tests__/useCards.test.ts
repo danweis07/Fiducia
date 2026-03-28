@@ -25,27 +25,46 @@ function createWrapper() {
     createElement(QueryClientProvider, { client: queryClient }, children);
 }
 
+const baseCard = {
+  accountId: "acct-1",
+  tenantId: "t-1",
+  userId: "u-1",
+  lastFour: "4242",
+  cardholderName: "Test User",
+  singleTransactionLimitCents: 100000,
+  expirationDate: "12/28",
+  isContactless: true,
+  isVirtual: false,
+  createdAt: "2024-01-01T00:00:00Z",
+};
+
 const mockCards = [
   {
+    ...baseCard,
     id: "card-1",
     cardNumberMasked: "****4242",
-    type: "debit",
-    status: "active",
+    type: "debit" as const,
+    status: "active" as const,
     dailyLimitCents: 200000,
+    lastFour: "4242",
   },
   {
+    ...baseCard,
     id: "card-2",
     cardNumberMasked: "****5353",
-    type: "credit",
-    status: "active",
+    type: "credit" as const,
+    status: "active" as const,
     dailyLimitCents: 500000,
+    lastFour: "5353",
   },
   {
+    ...baseCard,
     id: "card-3",
     cardNumberMasked: "****7878",
-    type: "debit",
-    status: "locked",
+    type: "debit" as const,
+    status: "locked" as const,
     dailyLimitCents: 100000,
+    lastFour: "7878",
   },
 ];
 

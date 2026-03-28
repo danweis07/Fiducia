@@ -29,7 +29,13 @@ describe("useExperiment", () => {
   });
 
   it("fetches assignment and auto-tracks impression", async () => {
-    const mockAssignment = { id: "asgn-1", variantId: "variant-a", experimentId: "exp-1" };
+    const mockAssignment = {
+      id: "asgn-1",
+      variantId: "variant-a",
+      experimentId: "exp-1",
+      userId: "u-1",
+      assignedAt: "2024-01-01T00:00:00Z",
+    };
     vi.mocked(gateway.experiments.assign).mockResolvedValue(mockAssignment);
     vi.mocked(gateway.experiments.track).mockResolvedValue({ success: true });
 
@@ -61,7 +67,13 @@ describe("useExperiment", () => {
   });
 
   it("trackClick calls track with click event", async () => {
-    const mockAssignment = { id: "asgn-1", variantId: "variant-b", experimentId: "exp-2" };
+    const mockAssignment = {
+      id: "asgn-1",
+      variantId: "variant-b",
+      experimentId: "exp-2",
+      userId: "u-1",
+      assignedAt: "2024-01-01T00:00:00Z",
+    };
     vi.mocked(gateway.experiments.assign).mockResolvedValue(mockAssignment);
     vi.mocked(gateway.experiments.track).mockResolvedValue({ success: true });
 
@@ -81,7 +93,13 @@ describe("useExperiment", () => {
   });
 
   it("trackDismiss calls track with dismiss event", async () => {
-    const mockAssignment = { id: "asgn-1", variantId: "variant-a", experimentId: "exp-3" };
+    const mockAssignment = {
+      id: "asgn-1",
+      variantId: "variant-a",
+      experimentId: "exp-3",
+      userId: "u-1",
+      assignedAt: "2024-01-01T00:00:00Z",
+    };
     vi.mocked(gateway.experiments.assign).mockResolvedValue(mockAssignment);
     vi.mocked(gateway.experiments.track).mockResolvedValue({ success: true });
 
@@ -101,7 +119,13 @@ describe("useExperiment", () => {
   });
 
   it("trackConversion calls track with conversion event", async () => {
-    const mockAssignment = { id: "asgn-1", variantId: "variant-a", experimentId: "exp-4" };
+    const mockAssignment = {
+      id: "asgn-1",
+      variantId: "variant-a",
+      experimentId: "exp-4",
+      userId: "u-1",
+      assignedAt: "2024-01-01T00:00:00Z",
+    };
     vi.mocked(gateway.experiments.assign).mockResolvedValue(mockAssignment);
     vi.mocked(gateway.experiments.track).mockResolvedValue({ success: true });
 

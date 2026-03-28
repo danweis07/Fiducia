@@ -62,17 +62,17 @@ export default function KnowledgeBase() {
 
   const { data: documentsData, isLoading: docsLoading } = useQuery({
     queryKey: ["ai-platform", "kb", "documents"],
-    queryFn: () => gateway.aiPlatform.kb.listDocuments(),
+    queryFn: () => gateway.aiPlatform.kb.list(),
   });
 
   const { data: gapsData, isLoading: gapsLoading } = useQuery({
     queryKey: ["ai-platform", "kb", "gaps"],
-    queryFn: () => gateway.aiPlatform.kb.listGaps(),
+    queryFn: () => gateway.aiPlatform.kb.gaps(),
   });
 
   const uploadDocument = useMutation({
     mutationFn: (params: { title: string; content: string; category: string }) =>
-      gateway.aiPlatform.kb.uploadDocument(params),
+      gateway.aiPlatform.kb.upload(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ai-platform", "kb", "documents"] });
       setUploadOpen(false);
@@ -88,7 +88,7 @@ export default function KnowledgeBase() {
   });
 
   const deleteDocument = useMutation({
-    mutationFn: (documentId: string) => gateway.aiPlatform.kb.deleteDocument({ documentId }),
+    mutationFn: (documentId: string) => gateway.aiPlatform.kb.remove(documentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ai-platform", "kb", "documents"] });
       toast({ title: t("knowledgeBase.toasts.documentDeleted") });
@@ -246,33 +246,41 @@ export default function KnowledgeBase() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {documents.map((doc) => (
-                          <TableRow key={doc.id}>
-                            <TableCell className="font-medium">{doc.title}</TableCell>
-                            <TableCell>
-                              <Badge variant="outline" className="capitalize">
-                                {doc.category}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <StatusBadge status={doc.status} />
-                            </TableCell>
-                            <TableCell className="text-muted-foreground text-sm">
-                              {new Date(doc.createdAt).toLocaleDateString()}
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                                onClick={() => deleteDocument.mutate(doc.id)}
-                                disabled={deleteDocument.isPending}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                        {documents.map(
+                          (doc: {
+                            id: string;
+                            title: string;
+                            category: string;
+                            status: string;
+                            createdAt: string;
+                          }) => (
+                            <TableRow key={doc.id}>
+                              <TableCell className="font-medium">{doc.title}</TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="capitalize">
+                                  {doc.category}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <StatusBadge status={doc.status} />
+                              </TableCell>
+                              <TableCell className="text-muted-foreground text-sm">
+                                {new Date(doc.createdAt).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                  onClick={() => deleteDocument.mutate(doc.id)}
+                                  disabled={deleteDocument.isPending}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ),
+                        )}
                       </TableBody>
                     </Table>
                   )}
@@ -315,17 +323,25 @@ export default function KnowledgeBase() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {gaps.map((gap) => (
-                          <TableRow key={gap.id}>
-                            <TableCell>{gap.question}</TableCell>
-                            <TableCell className="text-right">
-                              <Badge variant="secondary">{gap.occurrenceCount}</Badge>
-                            </TableCell>
-                            <TableCell className="text-muted-foreground text-sm">
-                              {new Date(gap.lastAskedAt).toLocaleDateString()}
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                        {gaps.map(
+                          (gap: {
+                            id: string;
+                            query: string;
+                            occurrenceCount: number;
+                            lastAskedAt: string;
+                            resolved: boolean;
+                          }) => (
+                            <TableRow key={gap.id}>
+                              <TableCell>{gap.query}</TableCell>
+                              <TableCell className="text-right">
+                                <Badge variant="secondary">{gap.occurrenceCount}</Badge>
+                              </TableCell>
+                              <TableCell className="text-muted-foreground text-sm">
+                                {new Date(gap.lastAskedAt).toLocaleDateString()}
+                              </TableCell>
+                            </TableRow>
+                          ),
+                        )}
                       </TableBody>
                     </Table>
                   )}

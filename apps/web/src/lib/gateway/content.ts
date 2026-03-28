@@ -116,7 +116,10 @@ export function createContentDomain(callGateway: CallGatewayFn) {
         return callGateway<Experiment>("experiments.get", { id });
       },
       async create(input: ExperimentCreateInput) {
-        return callGateway<Experiment>("experiments.create", input);
+        return callGateway<Experiment>(
+          "experiments.create",
+          input as unknown as Record<string, unknown>,
+        );
       },
       async update(
         id: string,
@@ -259,7 +262,10 @@ export function createContentDomain(callGateway: CallGatewayFn) {
           >("sdui.personas.list", {});
         },
         async create(input: PersonaCreateInput) {
-          return callGateway<UserPersona & { id: string }>("sdui.personas.create", input);
+          return callGateway<UserPersona & { id: string }>(
+            "sdui.personas.create",
+            input as unknown as Record<string, unknown>,
+          );
         },
         async update(
           id: string,
@@ -288,7 +294,10 @@ export function createContentDomain(callGateway: CallGatewayFn) {
           return callGateway<ScreenManifest>("sdui.manifests.get", { id });
         },
         async create(input: ScreenManifestCreateInput) {
-          return callGateway<ScreenManifest>("sdui.manifests.create", input);
+          return callGateway<ScreenManifest>(
+            "sdui.manifests.create",
+            input as unknown as Record<string, unknown>,
+          );
         },
         async update(id: string, updates: ScreenManifestUpdateInput) {
           return callGateway<ScreenManifest>("sdui.manifests.update", { id, ...updates });

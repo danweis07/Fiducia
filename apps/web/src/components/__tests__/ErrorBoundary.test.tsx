@@ -8,7 +8,7 @@ vi.mock("@/lib/sentry", () => ({
 import { ErrorBoundary, PageErrorBoundary } from "../ErrorBoundary";
 
 // A component that always throws
-function Thrower({ message = "Test error" }: { message?: string }) {
+function Thrower({ message = "Test error" }: { message?: string }): React.JSX.Element {
   throw new Error(message);
 }
 

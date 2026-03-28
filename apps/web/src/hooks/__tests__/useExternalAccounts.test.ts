@@ -59,7 +59,9 @@ describe("useLinkedAccounts", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches linked accounts", async () => {
-    const mockAccounts = [{ id: "ext-1", name: "External Checking", institution: "Chase" }];
+    const mockAccounts = [
+      { id: "ext-1", name: "External Checking", institution: "Chase" },
+    ] as never[];
     vi.mocked(gateway.externalAccounts.list).mockResolvedValue({ accounts: mockAccounts });
 
     const { result } = renderHook(() => useLinkedAccounts(), { wrapper: createWrapper() });
@@ -73,7 +75,10 @@ describe("useLinkAccount", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("exchanges public token on mutate", async () => {
-    vi.mocked(gateway.externalAccounts.exchange).mockResolvedValue({ success: true });
+    vi.mocked(gateway.externalAccounts.exchange).mockResolvedValue({
+      itemId: "item-1",
+      linkedAt: "2024-01-01T00:00:00Z",
+    });
 
     const { result } = renderHook(() => useLinkAccount(), { wrapper: createWrapper() });
 
@@ -90,7 +95,18 @@ describe("useExternalBalances", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches balances for an account", async () => {
-    const mockBalances = { balances: [{ current: 150000, available: 140000 }] };
+    const mockBalances = {
+      balances: [
+        {
+          accountId: "ext-1",
+          currentCents: 150000,
+          availableCents: 140000,
+          limitCents: null,
+          currencyCode: "USD",
+          lastUpdatedAt: "2024-01-01T00:00:00Z",
+        },
+      ],
+    };
     vi.mocked(gateway.externalAccounts.balances).mockResolvedValue(mockBalances);
 
     const { result } = renderHook(() => useExternalBalances("ext-1"), { wrapper: createWrapper() });
@@ -104,7 +120,23 @@ describe("useExternalTransactions", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches transactions for an account", async () => {
-    const mockTxns = { transactions: [{ id: "txn-1", amountCents: 5000 }] };
+    const mockTxns = {
+      transactions: [
+        {
+          transactionId: "txn-1",
+          accountId: "ext-1",
+          amountCents: 5000,
+          description: "Test",
+          merchantName: null,
+          category: [],
+          date: "2024-01-01",
+          pending: false,
+          currencyCode: "USD",
+        },
+      ],
+      nextCursor: "",
+      hasMore: false,
+    };
     vi.mocked(gateway.externalAccounts.transactions).mockResolvedValue(mockTxns);
 
     const { result } = renderHook(() => useExternalTransactions("ext-1"), {
@@ -116,7 +148,11 @@ describe("useExternalTransactions", () => {
   });
 
   it("calls without accountId when undefined", async () => {
-    vi.mocked(gateway.externalAccounts.transactions).mockResolvedValue({ transactions: [] });
+    vi.mocked(gateway.externalAccounts.transactions).mockResolvedValue({
+      transactions: [],
+      nextCursor: "",
+      hasMore: false,
+    });
 
     const { result } = renderHook(() => useExternalTransactions(undefined), {
       wrapper: createWrapper(),

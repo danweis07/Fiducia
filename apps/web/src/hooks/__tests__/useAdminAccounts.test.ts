@@ -51,7 +51,7 @@ describe("useAdminAccountList", () => {
   });
 
   it("fetches admin accounts successfully", async () => {
-    vi.mocked(gateway.adminAccounts.list).mockResolvedValue({ accounts: [], total: 0 });
+    vi.mocked(gateway.adminAccounts.list).mockResolvedValue({ accounts: [] });
 
     const { result } = renderHook(() => useAdminAccountList(), { wrapper: createWrapper() });
 
@@ -74,8 +74,13 @@ describe("useAdminAccountAggregates", () => {
 
   it("fetches aggregates successfully", async () => {
     vi.mocked(gateway.adminAccounts.aggregates).mockResolvedValue({
-      totalAccounts: 100,
-      totalBalanceCents: 50000000,
+      aggregates: {
+        totalCheckingCents: 20000000,
+        totalSavingsCents: 15000000,
+        totalCDCents: 10000000,
+        totalMoneyMarketCents: 5000000,
+        totalAccounts: 100,
+      },
     });
 
     const { result } = renderHook(() => useAdminAccountAggregates(), { wrapper: createWrapper() });

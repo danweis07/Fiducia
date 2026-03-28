@@ -5,7 +5,7 @@
  * Requested → Approved → Tested → Deployed → Monitored
  */
 
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   CheckCircle2,
   Circle,
@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select";
 import { useChangeRequests } from "@/hooks/useIncidents";
 import { PageSkeleton } from "@/components/common/LoadingSkeleton";
-import type { ChangeRequest, ChangeRequestStatus, ChangeType, TestResults } from "@/types/incident";
+import type { ChangeRequest, ChangeType, TestResults } from "@/types/incident";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -245,7 +245,7 @@ function MonitoredDetail({ cr }: { cr: ChangeRequest }) {
   );
 }
 
-const stepDetailRenderers: Record<StepKey, (props: { cr: ChangeRequest }) => JSX.Element> = {
+const stepDetailRenderers: Record<StepKey, (props: { cr: ChangeRequest }) => React.JSX.Element> = {
   requested: RequestedDetail,
   approved: ApprovedDetail,
   tested: TestedDetail,

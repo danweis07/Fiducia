@@ -4,7 +4,7 @@ import { getDemoResponse } from "../demo-data";
 describe("getDemoResponse", () => {
   // Accounts
   it("returns accounts list", () => {
-    const result = getDemoResponse("accounts.list", {}) as Record<string, unknown>;
+    const result = getDemoResponse("accounts.list", {}) as { accounts: unknown[] };
     expect(result.accounts).toBeDefined();
     expect(result.accounts.length).toBeGreaterThan(0);
     expect(result.accounts[0]).toHaveProperty("id");
@@ -26,7 +26,7 @@ describe("getDemoResponse", () => {
 
   // Transactions
   it("returns transactions list", () => {
-    const result = getDemoResponse("transactions.list", {}) as Record<string, unknown>;
+    const result = getDemoResponse("transactions.list", {}) as { transactions: unknown[] };
     expect(result.transactions).toBeDefined();
     expect(result.transactions.length).toBeGreaterThan(0);
   });
@@ -115,7 +115,7 @@ describe("getDemoResponse", () => {
 
   // Cards
   it("returns cards list", () => {
-    const result = getDemoResponse("cards.list", {}) as Record<string, unknown>;
+    const result = getDemoResponse("cards.list", {}) as { cards: unknown[] };
     expect(result.cards).toBeDefined();
     expect(result.cards.length).toBeGreaterThan(0);
   });

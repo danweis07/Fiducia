@@ -70,7 +70,10 @@ describe("useAggregatorInstitutions", () => {
   });
 
   it("fetches institutions successfully", async () => {
-    vi.mocked(gateway.aggregator.searchInstitutions).mockResolvedValue({ institutions: [] });
+    vi.mocked(gateway.aggregator.searchInstitutions).mockResolvedValue({
+      institutions: [],
+      totalCount: 0,
+    });
 
     const { result } = renderHook(() => useAggregatorInstitutions("chase"), {
       wrapper: createWrapper(),
@@ -151,7 +154,11 @@ describe("useAggregatedTransactions", () => {
   });
 
   it("fetches transactions successfully", async () => {
-    vi.mocked(gateway.aggregator.listTransactions).mockResolvedValue({ transactions: [] });
+    vi.mocked(gateway.aggregator.listTransactions).mockResolvedValue({
+      transactions: [],
+      totalCount: 0,
+      hasMore: false,
+    });
 
     const { result } = renderHook(() => useAggregatedTransactions("acct-1"), {
       wrapper: createWrapper(),

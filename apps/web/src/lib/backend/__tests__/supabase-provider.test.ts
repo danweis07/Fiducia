@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // Use vi.hoisted to create mocks that are available in vi.mock factory
 const {
   mockAuth,
-  mockChannel,
+  mockChannel: _mockChannel,
   mockFrom,
   mockFunctionsInvoke,
   mockRemoveChannel,

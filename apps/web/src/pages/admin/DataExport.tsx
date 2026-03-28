@@ -405,7 +405,7 @@ export default function DataExport() {
                     </TableCell>
                     <TableCell>
                       {tpl.schedule?.isActive
-                        ? `${(tpl.schedule as Record<string, unknown>).frequency}`
+                        ? `${(tpl.schedule as unknown as Record<string, unknown>).frequency}`
                         : t("dataExport.manual")}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">

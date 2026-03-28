@@ -113,7 +113,7 @@ export default function InternationalPayments() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {payouts.filter((p) => p.status === "pending" || p.status === "processing").length}
+              {payouts.filter((p) => p.status === "pending" || p.status === "in_transit").length}
             </div>
           </CardContent>
         </Card>
@@ -171,7 +171,7 @@ export default function InternationalPayments() {
                     const StatusIcon = statusInfo.icon;
                     return (
                       <div
-                        key={payment.id}
+                        key={payment.paymentId}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div className="flex items-center gap-3">
@@ -192,7 +192,7 @@ export default function InternationalPayments() {
                               &rarr; {formatCurrency(payment.toAmountCents)} {payment.toCurrency}
                             </div>
                           </div>
-                          <Badge variant="outline" className={getStatusStyle(payment.status)}>
+                          <Badge variant="outline" className={getStatusStyle(payment.status).badge}>
                             {statusInfo.label}
                           </Badge>
                         </div>
@@ -228,7 +228,7 @@ export default function InternationalPayments() {
                       <CardContent className="pt-4">
                         <div className="flex items-center justify-between mb-2">
                           <span className="font-medium">{card.cardholderName}</span>
-                          <Badge variant="outline" className={getStatusStyle(card.status)}>
+                          <Badge variant="outline" className={getStatusStyle(card.status).badge}>
                             {card.status}
                           </Badge>
                         </div>
@@ -281,7 +281,7 @@ export default function InternationalPayments() {
                         <span className="font-medium">
                           {formatCurrency(payout.amountCents)} {payout.destinationCurrency}
                         </span>
-                        <Badge variant="outline" className={getStatusStyle(payout.status)}>
+                        <Badge variant="outline" className={getStatusStyle(payout.status).badge}>
                           {payout.status}
                         </Badge>
                       </div>
@@ -331,7 +331,7 @@ export default function InternationalPayments() {
                             &rarr; {formatCurrency(bp.toAmountCents)} {bp.toCurrency}
                           </div>
                         </div>
-                        <Badge variant="outline" className={getStatusStyle(bp.status)}>
+                        <Badge variant="outline" className={getStatusStyle(bp.status).badge}>
                           {bp.status}
                         </Badge>
                       </div>

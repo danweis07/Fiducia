@@ -5,16 +5,21 @@ import type { CMSContent } from "@/types/admin";
 
 const mockContent: CMSContent = {
   id: "banner-1",
-  tenantId: "tenant-1",
   title: "System Maintenance",
   body: "Scheduled downtime this weekend.",
   contentType: "announcement",
   status: "published",
   slug: "system-maintenance",
+  channels: [],
   metadata: {},
+  locale: "en",
+  authorId: null,
+  publishedAt: null,
+  scheduledAt: null,
+  expiresAt: null,
+  version: 1,
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-01T00:00:00Z",
-  createdBy: "admin",
 };
 
 beforeEach(() => {

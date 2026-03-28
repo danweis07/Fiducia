@@ -5,7 +5,7 @@
  * Feature-gated routes will render NotFound if the feature is disabled.
  */
 
-import { lazy } from "react";
+import React, { lazy } from "react";
 import { Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
@@ -65,7 +65,7 @@ const LiquidityDashboard = lazy(() => import("@/pages/LiquidityDashboard"));
 /**
  * Helper to wrap a page component in an ErrorBoundary.
  */
-function eb(Component: React.LazyExoticComponent<() => JSX.Element>) {
+function eb(Component: React.LazyExoticComponent<() => React.JSX.Element>) {
   return (
     <ErrorBoundary>
       <Component />

@@ -228,7 +228,7 @@ export default function OpenBankingConsents() {
   const { data: summaryData } = useOpenBankingConsentSummary();
   const revokeMutation = useRevokeConsent();
   const { toast } = useToast();
-  const handleError = useErrorHandler();
+  const { handleError } = useErrorHandler();
 
   if (isLoading) return <PageSkeleton />;
   if (error)

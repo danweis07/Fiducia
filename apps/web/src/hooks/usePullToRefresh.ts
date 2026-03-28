@@ -27,7 +27,7 @@ export function usePullToRefresh({ onRefresh, threshold = 60 }: UsePullToRefresh
       }
     };
 
-    const onTouchMove = (e: TouchEvent) => {
+    const onTouchMove = (_e: TouchEvent) => {
       if (!pulling.current) return;
       // Just track — actual trigger happens on touchend
     };

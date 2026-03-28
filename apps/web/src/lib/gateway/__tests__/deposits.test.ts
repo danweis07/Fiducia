@@ -108,7 +108,7 @@ describe("DepositsDomain", () => {
 
     it("listOrders calls checks.orders.list", async () => {
       const invoke = mockInvoke({ orders: [] });
-      await gateway.checks.listOrders({ status: "shipped" as unknown });
+      await gateway.checks.listOrders({ status: "shipped" as never });
       expect(invoke).toHaveBeenCalledWith("checks.orders.list", { status: "shipped" });
     });
 
@@ -136,7 +136,7 @@ describe("DepositsDomain", () => {
 
     it("initiate calls directDeposit.initiate", async () => {
       const invoke = mockInvoke({ switch: {}, widgetUrl: "", linkToken: "" });
-      const params = { accountId: "a1", employerId: "emp1", allocationType: "full" as unknown };
+      const params = { accountId: "a1", employerId: "emp1", allocationType: "full" as never };
       await gateway.directDeposit.initiate(params);
       expect(invoke).toHaveBeenCalledWith("directDeposit.initiate", params);
     });

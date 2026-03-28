@@ -195,7 +195,7 @@ export default function IntegrationManager() {
                       });
                       toast({
                         title: t("integrationManager.connectionTest"),
-                        description: `${integration.domainLabel}: ${result?.data?.status ?? "healthy"}`,
+                        description: `${integration.domainLabel}: ${(result as Record<string, unknown>)?.status ?? "healthy"}`,
                       });
                     } catch {
                       toast({

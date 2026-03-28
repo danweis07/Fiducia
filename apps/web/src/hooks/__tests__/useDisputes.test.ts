@@ -54,7 +54,11 @@ describe("useDispute", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches single dispute", async () => {
-    vi.mocked(gateway.disputes.get).mockResolvedValue({ id: "d-1", status: "open" });
+    vi.mocked(gateway.disputes.get).mockResolvedValue({
+      dispute: { id: "d-1", status: "open" } as never,
+      timeline: [],
+      documents: [],
+    });
     const { result } = renderHook(() => useDispute("d-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
@@ -69,7 +73,7 @@ describe("useFileDispute", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("files a dispute", async () => {
-    vi.mocked(gateway.disputes.file).mockResolvedValue({ disputeId: "d-new" });
+    vi.mocked(gateway.disputes.file).mockResolvedValue({ dispute: { id: "d-new" } } as never);
     const { result } = renderHook(() => useFileDispute(), { wrapper: createWrapper() });
     await act(async () => {
       result.current.mutate({

@@ -77,7 +77,7 @@ const switchStatusConfig: Record<
   },
 };
 
-const _allocationLabelKeys: Record<AllocationTypeValue, string> = {
+const allocationLabelKeys: Record<AllocationTypeValue, string> = {
   full: "directDeposit.fullPaycheck",
   partial: "directDeposit.percentageOfPaycheck",
   fixed_amount: "directDeposit.fixedDollarAmount",
@@ -395,11 +395,11 @@ export default function DirectDeposit() {
                           <div className="flex items-center gap-2">
                             <StatusIcon className="h-4 w-4" />
                             <span className="font-semibold">{sw.employerName}</span>
-                            <Badge className={cfg.className}>{cfg.label}</Badge>
+                            <Badge className={cfg.className}>{t(cfg.labelKey)}</Badge>
                           </div>
                           <div className="text-sm text-muted-foreground">
                             Account {sw.accountMasked} &middot;{" "}
-                            {allocationLabels[sw.allocationType] ?? sw.allocationType}
+                            {t(allocationLabelKeys[sw.allocationType]) ?? sw.allocationType}
                             {sw.allocationAmountCents != null &&
                               ` (${formatCurrency(sw.allocationAmountCents)})`}
                             {sw.allocationPercentage != null && ` (${sw.allocationPercentage}%)`}

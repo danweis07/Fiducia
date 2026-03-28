@@ -45,13 +45,13 @@ export function StructuredData({ type, data }: StructuredDataProps) {
 
     const jsonLd: Record<string, unknown> = {
       "@context": "https://schema.org",
-      "@type": type,
       ...data,
+      "@type": type,
     };
 
     // Attach organization info for relevant types
     if (["WebPage", "Product", "FAQPage", "ContactPage", "AboutPage"].includes(type)) {
-      jsonLd.publisher = { "@type": "CreditUnion", ...DEFAULT_ORG };
+      jsonLd.publisher = { ...DEFAULT_ORG };
     }
 
     script.textContent = JSON.stringify(jsonLd);

@@ -89,7 +89,8 @@ export default function InternationalEKYC() {
   } = useEKYCVerifications();
   const initiateMutation = useInitiateEKYC();
   const startLivenessMutation = useStartLiveness();
-  const _completeLivenessMutation = useCompleteLiveness();
+  const completeLivenessMutation = useCompleteLiveness();
+  void completeLivenessMutation; // reserved for future use
 
   const [initiateDialog, setInitiateDialog] = useState<EKYCProviderConfig | null>(null);
   const [initiateForm, setInitiateForm] = useState({
@@ -111,8 +112,8 @@ export default function InternationalEKYC() {
     }
     try {
       await initiateMutation.mutateAsync({
-        providerId: initiateDialog.providerId,
-        country: initiateDialog.country,
+        provider: initiateDialog.provider,
+        countryCode: initiateDialog.countryCode,
         documentType: initiateForm.documentType.trim(),
         documentNumber: initiateForm.documentNumber.trim(),
       });
@@ -208,7 +209,7 @@ export default function InternationalEKYC() {
           {selectedCountry && providers.length > 0 && (
             <div className="grid gap-3">
               {providers.map((provider) => (
-                <Card key={provider.providerId} className="border">
+                <Card key={provider.provider} className="border">
                   <CardContent className="py-4">
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
@@ -230,7 +231,7 @@ export default function InternationalEKYC() {
                         <p className="text-sm text-muted-foreground">{provider.description}</p>
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
-                          Estimated time: {provider.estimatedTime}
+                          Estimated time: {provider.estimatedTimeSeconds}
                         </div>
                       </div>
                       <Button
@@ -291,14 +292,14 @@ export default function InternationalEKYC() {
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{verification.providerName}</span>
+                          <span className="font-medium">{verification.provider}</span>
                           <Badge variant={statusCfg.variant}>{statusCfg.label}</Badge>
                           <Badge variant={livenessCfg.variant}>{livenessCfg.label}</Badge>
                         </div>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Globe className="h-3 w-3" />
-                            {verification.country}
+                            {verification.countryCode}
                           </span>
                           <span>{verification.documentType}</span>
                         </div>
@@ -308,13 +309,13 @@ export default function InternationalEKYC() {
                               Verified {new Date(verification.verifiedAt).toLocaleDateString()}
                             </span>
                           )}
-                          {verification.failedAt && (
+                          {verification.failureReason && (
                             <span>
-                              Failed {new Date(verification.failedAt).toLocaleDateString()}
+                              Failed {new Date(verification.updatedAt).toLocaleDateString()}
                             </span>
                           )}
                           {!verification.verifiedAt &&
-                            !verification.failedAt &&
+                            !verification.failureReason &&
                             verification.createdAt && (
                               <span>
                                 Started {new Date(verification.createdAt).toLocaleDateString()}
@@ -358,8 +359,8 @@ export default function InternationalEKYC() {
               {initiateDialog && (
                 <>
                   Verify your identity with {initiateDialog.displayName} (
-                  {countryOptions.find((c) => c.value === initiateDialog.country)?.label ??
-                    initiateDialog.country}
+                  {countryOptions.find((c) => c.value === initiateDialog.countryCode)?.label ??
+                    initiateDialog.countryCode}
                   ).
                 </>
               )}
@@ -387,10 +388,10 @@ export default function InternationalEKYC() {
                 Your document number will be masked in all displays and logs for security.
               </p>
             </div>
-            {initiateDialog?.estimatedTime && (
+            {initiateDialog?.estimatedTimeSeconds && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Clock className="h-4 w-4" />
-                Estimated processing time: {initiateDialog.estimatedTime}
+                Estimated processing time: {initiateDialog.estimatedTimeSeconds}s
               </div>
             )}
           </div>

@@ -64,7 +64,7 @@ export default function Auth() {
     const result = signInSchema.safeParse({ email, password });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
@@ -84,7 +84,7 @@ export default function Auth() {
     const result = signUpSchema.safeParse({ email, password, confirmPassword, firmName });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
@@ -105,7 +105,7 @@ export default function Auth() {
     clearErrors();
     const result = resetSchema.safeParse({ email: resetEmail });
     if (!result.success) {
-      setErrors({ resetEmail: result.error.errors[0]?.message ?? "Invalid email" });
+      setErrors({ resetEmail: result.error.issues[0]?.message ?? "Invalid email" });
       return;
     }
     setLoading(true);

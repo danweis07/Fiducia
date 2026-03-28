@@ -49,12 +49,9 @@ describe("cardProvisioningKeys", () => {
   });
 
   it("has correct eligibility key", () => {
-    expect(cardProvisioningKeys.eligibility("card-1", "apple_pay" as unknown)).toEqual([
-      "cardProvisioning",
-      "eligibility",
-      "card-1",
-      "apple_pay",
-    ]);
+    expect(
+      cardProvisioningKeys.eligibility("card-1", "apple_pay" as import("@/types").WalletProvider),
+    ).toEqual(["cardProvisioning", "eligibility", "card-1", "apple_pay"]);
   });
 });
 
@@ -64,12 +61,22 @@ describe("useProvisioningConfig", () => {
   });
 
   it("fetches config successfully", async () => {
-    vi.mocked(gateway.cardProvisioning.config).mockResolvedValue({ enabled: true });
+    const mockConfig = {
+      config: {
+        provisioningEnabled: true,
+        provisionPlusEnabled: false,
+        digitalIssuanceEnabled: false,
+        digitalOnlyEnabled: false,
+        supportedWallets: [],
+        pinSelectionBeforeActivation: false,
+      },
+    };
+    vi.mocked(gateway.cardProvisioning.config).mockResolvedValue(mockConfig);
 
     const { result } = renderHook(() => useProvisioningConfig(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({ enabled: true });
+    expect(result.current.data).toEqual(mockConfig);
   });
 
   it("handles error", async () => {
@@ -87,10 +94,22 @@ describe("useProvisioningEligibility", () => {
   });
 
   it("fetches eligibility successfully", async () => {
-    vi.mocked(gateway.cardProvisioning.checkEligibility).mockResolvedValue({ eligible: true });
+    vi.mocked(gateway.cardProvisioning.checkEligibility).mockResolvedValue({
+      eligibility: {
+        cardId: "card-1",
+        lastFour: "1234",
+        walletProvider: "apple_pay",
+        status: "eligible",
+        activationStatus: "activated",
+        cardCategory: "debit",
+        allowNonActivatedProvisioning: false,
+        alreadyInWallet: false,
+        supportedWallets: ["apple_pay"],
+      },
+    } as never);
 
     const { result } = renderHook(
-      () => useProvisioningEligibility("card-1", "apple_pay" as unknown),
+      () => useProvisioningEligibility("card-1", "apple_pay" as import("@/types").WalletProvider),
       { wrapper: createWrapper() },
     );
 
@@ -98,9 +117,12 @@ describe("useProvisioningEligibility", () => {
   });
 
   it("does not fetch when cardId is empty", () => {
-    const { result } = renderHook(() => useProvisioningEligibility("", "apple_pay" as unknown), {
-      wrapper: createWrapper(),
-    });
+    const { result } = renderHook(
+      () => useProvisioningEligibility("", "apple_pay" as import("@/types").WalletProvider),
+      {
+        wrapper: createWrapper(),
+      },
+    );
     expect(result.current.fetchStatus).toBe("idle");
   });
 
@@ -108,7 +130,7 @@ describe("useProvisioningEligibility", () => {
     vi.mocked(gateway.cardProvisioning.checkEligibility).mockRejectedValue(new Error("fail"));
 
     const { result } = renderHook(
-      () => useProvisioningEligibility("card-1", "apple_pay" as unknown),
+      () => useProvisioningEligibility("card-1", "apple_pay" as import("@/types").WalletProvider),
       { wrapper: createWrapper() },
     );
 

@@ -11,7 +11,7 @@ export const scaKeys = {
 export function useSCAConfig() {
   return useQuery({
     queryKey: scaKeys.config(),
-    queryFn: () => gateway.sca.getConfig(),
+    queryFn: () => gateway.intlSca.getConfig(),
     staleTime: 1000 * 60 * 5,
   });
 }
@@ -25,7 +25,7 @@ export function useCreateSCAChallenge() {
       paymentAmountCents?: number;
       paymentCurrency?: string;
       payeeName?: string;
-    }) => gateway.sca.createChallenge(params),
+    }) => gateway.intlSca.createChallenge(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: scaKeys.challenges() });
     },
@@ -37,7 +37,7 @@ export function useVerifySCAFactor() {
 
   return useMutation({
     mutationFn: (params: { challengeId: string; factorType: string; credential: string }) =>
-      gateway.sca.verifyFactor(params),
+      gateway.intlSca.verifyFactor(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: scaKeys.challenges() });
     },
@@ -47,7 +47,7 @@ export function useVerifySCAFactor() {
 export function useSCATrustedDevices() {
   return useQuery({
     queryKey: scaKeys.devices(),
-    queryFn: () => gateway.sca.listTrustedDevices(),
+    queryFn: () => gateway.intlSca.listTrustedDevices(),
     staleTime: 1000 * 60 * 2,
   });
 }
@@ -61,7 +61,7 @@ export function useBindSCADevice() {
       deviceType: string;
       platform: string;
       pushToken?: string;
-    }) => gateway.sca.bindDevice(params),
+    }) => gateway.intlSca.bindDevice(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: scaKeys.devices() });
     },
@@ -72,7 +72,7 @@ export function useUnbindSCADevice() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (deviceId: string) => gateway.sca.unbindDevice(deviceId),
+    mutationFn: (deviceId: string) => gateway.intlSca.unbindDevice(deviceId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: scaKeys.devices() });
     },

@@ -74,8 +74,17 @@ describe("useAMLScreening", () => {
 
   it("fetches screening successfully", async () => {
     vi.mocked(gateway.aml.getScreening).mockResolvedValue({
-      screeningId: "scr-1",
-      status: "clear",
+      screening: {
+        screeningId: "scr-1",
+        customerId: "cust-1",
+        riskLevel: "low",
+        totalMatches: 0,
+        matches: [],
+        watchlistsChecked: [],
+        screenedAt: "2024-01-01T00:00:00Z",
+        expiresAt: "2025-01-01T00:00:00Z",
+        provider: "test",
+      },
     });
 
     const { result } = renderHook(() => useAMLScreening("scr-1"), { wrapper: createWrapper() });

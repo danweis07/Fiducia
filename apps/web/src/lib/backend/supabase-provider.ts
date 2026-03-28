@@ -72,6 +72,17 @@ const DEFAULT_FEATURES: TenantFeatures = {
   externalTransfers: true,
   wires: false,
   mobileDeposit: true,
+  directDeposit: false,
+  openBanking: false,
+  sca: false,
+  confirmationOfPayee: false,
+  multiCurrency: false,
+  internationalPayments: false,
+  internationalBillPay: false,
+  openBankingAggregation: false,
+  aliasPayments: false,
+  amlScreening: false,
+  instantPayments: false,
 };
 
 // =============================================================================
@@ -195,30 +206,33 @@ class SupabaseAuthProvider implements AuthProvider {
 
       const { data: tData, error: tError } = await fromTable("firms")
         .select("*")
-        .eq("id", tuData.firm_id)
+        .eq("id", (tuData as Record<string, unknown>).firm_id as string)
         .single();
 
       if (tError) throw new Error(`Failed to fetch tenant: ${tError.message}`);
 
+      const tu = tuData as Record<string, unknown>;
+      const t = tData as Record<string, unknown>;
+
       // Update last active
       await fromTable("firm_users")
-        .update({ last_active_at: new Date().toISOString() })
-        .eq("id", tuData.id);
+        .update({ last_active_at: new Date().toISOString() } as Record<string, unknown>)
+        .eq("id", tu.id as string);
 
       return {
-        tenantId: tData.id,
-        tenantName: tData.name,
+        tenantId: t.id as string,
+        tenantName: t.name as string,
         userId,
-        userRole: tuData.role as TenantUserRole,
-        displayName: tuData.display_name || "User",
-        permissions: getRolePermissions(tuData.role as TenantUserRole),
-        subscriptionTier: tData.subscription_tier as SubscriptionTier,
-        features: tData.features || DEFAULT_FEATURES,
-        region: (tData.region ?? "us") as TenantContextType["region"],
-        country: (tData.country as string) ?? "US",
-        defaultCurrency: (tData.default_currency as string) ?? "USD",
-        sessionTimeoutMinutes: (tData.session_timeout_minutes as number) ?? 15,
-        sessionGraceMinutes: (tData.session_grace_minutes as number) ?? 2,
+        userRole: tu.role as TenantUserRole,
+        displayName: (tu.display_name as string) || "User",
+        permissions: getRolePermissions(tu.role as TenantUserRole),
+        subscriptionTier: t.subscription_tier as SubscriptionTier,
+        features: (t.features as TenantFeatures) || DEFAULT_FEATURES,
+        region: ((t.region as string) ?? "us") as TenantContextType["region"],
+        country: (t.country as string) ?? "US",
+        defaultCurrency: (t.default_currency as string) ?? "USD",
+        sessionTimeoutMinutes: (t.session_timeout_minutes as number) ?? 15,
+        sessionGraceMinutes: (t.session_grace_minutes as number) ?? 2,
       };
     } catch {
       return {
@@ -254,7 +268,7 @@ class SupabaseAuthProvider implements AuthProvider {
     if (te) return { error: new Error(`Tenant setup failed: ${te.message}`) };
 
     const { error: me } = await fromTable("firm_users").insert({
-      firm_id: td.id,
+      firm_id: (td as Record<string, unknown>).id as string,
       user_id: userId,
       role: "owner",
       status: "active",

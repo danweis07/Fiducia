@@ -53,7 +53,8 @@ const statusConfig: Record<
   active: { label: "Active", variant: "default" },
   revoked: { label: "Revoked", variant: "destructive" },
   expired: { label: "Expired", variant: "secondary" },
-  pending_reauth: { label: "Awaiting Reauth", variant: "outline" },
+  suspended: { label: "Suspended", variant: "outline" },
+  awaiting_reauthorization: { label: "Awaiting Reauth", variant: "outline" },
 };
 
 const scopeLabels: Record<string, string> = {
@@ -291,7 +292,7 @@ export default function ConsentDashboard() {
   const revokeMutation = useRevokeInternationalConsent();
   const revokeScopeMutation = useRevokeInternationalConsentScope();
   const { toast } = useToast();
-  const handleError = useErrorHandler();
+  const { handleError } = useErrorHandler();
 
   if (isLoading) return <PageSkeleton />;
   if (error)
@@ -374,7 +375,7 @@ export default function ConsentDashboard() {
           <Card>
             <CardContent className="pt-4 pb-3 text-center">
               <div className="text-2xl font-bold text-orange-600">
-                {summary.pendingReauthConsents}
+                {summary.pendingReauthorization}
               </div>
               <div className="text-xs text-muted-foreground">Pending Reauth</div>
             </CardContent>

@@ -101,8 +101,8 @@ describe("LoansDomain", () => {
       const input = {
         institutionId: "inst1",
         documentTemplateType: 1,
-        documentEntityType: "loan" as unknown,
-        documentEntity: { id: "l1", context: "origination" as unknown },
+        documentEntityType: "loan" as never,
+        documentEntity: { id: "l1", context: "origination" as never },
       };
       await gateway.loanOrigination.createDocument(input);
       expect(invoke).toHaveBeenCalledWith("loanOrigination.document.create", input);

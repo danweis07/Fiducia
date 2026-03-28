@@ -6,6 +6,16 @@ import { createElement } from "react";
 vi.mock("@/lib/gateway", () => ({
   gateway: {
     internationalPayments: {
+      listPayments: vi.fn(),
+      getCoverage: vi.fn(),
+      getFXQuote: vi.fn(),
+      createPayment: vi.fn(),
+      listCards: vi.fn(),
+      issueCard: vi.fn(),
+      listPayouts: vi.fn(),
+      createPayout: vi.fn(),
+    },
+    intlPaymentAliases: {
       listAliases: vi.fn(),
       createAlias: vi.fn(),
       deleteAlias: vi.fn(),
@@ -15,13 +25,6 @@ vi.mock("@/lib/gateway", () => ({
       generateQR: vi.fn(),
       listPayments: vi.fn(),
       getLimits: vi.fn(),
-      getCoverage: vi.fn(),
-      getFXQuote: vi.fn(),
-      createPayment: vi.fn(),
-      listCards: vi.fn(),
-      issueCard: vi.fn(),
-      listPayouts: vi.fn(),
-      createPayout: vi.fn(),
     },
     internationalBillPay: {
       searchBillers: vi.fn(),
@@ -98,7 +101,7 @@ describe("usePaymentAliases", () => {
   });
 
   it("fetches aliases successfully", async () => {
-    vi.mocked(gateway.internationalPayments.listAliases).mockResolvedValue({ aliases: [] });
+    vi.mocked(gateway.intlPaymentAliases.listAliases).mockResolvedValue({ aliases: [] });
 
     const { result } = renderHook(() => usePaymentAliases(), { wrapper: createWrapper() });
 
@@ -106,7 +109,7 @@ describe("usePaymentAliases", () => {
   });
 
   it("handles error", async () => {
-    vi.mocked(gateway.internationalPayments.listAliases).mockRejectedValue(new Error("fail"));
+    vi.mocked(gateway.intlPaymentAliases.listAliases).mockRejectedValue(new Error("fail"));
 
     const { result } = renderHook(() => usePaymentAliases(), { wrapper: createWrapper() });
 
@@ -188,7 +191,7 @@ describe("useInternationalPaymentHistory", () => {
   });
 
   it("fetches payment history successfully", async () => {
-    vi.mocked(gateway.internationalPayments.listPayments).mockResolvedValue({ payments: [] });
+    vi.mocked(gateway.internationalPayments.listPayments).mockResolvedValue([]);
 
     const { result } = renderHook(() => useInternationalPaymentHistory(), {
       wrapper: createWrapper(),
@@ -214,8 +217,8 @@ describe("useInternationalPaymentLimits", () => {
   });
 
   it("fetches limits successfully", async () => {
-    vi.mocked(gateway.internationalPayments.getLimits).mockResolvedValue({
-      dailyLimitCents: 1000000,
+    vi.mocked(gateway.intlPaymentAliases.getLimits).mockResolvedValue({
+      limits: { dailyLimitCents: 1000000 } as never,
     });
 
     const { result } = renderHook(() => useInternationalPaymentLimits(), {
@@ -226,7 +229,7 @@ describe("useInternationalPaymentLimits", () => {
   });
 
   it("handles error", async () => {
-    vi.mocked(gateway.internationalPayments.getLimits).mockRejectedValue(new Error("fail"));
+    vi.mocked(gateway.intlPaymentAliases.getLimits).mockRejectedValue(new Error("fail"));
 
     const { result } = renderHook(() => useInternationalPaymentLimits(), {
       wrapper: createWrapper(),
@@ -242,7 +245,10 @@ describe("useInternationalCoverage", () => {
   });
 
   it("fetches coverage successfully", async () => {
-    vi.mocked(gateway.internationalPayments.getCoverage).mockResolvedValue({ countries: [] });
+    vi.mocked(gateway.internationalPayments.getCoverage).mockResolvedValue({
+      countries: [],
+      total: 0,
+    });
 
     const { result } = renderHook(() => useInternationalCoverage(), { wrapper: createWrapper() });
 
@@ -256,7 +262,18 @@ describe("useFXQuote", () => {
   });
 
   it("fetches FX quote successfully", async () => {
-    vi.mocked(gateway.internationalPayments.getFXQuote).mockResolvedValue({ rate: 1.12 });
+    vi.mocked(gateway.internationalPayments.getFXQuote).mockResolvedValue({
+      quoteId: "q-1",
+      fromCurrency: "USD",
+      toCurrency: "EUR",
+      exchangeRate: 1.12,
+      inverseRate: 0.89,
+      fromAmountCents: 10000,
+      toAmountCents: 11200,
+      feeAmountCents: 100,
+      feeCurrency: "USD",
+      expiresAt: "2026-01-01T00:00:00Z",
+    });
 
     const { result } = renderHook(() => useFXQuote("USD", "EUR", 10000), {
       wrapper: createWrapper(),
@@ -277,7 +294,7 @@ describe("useInternationalPayments", () => {
   });
 
   it("fetches payments successfully", async () => {
-    vi.mocked(gateway.internationalPayments.listPayments).mockResolvedValue({ payments: [] });
+    vi.mocked(gateway.internationalPayments.listPayments).mockResolvedValue([]);
 
     const { result } = renderHook(() => useInternationalPayments(), { wrapper: createWrapper() });
 
@@ -304,7 +321,7 @@ describe("useGlobalCards", () => {
   });
 
   it("fetches cards successfully", async () => {
-    vi.mocked(gateway.internationalPayments.listCards).mockResolvedValue({ cards: [] });
+    vi.mocked(gateway.internationalPayments.listCards).mockResolvedValue([]);
 
     const { result } = renderHook(() => useGlobalCards(), { wrapper: createWrapper() });
 
@@ -329,7 +346,7 @@ describe("useInternationalPayouts", () => {
   });
 
   it("fetches payouts successfully", async () => {
-    vi.mocked(gateway.internationalPayments.listPayouts).mockResolvedValue({ payouts: [] });
+    vi.mocked(gateway.internationalPayments.listPayouts).mockResolvedValue([]);
 
     const { result } = renderHook(() => useInternationalPayouts(), { wrapper: createWrapper() });
 
@@ -356,7 +373,10 @@ describe("useInternationalBillers", () => {
   });
 
   it("fetches billers when query is long enough", async () => {
-    vi.mocked(gateway.internationalBillPay.searchBillers).mockResolvedValue({ billers: [] });
+    vi.mocked(gateway.internationalBillPay.searchBillers).mockResolvedValue({
+      billers: [],
+      total: 0,
+    });
 
     const { result } = renderHook(() => useInternationalBillers("electric"), {
       wrapper: createWrapper(),
@@ -377,7 +397,7 @@ describe("useInternationalBillPayments", () => {
   });
 
   it("fetches bill payments successfully", async () => {
-    vi.mocked(gateway.internationalBillPay.listPayments).mockResolvedValue({ payments: [] });
+    vi.mocked(gateway.internationalBillPay.listPayments).mockResolvedValue([]);
 
     const { result } = renderHook(() => useInternationalBillPayments(), {
       wrapper: createWrapper(),
@@ -420,7 +440,7 @@ describe("useInternationalLoanApplications", () => {
   });
 
   it("fetches loan applications successfully", async () => {
-    vi.mocked(gateway.internationalLoans.listApplications).mockResolvedValue({ applications: [] });
+    vi.mocked(gateway.internationalLoans.listApplications).mockResolvedValue([]);
 
     const { result } = renderHook(() => useInternationalLoanApplications(), {
       wrapper: createWrapper(),
@@ -449,7 +469,7 @@ describe("useBaaSAccounts", () => {
   });
 
   it("fetches BaaS accounts successfully", async () => {
-    vi.mocked(gateway.baas.listAccounts).mockResolvedValue({ accounts: [] });
+    vi.mocked(gateway.baas.listAccounts).mockResolvedValue([]);
 
     const { result } = renderHook(() => useBaaSAccounts(), { wrapper: createWrapper() });
 

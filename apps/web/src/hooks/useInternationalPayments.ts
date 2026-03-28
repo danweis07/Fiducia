@@ -13,7 +13,7 @@ export const internationalPaymentKeys = {
 export function usePaymentAliases() {
   return useQuery({
     queryKey: internationalPaymentKeys.aliases(),
-    queryFn: () => gateway.internationalPayments.listAliases(),
+    queryFn: () => gateway.intlPaymentAliases.listAliases(),
     staleTime: 1000 * 60 * 2,
   });
 }
@@ -27,7 +27,7 @@ export function useCreatePaymentAlias() {
       aliasValue: string;
       linkedAccountId: string;
       network: PaymentNetwork;
-    }) => gateway.internationalPayments.createAlias(params),
+    }) => gateway.intlPaymentAliases.createAlias(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: internationalPaymentKeys.aliases() });
     },
@@ -38,7 +38,7 @@ export function useDeletePaymentAlias() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (aliasId: string) => gateway.internationalPayments.deleteAlias(aliasId),
+    mutationFn: (aliasId: string) => gateway.intlPaymentAliases.deleteAlias(aliasId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: internationalPaymentKeys.aliases() });
     },
@@ -51,7 +51,7 @@ export function useConfirmPayee() {
       aliasValue: string;
       aliasType: PaymentAliasType;
       network: PaymentNetwork;
-    }) => gateway.internationalPayments.confirmPayee(params),
+    }) => gateway.intlPaymentAliases.confirmPayee(params),
   });
 }
 
@@ -66,7 +66,7 @@ export function useSendInternationalPayment() {
       currencyCode: string;
       network: PaymentNetwork;
       memo?: string;
-    }) => gateway.internationalPayments.send(params),
+    }) => gateway.intlPaymentAliases.send(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: internationalPaymentKeys.all });
     },
@@ -75,21 +75,21 @@ export function useSendInternationalPayment() {
 
 export function useParseQR() {
   return useMutation({
-    mutationFn: (qrData: string) => gateway.internationalPayments.parseQR(qrData),
+    mutationFn: (qrData: string) => gateway.intlPaymentAliases.parseQR(qrData),
   });
 }
 
 export function useGenerateQR() {
   return useMutation({
     mutationFn: (params: { aliasId: string; amountCents?: number; reference?: string }) =>
-      gateway.internationalPayments.generateQR(params),
+      gateway.intlPaymentAliases.generateQR(params),
   });
 }
 
 export function useInternationalPaymentHistory(network?: PaymentNetwork, status?: string) {
   return useQuery({
     queryKey: internationalPaymentKeys.payments(network, status),
-    queryFn: () => gateway.internationalPayments.listPayments({ network, status }),
+    queryFn: () => gateway.intlPaymentAliases.listPayments({ network, status }),
     staleTime: 1000 * 60,
   });
 }
@@ -97,7 +97,7 @@ export function useInternationalPaymentHistory(network?: PaymentNetwork, status?
 export function useInternationalPaymentLimits() {
   return useQuery({
     queryKey: internationalPaymentKeys.limits(),
-    queryFn: () => gateway.internationalPayments.getLimits(),
+    queryFn: () => gateway.intlPaymentAliases.getLimits(),
     staleTime: 1000 * 60 * 5,
   });
 }

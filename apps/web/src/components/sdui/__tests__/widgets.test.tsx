@@ -120,7 +120,7 @@ vi.mock("dompurify", () => ({
 // Helpers
 // ---------------------------------------------------------------------------
 
-const baseManifest = { componentType: "test" as unknown, id: "test-1", props: {}, order: 0 };
+const baseManifest = { componentType: "test", id: "test-1", props: {}, order: 0 };
 
 function makeManifest(props: Record<string, unknown>) {
   return { ...baseManifest, props };

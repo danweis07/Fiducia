@@ -78,7 +78,7 @@ describe("Activation Steps", () => {
     const { StepCredentials } = await import("../activation/CredentialsStep");
     const { container } = render(
       createElement(StepCredentials, {
-        config: mockConfig as unknown,
+        config: mockConfig as never,
         activationToken: "test-token",
         onComplete: noop,
         onBack: noop,
@@ -92,7 +92,7 @@ describe("Activation Steps", () => {
     const { StepDevice } = await import("../activation/DeviceStep");
     const { container } = render(
       createElement(StepDevice, {
-        config: mockConfig as unknown,
+        config: mockConfig as never,
         activationToken: "test-token",
         onComplete: noop,
         onBack: noop,
@@ -107,7 +107,7 @@ describe("Activation Steps", () => {
     const { StepMFA } = await import("../activation/MFAStep");
     const { container } = render(
       createElement(StepMFA, {
-        config: mockConfig as unknown,
+        config: mockConfig as never,
         activationToken: "test-token",
         onComplete: noop,
         onBack: noop,
@@ -122,7 +122,7 @@ describe("Activation Steps", () => {
     const { StepTerms } = await import("../activation/TermsStep");
     const { container } = render(
       createElement(StepTerms, {
-        config: mockConfig as unknown,
+        config: mockConfig as never,
         activationToken: "test-token",
         onComplete: noop,
         onBack: noop,

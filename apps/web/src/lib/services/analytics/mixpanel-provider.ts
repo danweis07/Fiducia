@@ -20,7 +20,6 @@ type MixpanelLib = any;
 export class MixpanelProvider implements AnalyticsProvider {
   readonly name = "mixpanel";
   private mp: MixpanelLib | null = null;
-  private initialized = false;
 
   async init(config: Record<string, unknown>): Promise<void> {
     const token = config.token as string;
@@ -41,7 +40,7 @@ export class MixpanelProvider implements AnalyticsProvider {
         ...((config.options as Record<string, unknown>) ?? {}),
       });
       this.mp = mp;
-      this.initialized = true;
+      // initialized
     } catch {
       console.warn("[Mixpanel] mixpanel-browser not installed. Run: npm install mixpanel-browser");
     }

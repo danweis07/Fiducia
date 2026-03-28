@@ -38,7 +38,7 @@ describe("useDevices", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches device list", async () => {
-    const mockDevices = [{ id: "d-1", name: "iPhone", trusted: true }];
+    const mockDevices = [{ id: "d-1", name: "iPhone", trusted: true }] as never[];
     vi.mocked(gateway.devices.list).mockResolvedValue({ devices: mockDevices });
 
     const { result } = renderHook(() => useDevices(), { wrapper: createWrapper() });
@@ -52,7 +52,9 @@ describe("useDevice", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches single device by id", async () => {
-    vi.mocked(gateway.devices.get).mockResolvedValue({ id: "d-1", name: "iPhone" });
+    vi.mocked(gateway.devices.get).mockResolvedValue({
+      device: { id: "d-1", name: "iPhone" },
+    } as never);
 
     const { result } = renderHook(() => useDevice("d-1"), { wrapper: createWrapper() });
 
@@ -105,7 +107,9 @@ describe("useDeviceActivity", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches activity for a device", async () => {
-    const mockActivity = [{ id: "a-1", action: "login", timestamp: "2026-01-01T00:00:00Z" }];
+    const mockActivity = [
+      { id: "a-1", action: "login", timestamp: "2026-01-01T00:00:00Z" },
+    ] as never[];
     vi.mocked(gateway.devices.activity).mockResolvedValue({ activity: mockActivity });
 
     const { result } = renderHook(() => useDeviceActivity("d-1"), { wrapper: createWrapper() });

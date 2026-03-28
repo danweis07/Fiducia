@@ -47,19 +47,19 @@ describe("useExportList", () => {
 
   it("fetches export list successfully", async () => {
     const mockExports = [{ id: "exp-1", status: "completed", reportType: "transactions" }];
-    vi.mocked(gateway.exports.list).mockResolvedValue(mockExports);
+    vi.mocked(gateway.exports.list).mockResolvedValue({ exports: mockExports as never[] });
 
     const { result } = renderHook(() => useExportList({ status: "completed" }), {
       wrapper: createWrapper(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.exports).toHaveLength(1);
     expect(gateway.exports.list).toHaveBeenCalledWith({ status: "completed" });
   });
 
   it("fetches with no params", async () => {
-    vi.mocked(gateway.exports.list).mockResolvedValue([]);
+    vi.mocked(gateway.exports.list).mockResolvedValue({ exports: [] });
 
     const { result } = renderHook(() => useExportList(), { wrapper: createWrapper() });
 
@@ -74,7 +74,9 @@ describe("useExportSummary", () => {
   });
 
   it("fetches export summary successfully", async () => {
-    const mockSummary = { totalExports: 5, pendingCount: 1, completedCount: 4 };
+    const mockSummary = {
+      summary: { totalExports: 5, pendingCount: 1, completedCount: 4 },
+    } as never;
     vi.mocked(gateway.exports.summary).mockResolvedValue(mockSummary);
 
     const { result } = renderHook(() => useExportSummary(), { wrapper: createWrapper() });
@@ -90,7 +92,9 @@ describe("useCreateExport", () => {
   });
 
   it("creates export successfully", async () => {
-    vi.mocked(gateway.exports.create).mockResolvedValue({ id: "exp-new", status: "pending" });
+    vi.mocked(gateway.exports.create).mockResolvedValue({
+      export: { id: "exp-new", status: "pending" },
+    } as never);
 
     const { result } = renderHook(() => useCreateExport(), { wrapper: createWrapper() });
 
@@ -114,7 +118,11 @@ describe("useDownloadExport", () => {
   });
 
   it("downloads export successfully", async () => {
-    vi.mocked(gateway.exports.download).mockResolvedValue({ url: "https://example.com/file.csv" });
+    vi.mocked(gateway.exports.download).mockResolvedValue({
+      fileUrl: "https://example.com/file.csv",
+      format: "csv",
+      fileName: "export.csv",
+    });
 
     const { result } = renderHook(() => useDownloadExport(), { wrapper: createWrapper() });
 
@@ -153,12 +161,14 @@ describe("useReportTemplates", () => {
 
   it("fetches report templates successfully", async () => {
     const mockTemplates = [{ id: "tpl-1", name: "Monthly Report", reportType: "transactions" }];
-    vi.mocked(gateway.reportTemplates.list).mockResolvedValue(mockTemplates);
+    vi.mocked(gateway.reportTemplates.list).mockResolvedValue({
+      templates: mockTemplates as never[],
+    });
 
     const { result } = renderHook(() => useReportTemplates(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.templates).toHaveLength(1);
   });
 });
 
@@ -168,7 +178,9 @@ describe("useCreateReportTemplate", () => {
   });
 
   it("creates report template successfully", async () => {
-    vi.mocked(gateway.reportTemplates.create).mockResolvedValue({ id: "tpl-new" });
+    vi.mocked(gateway.reportTemplates.create).mockResolvedValue({
+      template: { id: "tpl-new" },
+    } as never);
 
     const { result } = renderHook(() => useCreateReportTemplate(), { wrapper: createWrapper() });
 

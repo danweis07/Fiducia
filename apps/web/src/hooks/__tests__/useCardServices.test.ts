@@ -46,7 +46,7 @@ describe("useTravelNotices", () => {
   it("fetches travel notices", async () => {
     const mockNotices = [
       { id: "tn-1", destinations: [{ country: "FR" }], startDate: "2026-06-01" },
-    ];
+    ] as never[];
     vi.mocked(gateway.travelNotices.list).mockResolvedValue({ notices: mockNotices });
 
     const { result } = renderHook(() => useTravelNotices("active"), { wrapper: createWrapper() });
@@ -60,7 +60,7 @@ describe("useCreateTravelNotice", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway.travelNotices.create on mutate", async () => {
-    vi.mocked(gateway.travelNotices.create).mockResolvedValue({ id: "tn-2" });
+    vi.mocked(gateway.travelNotices.create).mockResolvedValue({ notice: { id: "tn-2" } } as never);
 
     const { result } = renderHook(() => useCreateTravelNotice(), { wrapper: createWrapper() });
 
@@ -103,7 +103,7 @@ describe("useCardReplacements", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches card replacements list", async () => {
-    const mockReplacements = [{ id: "cr-1", cardId: "c-1", status: "shipped" }];
+    const mockReplacements = [{ id: "cr-1", cardId: "c-1", status: "shipped" }] as never[];
     vi.mocked(gateway.cardReplacements.list).mockResolvedValue({ replacements: mockReplacements });
 
     const { result } = renderHook(() => useCardReplacements(), { wrapper: createWrapper() });
@@ -117,7 +117,9 @@ describe("useRequestCardReplacement", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway.cardReplacements.request on mutate", async () => {
-    vi.mocked(gateway.cardReplacements.request).mockResolvedValue({ id: "cr-2" });
+    vi.mocked(gateway.cardReplacements.request).mockResolvedValue({
+      replacement: { id: "cr-2" },
+    } as never);
 
     const { result } = renderHook(() => useRequestCardReplacement(), { wrapper: createWrapper() });
 
@@ -139,10 +141,8 @@ describe("useCardReplacementStatus", () => {
 
   it("fetches replacement status by id", async () => {
     vi.mocked(gateway.cardReplacements.status).mockResolvedValue({
-      id: "cr-1",
-      status: "shipped",
-      trackingNumber: "TRK123",
-    });
+      replacement: { id: "cr-1", status: "shipped", trackingNumber: "TRK123" },
+    } as never);
 
     const { result } = renderHook(() => useCardReplacementStatus("cr-1"), {
       wrapper: createWrapper(),
@@ -162,7 +162,10 @@ describe("useActivateReplacementCard", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("calls gateway.cardReplacements.activate on mutate", async () => {
-    vi.mocked(gateway.cardReplacements.activate).mockResolvedValue({ success: true });
+    vi.mocked(gateway.cardReplacements.activate).mockResolvedValue({
+      success: true,
+      replacementId: "cr-1",
+    });
 
     const { result } = renderHook(() => useActivateReplacementCard(), { wrapper: createWrapper() });
 

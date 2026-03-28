@@ -338,8 +338,8 @@ describe("ContentDomain", () => {
 
       it("update calls sdui.manifests.update", async () => {
         const invoke = mockInvoke({});
-        const updates = { components: [] } as never;
-        await gateway.sdui.manifests.update("m1", updates);
+        const updates = { components: [] } as Record<string, unknown>;
+        await gateway.sdui.manifests.update("m1", updates as never);
         expect(invoke).toHaveBeenCalledWith("sdui.manifests.update", { id: "m1", ...updates });
       });
 

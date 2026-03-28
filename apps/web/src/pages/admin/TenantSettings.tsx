@@ -251,7 +251,7 @@ export default function TenantSettings() {
     // Persist to backend and refresh tenant context
     try {
       const featureMap = Object.fromEntries(updated.map((f) => [f.key, f.enabled]));
-      await gateway.tenants.updateFeatures(featureMap);
+      await gateway.request("tenants.updateFeatures", featureMap);
       await refreshTenant();
       toast({ title: t("tenantSettings.toasts.featureUpdated") });
     } catch {

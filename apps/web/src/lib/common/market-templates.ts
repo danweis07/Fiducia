@@ -54,6 +54,7 @@ const CORE_FEATURES: TenantFeatures = {
   openBankingAggregation: false,
   aliasPayments: false,
   amlScreening: false,
+  instantPayments: false,
 };
 
 // =============================================================================

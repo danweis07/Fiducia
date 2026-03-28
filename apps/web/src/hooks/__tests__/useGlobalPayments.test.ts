@@ -93,10 +93,19 @@ describe("useSCAExemptionCheck", () => {
   });
 
   it("fetches exemption check when params provided", async () => {
-    vi.mocked(gateway.sca.checkExemption).mockResolvedValue({ exempt: true, reason: "low_value" });
+    vi.mocked(gateway.sca.checkExemption).mockResolvedValue({
+      exempt: true,
+      exemptionType: "low_value",
+      reason: "low_value",
+    });
 
     const { result } = renderHook(
-      () => useSCAExemptionCheck({ amountCents: 100, currency: "EUR" } as unknown),
+      () =>
+        useSCAExemptionCheck({
+          exemptionType: "low_value",
+          amountMinorUnits: 100,
+          currency: "EUR",
+        }),
       { wrapper: createWrapper() },
     );
 
@@ -111,9 +120,12 @@ describe("useSCAExemptionCheck", () => {
   it("handles error", async () => {
     vi.mocked(gateway.sca.checkExemption).mockRejectedValue(new Error("fail"));
 
-    const { result } = renderHook(() => useSCAExemptionCheck({ amountCents: 100 } as unknown), {
-      wrapper: createWrapper(),
-    });
+    const { result } = renderHook(
+      () => useSCAExemptionCheck({ exemptionType: "low_value", amountMinorUnits: 100 }),
+      {
+        wrapper: createWrapper(),
+      },
+    );
 
     await waitFor(() => expect(result.current.isError).toBe(true));
   });
@@ -147,7 +159,18 @@ describe("useInstantPayment (from global)", () => {
   });
 
   it("fetches single payment", async () => {
-    vi.mocked(gateway.instantPayments.get).mockResolvedValue({ payment: { id: "p-1" } });
+    vi.mocked(gateway.instantPayments.get).mockResolvedValue({
+      payment: {
+        paymentId: "p-1",
+        status: "completed",
+        rail: "fps",
+        amountCents: 1000,
+        senderName: "Test",
+        receiverName: "Test2",
+        createdAt: "2024-01-01T00:00:00Z",
+        completedAt: null,
+      },
+    });
 
     const { result } = renderHook(() => useInstantPayment("p-1"), { wrapper: createWrapper() });
 
@@ -212,7 +235,12 @@ describe("useDataResidency", () => {
   });
 
   it("fetches data residency successfully", async () => {
-    vi.mocked(gateway.globalCompliance.getDataResidency).mockResolvedValue({ region: "EU" });
+    vi.mocked(gateway.globalCompliance.getDataResidency).mockResolvedValue({
+      tenantId: "t-1",
+      dataResidencyRegion: "EU",
+      countryCode: "DE",
+      regulations: [],
+    });
 
     const { result } = renderHook(() => useDataResidency(), { wrapper: createWrapper() });
 
@@ -234,7 +262,14 @@ describe("useLoanCoolingOff", () => {
   });
 
   it("fetches cooling off data", async () => {
-    vi.mocked(gateway.globalCompliance.getLoanCoolingOff).mockResolvedValue({ daysRemaining: 5 });
+    vi.mocked(gateway.globalCompliance.getLoanCoolingOff).mockResolvedValue({
+      loanId: "loan-1",
+      coolingOffApplicable: true,
+      coolingOffDays: 14,
+      daysRemaining: 5,
+      isActive: true,
+      canWithdraw: true,
+    });
 
     const { result } = renderHook(() => useLoanCoolingOff("loan-1"), { wrapper: createWrapper() });
 
@@ -264,7 +299,16 @@ describe("useInterestWithholding", () => {
   });
 
   it("fetches withholding data", async () => {
-    vi.mocked(gateway.globalCompliance.getInterestWithholding).mockResolvedValue({ withheld: 100 });
+    vi.mocked(gateway.globalCompliance.getInterestWithholding).mockResolvedValue({
+      accountId: "acct-1",
+      taxYear: "2024",
+      jurisdiction: "US",
+      grossInterestCents: 1000,
+      taxWithheldCents: 100,
+      netInterestCents: 900,
+      withholdingRateBps: 1000,
+      regulation: "IRS",
+    });
 
     const { result } = renderHook(() => useInterestWithholding("acct-1"), {
       wrapper: createWrapper(),

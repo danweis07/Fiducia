@@ -47,7 +47,9 @@ describe("useVaultDocument", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches single document", async () => {
-    vi.mocked(gateway.vault.get).mockResolvedValue({ id: "doc-1", name: "Statement" });
+    vi.mocked(gateway.vault.get).mockResolvedValue({
+      document: { id: "doc-1", name: "Statement" },
+    } as never);
     const { result } = renderHook(() => useVaultDocument("doc-1"), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
@@ -62,10 +64,16 @@ describe("useUploadDocument", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("uploads a document", async () => {
-    vi.mocked(gateway.vault.upload).mockResolvedValue({ documentId: "doc-new" });
+    vi.mocked(gateway.vault.upload).mockResolvedValue({
+      document: { id: "doc-new" } as never,
+      uploadUrl: null,
+    });
     const { result } = renderHook(() => useUploadDocument(), { wrapper: createWrapper() });
     await act(async () => {
-      result.current.mutate({ name: "Tax Return", category: "tax" as Record<string, unknown> });
+      result.current.mutate({
+        name: "Tax Return",
+        category: "tax" as unknown as import("@/types").VaultDocumentCategory,
+      });
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
   });
@@ -89,8 +97,7 @@ describe("useVaultSummary", () => {
 
   it("fetches summary", async () => {
     vi.mocked(gateway.vault.summary).mockResolvedValue({
-      totalDocuments: 12,
-      totalSizeBytes: 50000,
+      summary: { totalDocuments: 12, totalSizeBytes: 50000 } as never,
     });
     const { result } = renderHook(() => useVaultSummary(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

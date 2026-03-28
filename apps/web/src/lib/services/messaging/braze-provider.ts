@@ -144,7 +144,7 @@ export class BrazeProvider implements MessagingProvider {
         extras: msg.extras,
       });
       // Auto-display the message
-      this.braze.showInAppMessage(msg);
+      this.braze!.showInAppMessage(msg);
     });
     return { unsubscribe: () => sub?.removeSubscriber?.() };
   }

@@ -45,15 +45,15 @@ export function useInstantPayment(paymentId: string) {
 export function useInstantPaymentLimits() {
   return useQuery({
     queryKey: instantPaymentKeys.limits,
-    queryFn: () => gateway.instantPayments.limits(),
+    queryFn: () => gateway.instantPayments.getLimits(),
     staleTime: 1000 * 60 * 5, // 5 min
   });
 }
 
-export function useCheckReceiver(routingNumber: string, rail?: InstantPaymentRail) {
+export function useCheckReceiver(routingNumber: string, _rail?: InstantPaymentRail) {
   return useQuery({
     queryKey: instantPaymentKeys.receiver(routingNumber),
-    queryFn: () => gateway.instantPayments.checkReceiver(routingNumber, rail),
+    queryFn: () => gateway.instantPayments.checkReceiver({ routingNumber }),
     enabled: routingNumber.length === 9,
     staleTime: 1000 * 60 * 10, // 10 min
   });
@@ -87,12 +87,13 @@ export function useRequestForPayment() {
     mutationFn: (input: {
       requesterAccountId: string;
       payerRoutingNumber: string;
+      payerAccountNumber: string;
       payerName: string;
       amountCents: number;
       description: string;
       expiresAt: string;
       preferredRail?: InstantPaymentRail;
-    }) => gateway.instantPayments.requestPayment(input),
+    }) => gateway.instantPayments.requestForPayment(input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: instantPaymentKeys.all });
     },

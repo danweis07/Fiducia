@@ -151,7 +151,7 @@ describe("Compliance Domain", () => {
     it("createCredentials calls activation.createCredentials with params", async () => {
       const invoke = mockInvoke({ userId: "u1", status: "created" });
       const params = { activationToken: "tok", username: "jdoe", password: "secureP@ss1" };
-      await gateway.activation.createCredentials(params as Record<string, unknown>);
+      await gateway.activation.createCredentials(params as never);
       expect(invoke).toHaveBeenCalledWith(
         "activation.createCredentials",
         expect.objectContaining({ username: "jdoe" }),
@@ -161,7 +161,7 @@ describe("Compliance Domain", () => {
     it("enrollMFA calls activation.enrollMFA with params", async () => {
       const invoke = mockInvoke({ enrollmentId: "e1", qrCode: "data:image" });
       const params = { activationToken: "tok", method: "totp" };
-      await gateway.activation.enrollMFA(params as Record<string, unknown>);
+      await gateway.activation.enrollMFA(params as never);
       expect(invoke).toHaveBeenCalledWith(
         "activation.enrollMFA",
         expect.objectContaining({ method: "totp" }),
@@ -171,7 +171,7 @@ describe("Compliance Domain", () => {
     it("verifyMFA calls activation.verifyMFA with params", async () => {
       const invoke = mockInvoke({ verified: true });
       const params = { activationToken: "tok", enrollmentId: "e1", code: "123456" };
-      await gateway.activation.verifyMFA(params as Record<string, unknown>);
+      await gateway.activation.verifyMFA(params as never);
       expect(invoke).toHaveBeenCalledWith(
         "activation.verifyMFA",
         expect.objectContaining({ code: "123456" }),
@@ -189,7 +189,7 @@ describe("Compliance Domain", () => {
     it("registerPasskey calls activation.registerPasskey with params", async () => {
       const invoke = mockInvoke({ registered: true, credentialId: "cred1" });
       const params = { activationToken: "tok", credentialId: "cred1", attestation: "att" };
-      await gateway.activation.registerPasskey(params as Record<string, unknown>);
+      await gateway.activation.registerPasskey(params as never);
       expect(invoke).toHaveBeenCalledWith(
         "activation.registerPasskey",
         expect.objectContaining({ credentialId: "cred1" }),
@@ -199,7 +199,7 @@ describe("Compliance Domain", () => {
     it("registerDevice calls activation.registerDevice with params", async () => {
       const invoke = mockInvoke({ deviceId: "dev1", trusted: true });
       const params = { activationToken: "tok", deviceFingerprint: "fp123", platform: "ios" };
-      await gateway.activation.registerDevice(params as Record<string, unknown>);
+      await gateway.activation.registerDevice(params as never);
       expect(invoke).toHaveBeenCalledWith(
         "activation.registerDevice",
         expect.objectContaining({ deviceFingerprint: "fp123" }),
@@ -328,7 +328,7 @@ describe("Compliance Domain", () => {
       const params = {
         providerName: "Fintech App",
         providerId: "p1",
-        scopes: ["accounts" as const],
+        scopes: ["accounts" as never],
         expiresInDays: 90,
       };
       await gateway.openBanking.grantConsent(params);
