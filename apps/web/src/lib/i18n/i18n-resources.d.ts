@@ -6,22 +6,11 @@
 // Regenerate after adding/removing keys in English JSON files:
 //   npm run i18n:types
 
-import CommonNamespace from "./locales/en/common.json";
-import BankingNamespace from "./locales/en/banking.json";
-import SettingsNamespace from "./locales/en/settings.json";
-import ErrorsNamespace from "./locales/en/errors.json";
-
 declare module "i18next" {
   interface CustomTypeOptions {
     defaultNS: "common";
-    resources: {
-      common: typeof CommonNamespace;
-      banking: typeof BankingNamespace;
-      settings: typeof SettingsNamespace;
-      errors: typeof ErrorsNamespace;
-      admin: Record<string, string>;
-      public: Record<string, string>;
-    };
+    returnNull: false;
+    allowObjectInHTMLChildren: true;
   }
 }
 

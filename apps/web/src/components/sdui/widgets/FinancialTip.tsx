@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import type { ComponentManifest } from "@/types/sdui";
 
 export default function FinancialTip({ manifest }: { manifest: ComponentManifest }) {
-  const { title, body, category } = manifest.props as Record<string, unknown>;
+  const { title, body, category } = manifest.props as Record<string, string | number | boolean>;
 
   return (
     <Card className="border-amber-200 bg-amber-50">

@@ -29,7 +29,14 @@ export default function RecentTransactions({ manifest }: { manifest: ComponentMa
         ) : (
           <div className="divide-y">
             {transactions.map((tx) => (
-              <TransactionRow key={tx.id} transaction={tx} />
+              <TransactionRow
+                key={tx.id}
+                description={tx.description}
+                amountCents={tx.amountCents}
+                category={tx.category}
+                status={tx.status}
+                date={tx.postedAt ?? tx.createdAt}
+              />
             ))}
           </div>
         )}

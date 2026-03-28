@@ -10,7 +10,7 @@ export default function AnnouncementBar({ manifest }: { manifest: ComponentManif
     message,
     variant = "info",
     dismissible = true,
-  } = manifest.props as Record<string, unknown>;
+  } = manifest.props as Record<string, string | number | boolean>;
 
   const variants: Record<string, string> = {
     info: "bg-blue-50 text-blue-800 border-blue-200",

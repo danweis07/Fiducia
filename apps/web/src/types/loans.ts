@@ -58,6 +58,7 @@ export interface Loan {
   id: string;
   userId: string;
   productId: string;
+  productName?: string;
   loanNumberMasked: string;
   principalCents: number;
   interestRateBps: number;

@@ -1,7 +1,7 @@
 import type { ComponentManifest } from "@/types/sdui";
 
 export default function SectionHeader({ manifest }: { manifest: ComponentManifest }) {
-  const { title, subtitle } = manifest.props as Record<string, unknown>;
+  const { title, subtitle } = manifest.props as Record<string, string | number | boolean>;
 
   return (
     <div>

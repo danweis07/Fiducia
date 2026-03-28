@@ -6,7 +6,7 @@ import type { ComponentManifest } from "@/types/sdui";
 export default function ProductOfferCard({ manifest }: { manifest: ComponentManifest }) {
   const { title, description, ctaLabel, ctaLink, imageUrl, badge } = manifest.props as Record<
     string,
-    unknown
+    string | number | boolean
   >;
 
   return (

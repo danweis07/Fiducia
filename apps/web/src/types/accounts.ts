@@ -51,6 +51,8 @@ export interface Account {
   tenantId: string;
   userId: string;
   type: AccountType;
+  accountType?: AccountType;
+  name?: string;
   nickname: string | null;
   accountNumberMasked: string; // Always masked: "****1234"
   routingNumber: string;

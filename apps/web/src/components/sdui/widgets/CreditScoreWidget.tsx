@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ComponentManifest } from "@/types/sdui";
 
 export default function CreditScoreWidget({ manifest }: { manifest: ComponentManifest }) {
-  const { score, change, provider } = manifest.props as Record<string, unknown>;
+  const { score, change, provider } = manifest.props as Record<string, string | number | boolean>;
   const scoreNum = (score as number) ?? 0;
 
   const getScoreColor = (s: number) => {
