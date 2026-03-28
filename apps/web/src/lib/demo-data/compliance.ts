@@ -3,6 +3,7 @@
  */
 
 import { ActionHandler, DEMO_USER } from "./types";
+import { tenantConfig } from "@/lib/tenant.config";
 
 // =============================================================================
 // HANDLERS
@@ -67,7 +68,7 @@ export const complianceHandlers: Record<string, ActionHandler> = {
   }),
   "activation.passkeyOptions": () => ({
     challenge: "demo-challenge",
-    rpName: "Demo Credit Union",
+    rpName: tenantConfig.name,
     rpId: "localhost",
     userId: DEMO_USER.id,
     userName: DEMO_USER.email,
@@ -83,7 +84,7 @@ export const complianceHandlers: Record<string, ActionHandler> = {
   }),
   "activation.complete": () => ({
     status: "completed",
-    message: "Activation complete. Welcome to Demo Credit Union!",
+    message: `Activation complete. Welcome to ${tenantConfig.name}!`,
   }),
   "activation.checkTermsStatus": () => ({
     upToDate: true,

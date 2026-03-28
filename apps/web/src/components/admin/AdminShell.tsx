@@ -39,6 +39,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { cn } from "@/lib/utils";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 const navItems = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard, end: true },
@@ -76,13 +77,14 @@ function getBreadcrumbs(pathname: string): { label: string; path?: string }[] {
 }
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+  const { config } = useSiteConfig();
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-2 px-4 py-5">
         <Building2 className="h-6 w-6 text-slate-300" />
         <div className="min-w-0">
           <p className="text-sm font-semibold text-white truncate">Admin Console</p>
-          <p className="text-xs text-slate-400 truncate">Demo Credit Union</p>
+          <p className="text-xs text-slate-400 truncate">{config.name}</p>
         </div>
       </div>
       <Separator className="bg-slate-700" />

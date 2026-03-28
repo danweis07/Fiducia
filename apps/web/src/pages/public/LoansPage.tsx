@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { useCMSPageContent } from "@/hooks/useCMSContent";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,10 +17,27 @@ import {
 } from "lucide-react";
 
 export default function LoansPage() {
+  const { data: cmsPage } = useCMSPageContent("loans");
+
+  if (cmsPage) {
+    return (
+      <PublicShell tenantName={tenantConfig.name}>
+        <SEOHead
+          title={cmsPage.title ?? `Personal Loans, Auto Loans & More | ${tenantConfig.name}`}
+          description="Get the funds you need with competitive rates. Personal loans from 7.49% APR, auto loans from 5.24% APR, and home equity from 6.99% APR."
+        />
+        <article
+          className="prose max-w-4xl mx-auto py-12 px-4"
+          dangerouslySetInnerHTML={{ __html: cmsPage.body ?? "" }}
+        />
+      </PublicShell>
+    );
+  }
+
   return (
-    <PublicShell tenantName="Demo Credit Union">
+    <PublicShell tenantName={tenantConfig.name}>
       <SEOHead
-        title="Personal Loans, Auto Loans & More | Demo Credit Union"
+        title={`Personal Loans, Auto Loans & More | ${tenantConfig.name}`}
         description="Get the funds you need with competitive rates. Personal loans from 7.49% APR, auto loans from 5.24% APR, and home equity from 6.99% APR."
       />
 
@@ -31,7 +50,8 @@ export default function LoansPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Loans for Every Need</h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-8">
             Whether you're consolidating debt, buying a car, or tapping into your home's equity,
-            Demo CU has competitive rates and flexible terms to help you reach your goals.
+            {tenantConfig.shortName} has competitive rates and flexible terms to help you reach your
+            goals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8">

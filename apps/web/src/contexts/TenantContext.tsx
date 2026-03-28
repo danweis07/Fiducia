@@ -20,6 +20,7 @@ import {
 import { getBackend } from "@/lib/backend";
 import type { AuthUser, AuthSession } from "@/lib/backend/types";
 import { isDemoMode, DEMO_USER } from "@/lib/demo";
+import { tenantConfig } from "@/lib/tenant.config";
 import { setDefaultCurrency } from "@/lib/common/currency";
 import { useIdleTimeout } from "@/hooks/useIdleTimeout";
 import { IdleTimeoutWarning } from "@/components/common/IdleTimeoutWarning";
@@ -131,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Handled by fallback
       setTenant({
         tenantId: "default",
-        tenantName: "Demo Bank",
+        tenantName: tenantConfig.name,
         userId,
         userRole: "member",
         displayName: "Customer",
@@ -156,7 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession({ user: syntheticUser });
       setTenant({
         tenantId: "demo-tenant",
-        tenantName: "Demo Credit Union",
+        tenantName: tenantConfig.name,
         userId: DEMO_USER.id,
         userRole: "owner",
         displayName: DEMO_USER.displayName,

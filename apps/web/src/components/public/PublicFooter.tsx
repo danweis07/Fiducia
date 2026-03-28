@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import { Building2, Phone } from "lucide-react";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 interface PublicFooterProps {
   tenantName?: string;
 }
 
-export function PublicFooter({ tenantName = "Demo Credit Union" }: PublicFooterProps) {
+export function PublicFooter({ tenantName }: PublicFooterProps) {
+  const { config } = useSiteConfig();
+  const resolvedName = tenantName ?? config.name;
   const year = new Date().getFullYear();
 
   const sections = [
@@ -76,19 +79,17 @@ export function PublicFooter({ tenantName = "Demo Credit Union" }: PublicFooterP
               <Phone className="h-4 w-4 text-blue-400" />
               <span className="text-slate-400">Member Services:</span>
               <a
-                href="tel:+18005559665"
+                href={`tel:${config.phone}`}
                 className="text-white font-semibold hover:text-blue-300 transition-colors"
               >
-                (800) 555-0199
+                {config.phoneFormatted}
               </a>
               <span className="text-slate-600 mx-2">|</span>
               <span className="text-slate-400">Routing #:</span>
-              <span className="text-white font-mono">265473851</span>
+              <span className="text-white font-mono">{config.routingNumber}</span>
             </div>
             <div className="flex items-center gap-4 text-xs text-slate-400">
-              <span>Mon-Fri 7am-7pm</span>
-              <span className="text-slate-600">|</span>
-              <span>Sat 9am-2pm EST</span>
+              <span>{config.phoneHours}</span>
             </div>
           </div>
         </div>
@@ -101,11 +102,11 @@ export function PublicFooter({ tenantName = "Demo Credit Union" }: PublicFooterP
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <Building2 className="h-6 w-6 text-blue-400" />
-              <span className="text-lg font-semibold text-white">Demo CU</span>
+              <span className="text-lg font-semibold text-white">{config.shortName}</span>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed mb-5">
-              Serving the Delaware Valley community since 1952. Your savings federally insured to at
-              least $250,000 by NCUA.
+              Serving our community since {config.foundedYear}. Your savings federally insured to at
+              least $250,000 by {config.ncuaMember ? "NCUA" : "FDIC"}.
             </p>
 
             {/* Social links */}
@@ -170,7 +171,7 @@ export function PublicFooter({ tenantName = "Demo Credit Union" }: PublicFooterP
         <div className="mt-12 pt-8 border-t border-slate-800 space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-xs text-slate-500">
-              &copy; {year} {tenantName}. All rights reserved.
+              &copy; {year} {resolvedName}. All rights reserved.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <span className="text-xs text-slate-500 font-semibold border border-slate-700 px-2 py-0.5 rounded">
@@ -182,13 +183,16 @@ export function PublicFooter({ tenantName = "Demo Credit Union" }: PublicFooterP
             </div>
           </div>
           <p className="text-[11px] text-slate-600 leading-relaxed">
-            Demo Credit Union is a not-for-profit financial cooperative. Your savings federally
-            insured to at least $250,000 and backed by the full faith and credit of the United
-            States Government. National Credit Union Administration (NCUA), a U.S. Government
-            Agency. APY = Annual Percentage Yield. APR = Annual Percentage Rate. Rates are subject
-            to change without notice and are effective as of March 14, 2026. All loans subject to
-            credit approval. Membership eligibility required. This is a demo website for
-            illustrative purposes only.
+            {resolvedName} is a{" "}
+            {config.ncuaMember ? "not-for-profit financial cooperative" : "financial institution"}.
+            Your savings federally insured to at least $250,000 and backed by the full faith and
+            credit of the United States Government.{" "}
+            {config.ncuaMember
+              ? "National Credit Union Administration (NCUA), a U.S. Government Agency."
+              : "Federal Deposit Insurance Corporation (FDIC)."}{" "}
+            APY = Annual Percentage Yield. APR = Annual Percentage Rate. Rates are subject to change
+            without notice. All loans subject to credit approval.{" "}
+            {config.ncuaMember ? "Membership eligibility required." : ""}
           </p>
         </div>
       </div>

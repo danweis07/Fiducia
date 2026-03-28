@@ -3,14 +3,7 @@ import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-const stats = [
-  { label: "Members", value: "175,000+" },
-  { label: "Branches", value: "23" },
-  { label: "Assets", value: "$3.2B" },
-  { label: "Employees", value: "850+" },
-  { label: "Years Serving Community", value: "70+" },
-];
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 const values = [
   {
@@ -43,20 +36,31 @@ const leadership = [
 ];
 
 export default function AboutPage() {
+  const { config } = useSiteConfig();
+  const yearsServing = new Date().getFullYear() - config.foundedYear;
+
+  const stats = [
+    { label: "Members", value: config.memberCount },
+    { label: "Branches", value: String(config.branchCount) },
+    { label: "Assets", value: config.totalAssets },
+    { label: "Employees", value: config.employeeCount },
+    { label: "Years Serving Community", value: `${yearsServing}+` },
+  ];
+
   return (
     <PublicShell>
       <SEOHead
-        title="About Us - Demo Credit Union"
-        description="Learn about Demo Credit Union — serving the Delaware Valley community since 1952 with 175,000+ members and $3.2 billion in assets."
+        title={`About Us - ${config.name}`}
+        description={`Learn about ${config.name} — serving the ${config.serviceArea} community since ${config.foundedYear} with ${config.memberCount} members and ${config.totalAssets} in assets.`}
       />
 
       {/* Hero */}
       <section className="bg-blue-900 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About Demo Credit Union</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">About {config.name}</h1>
           <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-            Founded in 1952, we have been proudly serving our community for over 70 years — putting
-            members first in everything we do.
+            Founded in {config.foundedYear}, we have been proudly serving our community for over{" "}
+            {yearsServing} years — putting members first in everything we do.
           </p>
         </div>
       </section>
@@ -67,21 +71,19 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-slate-900 mb-6">Our Story</h2>
           <div className="space-y-4 text-slate-600 text-lg leading-relaxed">
             <p>
-              Demo Credit Union began in 1952 as a small credit union for employees of a local
-              manufacturing company in Anytown, Pennsylvania. A group of 28 factory workers pooled
-              their savings with a simple goal: to provide affordable financial services for their
-              fellow employees and families.
+              {config.name} began in {config.foundedYear} as a small credit union in {config.city},{" "}
+              {config.state}. A group of community members pooled their savings with a simple goal:
+              to provide affordable financial services for their fellow neighbors and families.
             </p>
             <p>
-              Over the decades, we expanded our charter to serve the broader Delaware Valley
-              community. What started in a single room on the manufacturing floor has grown into a
-              full-service financial institution with 23 branches across Pennsylvania, New Jersey,
-              and Delaware.
+              Over the decades, we expanded our charter to serve the broader {config.serviceArea}{" "}
+              community. What started as a small cooperative has grown into a full-service financial
+              institution with {config.branchCount} branches across {config.serviceArea}.
             </p>
             <p>
-              Today, Demo Credit Union serves more than 175,000 members and manages over $3.2
-              billion in assets. While we have grown significantly, our founding principle remains
-              the same: people helping people.
+              Today, {config.name} serves more than {config.memberCount} members and manages over{" "}
+              {config.totalAssets} in assets. While we have grown significantly, our founding
+              principle remains the same: people helping people.
             </p>
           </div>
         </div>
@@ -164,11 +166,13 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-slate-900 mb-6 text-center">Community Impact</h2>
           <div className="bg-white rounded-lg shadow-sm border p-8">
-            <h3 className="text-2xl font-semibold text-blue-800 mb-4">The Demo CU Foundation</h3>
+            <h3 className="text-2xl font-semibold text-blue-800 mb-4">
+              The {config.shortName} Foundation
+            </h3>
             <p className="text-slate-600 text-lg mb-6">
-              Established in 1998, the Demo CU Foundation is the philanthropic arm of our credit
-              union. Through the Foundation, we channel our commitment to the communities we serve
-              into meaningful action.
+              The {config.shortName} Foundation is the philanthropic arm of our credit union.
+              Through the Foundation, we channel our commitment to the communities we serve into
+              meaningful action.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
@@ -198,7 +202,7 @@ export default function AboutPage() {
       <section className="bg-white py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-slate-900 mb-4">
-            Ready to Join the Demo CU Family?
+            Ready to Join the {config.shortName} Family?
           </h2>
           <p className="text-slate-600 text-lg mb-8">
             Experience the credit union difference. Better rates, lower fees, and a team that
@@ -206,7 +210,7 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-blue-700 hover:bg-blue-800">
-              <Link to="/open-account">Join Demo CU</Link>
+              <Link to="/open-account">Join {config.shortName}</Link>
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link to="/find-us">Find a Branch</Link>

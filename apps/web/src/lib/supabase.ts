@@ -1,3 +1,13 @@
+/**
+ * @deprecated This module is deprecated. Use the backend provider abstraction instead:
+ *
+ *   import { useBackend } from "@/lib/backend";
+ *
+ * The backend provider pattern (src/lib/backend/) supports swappable backends
+ * (Supabase, REST, Realtime) and is the approved way to access backend services.
+ * Direct Supabase imports will be flagged by ESLint. See the no-restricted-imports
+ * rule in eslint.config.js for details.
+ */
 // Re-export from the integration client for backwards compatibility
 export { supabase } from "@/integrations/supabase/client";
 

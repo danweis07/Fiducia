@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,10 +18,10 @@ import {
 
 export default function CreditCardsPage() {
   return (
-    <PublicShell tenantName="Demo Credit Union">
+    <PublicShell tenantName={tenantConfig.name}>
       <SEOHead
-        title="Credit Cards | Demo Credit Union"
-        description="Earn rewards, cash back, or enjoy a low rate. Demo CU Visa credit cards with no annual fee, fraud protection, and competitive rates."
+        title={`Credit Cards | ${tenantConfig.name}`}
+        description={`Earn rewards, cash back, or enjoy a low rate. ${tenantConfig.shortName} Visa credit cards with no annual fee, fraud protection, and competitive rates.`}
       />
 
       {/* Hero Section */}
@@ -53,8 +54,8 @@ export default function CreditCardsPage() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-slate-900 text-center mb-4">Choose Your Card</h2>
           <p className="text-slate-600 text-center mb-12 max-w-2xl mx-auto">
-            Every Demo CU Visa card comes with no annual fee, EMV chip security, contactless pay,
-            and 24/7 fraud monitoring.
+            {`Every ${tenantConfig.shortName} Visa card`} comes with no annual fee, EMV chip
+            security, contactless pay, and 24/7 fraud monitoring.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -66,7 +67,7 @@ export default function CreditCardsPage() {
               <CardHeader className="pt-8 text-center">
                 <div className="w-full h-40 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex flex-col items-center justify-center text-white mb-4 shadow-md">
                   <CreditCard className="h-10 w-10 mb-2" />
-                  <p className="font-bold text-lg">Demo CU Rewards Visa</p>
+                  <p className="font-bold text-lg">{tenantConfig.shortName} Rewards Visa</p>
                   <p className="text-blue-200 text-sm">Visa Signature</p>
                 </div>
                 <CardTitle className="text-xl text-slate-900">Rewards Visa</CardTitle>
@@ -118,7 +119,7 @@ export default function CreditCardsPage() {
               <CardHeader className="text-center">
                 <div className="w-full h-40 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex flex-col items-center justify-center text-white mb-4 shadow-md">
                   <CreditCard className="h-10 w-10 mb-2" />
-                  <p className="font-bold text-lg">Demo CU Cash Back</p>
+                  <p className="font-bold text-lg">{tenantConfig.shortName} Cash Back</p>
                   <p className="text-slate-300 text-sm">Visa Platinum</p>
                 </div>
                 <CardTitle className="text-xl text-slate-900">Cash Back</CardTitle>
@@ -159,7 +160,7 @@ export default function CreditCardsPage() {
               <CardHeader className="text-center">
                 <div className="w-full h-40 bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-xl flex flex-col items-center justify-center text-white mb-4 shadow-md">
                   <CreditCard className="h-10 w-10 mb-2" />
-                  <p className="font-bold text-lg">Demo CU Low Rate</p>
+                  <p className="font-bold text-lg">{tenantConfig.shortName} Low Rate</p>
                   <p className="text-emerald-200 text-sm">Visa Platinum</p>
                 </div>
                 <CardTitle className="text-xl text-slate-900">Low Rate</CardTitle>
@@ -202,7 +203,7 @@ export default function CreditCardsPage() {
       <section className="py-16 px-4 bg-slate-50">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">
-            Every Demo CU Card Includes
+            {`Every ${tenantConfig.shortName} Card Includes`}
           </h2>
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
             {[

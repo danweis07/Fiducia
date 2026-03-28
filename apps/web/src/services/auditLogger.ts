@@ -200,7 +200,6 @@ class AuditLogger {
 
     // Also log to console in development
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       const logFn =
         severity === "warn" ? console.warn : severity === "debug" ? console.debug : console.log;
       logFn(`[AUDIT:${severity.toUpperCase()}] ${message}`, entry.metadata || {});

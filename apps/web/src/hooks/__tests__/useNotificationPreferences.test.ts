@@ -43,7 +43,7 @@ describe("useNotificationPreferences", () => {
     const { result } = renderHook(() => useNotificationPreferences(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(mockPrefs);
+    expect(result.current.data?.preferences).toEqual(mockPrefs);
     expect(gateway.notificationPreferences.get).toHaveBeenCalledTimes(1);
   });
 

@@ -1,0 +1,52 @@
+# Production-like Docker Compose for AWS EC2 single-instance deployment
+# For larger deployments, use ECS/EKS with the Helm chart in helm/
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ../../apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - VITE_SUPABASE_URL=${SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ../../supabase/functions
+      dockerfile: Dockerfile
+    ports:
+      - "54321:54321"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../../supabase/migrations:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_DB=fiducia
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

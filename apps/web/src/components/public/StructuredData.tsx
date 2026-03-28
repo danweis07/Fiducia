@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { tenantConfig } from "@/lib/tenant.config";
 
 interface StructuredDataProps {
   type: string;
@@ -7,30 +8,28 @@ interface StructuredDataProps {
 
 const DEFAULT_ORG = {
   "@type": "CreditUnion",
-  name: "Demo Credit Union",
-  alternateName: "Demo CU",
-  url: "https://www.example-cu.org",
-  logo: "https://www.example-cu.org/logo.png",
-  foundingDate: "1952",
-  description: "Not-for-profit financial cooperative serving communities nationwide. NCUA insured.",
-  telephone: "+1-800-555-0199",
-  email: "support@example-cu.org",
+  name: tenantConfig.name,
+  alternateName: tenantConfig.shortName,
+  url: tenantConfig.websiteUrl,
+  logo: tenantConfig.logoUrl ?? `${tenantConfig.websiteUrl}/logo.png`,
+  foundingDate: String(tenantConfig.foundedYear),
+  description: `Not-for-profit financial cooperative serving communities in ${tenantConfig.serviceArea}. ${tenantConfig.ncuaMember ? "NCUA" : "FDIC"} insured.`,
+  telephone: tenantConfig.phone,
+  email: tenantConfig.email,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "100 Credit Union Way",
-    addressLocality: "Anytown",
-    addressRegion: "US",
-    postalCode: "10001",
-    addressCountry: "US",
+    streetAddress: tenantConfig.streetAddress,
+    addressLocality: tenantConfig.city,
+    addressRegion: tenantConfig.stateAbbr,
+    postalCode: tenantConfig.postalCode,
+    addressCountry: tenantConfig.country,
   },
   areaServed: [{ "@type": "Country", name: "United States" }],
-  numberOfEmployees: { "@type": "QuantitativeValue", value: 850 },
-  sameAs: [
-    "https://facebook.com/examplecu",
-    "https://twitter.com/examplecu",
-    "https://linkedin.com/company/example-cu",
-    "https://instagram.com/examplecu",
-  ],
+  numberOfEmployees: {
+    "@type": "QuantitativeValue",
+    value: parseInt(tenantConfig.employeeCount.replace(/\D/g, ""), 10) || 0,
+  },
+  sameAs: [],
 };
 
 /**

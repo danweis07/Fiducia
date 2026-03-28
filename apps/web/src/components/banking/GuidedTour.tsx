@@ -16,7 +16,7 @@ interface GuidedTourProps {
   onDismiss: () => void;
 }
 
-const STORAGE_KEY = "fiducia_tour_completed";
+const STORAGE_KEY = "app-tour-completed";
 
 function getTooltipPosition(
   rect: DOMRect,

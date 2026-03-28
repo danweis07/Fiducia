@@ -15,6 +15,10 @@ vi.mock("@/components/public/SEOHead", () => ({
   SEOHead: () => null,
 }));
 
+vi.mock("@/hooks/useCMSContent", () => ({
+  useCMSPageContent: () => ({ data: null, isLoading: false }),
+}));
+
 import LoansPage from "../LoansPage";
 
 describe("LoansPage", () => {

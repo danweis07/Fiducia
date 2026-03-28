@@ -8,6 +8,7 @@
 import React, { lazy } from "react";
 import { Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { isInternationalExcluded } from "@/lib/features/international";
 
 // Banking pages
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
@@ -17,7 +18,6 @@ const LoanDetail = lazy(() => import("@/pages/LoanDetail"));
 const Transfer = lazy(() => import("@/pages/Transfer"));
 const MoveMoney = lazy(() => import("@/pages/MoveMoney"));
 const BillPay = lazy(() => import("@/pages/BillPay"));
-const InternationalPayments = lazy(() => import("@/pages/InternationalPayments"));
 const Deposit = lazy(() => import("@/pages/Deposit"));
 const Cards = lazy(() => import("@/pages/Cards"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
@@ -45,17 +45,36 @@ const OpenBankingConsents = lazy(() => import("@/pages/OpenBankingConsents"));
 const KYCAMLCompliance = lazy(() => import("@/pages/KYCAMLCompliance"));
 const AutomationRules = lazy(() => import("@/pages/member/AutomationRules"));
 
-// International compliance pages
-const InstantPayments = lazy(() => import("@/pages/InstantPayments"));
-const ConsentDashboard = lazy(() => import("@/pages/ConsentDashboard"));
-const SCAManagement = lazy(() => import("@/pages/SCAManagement"));
-const InternationalEKYC = lazy(() => import("@/pages/InternationalEKYC"));
-const OpenFinanceHub = lazy(() => import("@/pages/OpenFinanceHub"));
+// International & multi-market pages (conditionally loaded)
+const InternationalPayments = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/InternationalPayments"));
+const InstantPayments = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/InstantPayments"));
+const ConsentDashboard = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/ConsentDashboard"));
+const SCAManagement = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/SCAManagement"));
+const InternationalEKYC = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/InternationalEKYC"));
+const OpenFinanceHub = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/OpenFinanceHub"));
+const AliasPayments = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/AliasPayments"));
+const MultiCurrencyWallet = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/MultiCurrencyWallet"));
+const RegulatoryDashboard = isInternationalExcluded()
+  ? null
+  : lazy(() => import("@/pages/RegulatoryDashboard"));
 
 // Business orchestration pages
-const AliasPayments = lazy(() => import("@/pages/AliasPayments"));
-const MultiCurrencyWallet = lazy(() => import("@/pages/MultiCurrencyWallet"));
-const RegulatoryDashboard = lazy(() => import("@/pages/RegulatoryDashboard"));
 const BusinessHub = lazy(() => import("@/pages/BusinessHub"));
 const InvoiceProcessor = lazy(() => import("@/pages/InvoiceProcessor"));
 const CashSweeps = lazy(() => import("@/pages/CashSweeps"));
@@ -111,18 +130,18 @@ export function bankingRoutes() {
       <Route path="/connected-apps" element={eb(OpenBankingConsents)} />
       <Route path="/kyc-aml" element={eb(KYCAMLCompliance)} />
 
-      {/* International & multi-market */}
-      <Route path="/international" element={eb(InternationalPayments)} />
-      <Route path="/instant-payments" element={eb(InstantPayments)} />
-      <Route path="/alias-payments" element={eb(AliasPayments)} />
-      <Route path="/multi-currency" element={eb(MultiCurrencyWallet)} />
-      <Route path="/regulatory" element={eb(RegulatoryDashboard)} />
+      {/* International & multi-market (excluded when VITE_EXCLUDE_INTERNATIONAL=true) */}
+      {InternationalPayments && <Route path="/international" element={eb(InternationalPayments)} />}
+      {InstantPayments && <Route path="/instant-payments" element={eb(InstantPayments)} />}
+      {AliasPayments && <Route path="/alias-payments" element={eb(AliasPayments)} />}
+      {MultiCurrencyWallet && <Route path="/multi-currency" element={eb(MultiCurrencyWallet)} />}
+      {RegulatoryDashboard && <Route path="/regulatory" element={eb(RegulatoryDashboard)} />}
 
       {/* International compliance */}
-      <Route path="/consent-dashboard" element={eb(ConsentDashboard)} />
-      <Route path="/sca" element={eb(SCAManagement)} />
-      <Route path="/international-kyc" element={eb(InternationalEKYC)} />
-      <Route path="/open-finance" element={eb(OpenFinanceHub)} />
+      {ConsentDashboard && <Route path="/consent-dashboard" element={eb(ConsentDashboard)} />}
+      {SCAManagement && <Route path="/sca" element={eb(SCAManagement)} />}
+      {InternationalEKYC && <Route path="/international-kyc" element={eb(InternationalEKYC)} />}
+      {OpenFinanceHub && <Route path="/open-finance" element={eb(OpenFinanceHub)} />}
 
       {/* Business orchestration */}
       <Route path="/business" element={eb(BusinessHub)} />

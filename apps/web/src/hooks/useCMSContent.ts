@@ -44,3 +44,26 @@ export function useCMSBanners(channel = "web_portal") {
 export function useCMSAnnouncements(channel = "web_portal") {
   return useCMSContent({ channel, contentType: "announcement", limit: 5 });
 }
+
+/**
+ * Fetch a single CMS page by slug.
+ * Public product pages should use this to source their content from the CMS
+ * instead of hardcoding JSX.
+ *
+ * Usage:
+ *   const { data: page, isLoading } = useCMSPageContent("checking");
+ */
+export function useCMSPageContent(slug: string) {
+  return useQuery({
+    queryKey: ["cms", "page", slug],
+    queryFn: () =>
+      gateway.cms.listContent({
+        slug,
+        contentType: "page",
+        status: "published",
+        limit: 1,
+      }),
+    staleTime: 1000 * 60 * 5,
+    select: (data) => (data.content ?? [])[0] ?? null,
+  });
+}

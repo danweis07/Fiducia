@@ -72,7 +72,7 @@ describe("useMemberAddresses", () => {
     const { result } = renderHook(() => useMemberAddresses(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.addresses).toHaveLength(1);
     expect(gateway.member.addresses).toHaveBeenCalledTimes(1);
   });
 

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, PiggyBank, Landmark, CreditCard, Home, ArrowRight } from "lucide-react";
@@ -68,10 +69,10 @@ const creditCardRates = [
 
 export default function RatesPage() {
   return (
-    <PublicShell tenantName="Demo CU">
+    <PublicShell tenantName={tenantConfig.shortName}>
       <SEOHead
-        title="Current Rates | Demo Credit Union"
-        description="View current savings, CD, loan, mortgage, and credit card rates at Demo Credit Union. Competitive rates for members."
+        title={`Current Rates | ${tenantConfig.name}`}
+        description={`View current savings, CD, loan, mortgage, and credit card rates at ${tenantConfig.name}. Competitive rates for members.`}
       />
 
       {/* Hero */}
