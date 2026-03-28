@@ -25,7 +25,16 @@ vi.mock("@/lib/gateway", () => ({
       updateStatus: vi.fn(),
     },
     systemHealth: {
-      snapshot: vi.fn().mockResolvedValue({ status: "healthy" }),
+      snapshot: vi
+        .fn()
+        .mockResolvedValue({
+          health: {
+            overallStatus: "healthy",
+            timestamp: "2026-03-01",
+            services: [],
+            uptimePct: 99.9,
+          },
+        }),
       deployments: vi.fn(),
     },
   },

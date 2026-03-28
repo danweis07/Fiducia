@@ -116,7 +116,7 @@ export const DEFAULT_THEME: ThemeConfig = {
   reducedMotion: false,
 };
 
-const STORAGE_KEY = "vantage-theme";
+const STORAGE_KEY = "app-theme";
 
 export function loadTheme(): ThemeConfig {
   try {

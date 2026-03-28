@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -139,9 +140,9 @@ const securityTips = [
 
 export default function FraudPreventionPage() {
   return (
-    <PublicShell tenantName="Demo Credit Union">
+    <PublicShell tenantName={tenantConfig.name}>
       <SEOHead
-        title="Fraud Prevention | Demo Credit Union"
+        title={`Fraud Prevention | ${tenantConfig.name}`}
         description="Learn how to protect yourself from fraud. Recognize common scams, understand security best practices, and know what to do if you're a victim."
       />
 

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,9 +18,9 @@ import {
 
 export default function MortgagePage() {
   return (
-    <PublicShell tenantName="Demo Credit Union">
+    <PublicShell tenantName={tenantConfig.name}>
       <SEOHead
-        title="Mortgage & Home Loans | Demo Credit Union"
+        title={`Mortgage & Home Loans | ${tenantConfig.name}`}
         description="Find your dream home with competitive mortgage rates. 30-year fixed from 6.375%, 15-year fixed from 5.750%. FHA, VA, and jumbo loans available."
       />
 
@@ -29,7 +30,7 @@ export default function MortgagePage() {
           <Badge className="bg-blue-600 text-white mb-4 text-sm px-4 py-1">Rates from 5.25%</Badge>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Your Dream Home Starts Here</h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-8">
-            Whether you're buying your first home, upgrading, or refinancing, Demo Credit Union
+            Whether you're buying your first home, upgrading, or refinancing, {tenantConfig.name}
             offers competitive rates, low closing costs, and personalized service every step of the
             way.
           </p>
@@ -191,7 +192,7 @@ export default function MortgagePage() {
             </div>
             <div className="bg-white rounded-xl shadow-lg p-8">
               <h3 className="text-xl font-bold text-slate-900 mb-6 text-center">
-                Why Demo CU for Your Mortgage?
+                {`Why ${tenantConfig.shortName} for Your Mortgage?`}
               </h3>
               <div className="space-y-6">
                 {[

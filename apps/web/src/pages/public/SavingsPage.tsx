@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { useCMSPageContent } from "@/hooks/useCMSContent";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,14 +11,30 @@ import { TrendingUp, Shield, PiggyBank, Clock, Landmark, ArrowRight } from "luci
 
 export default function SavingsPage() {
   const { t } = useTranslation("public");
+  const { data: cmsPage } = useCMSPageContent("savings");
   const rateLabel = t("terms.rateLabel");
   const insuranceBody = t("terms.depositInsuranceBody");
   const insuranceLimit = t("terms.depositInsuranceLimit");
 
+  if (cmsPage) {
+    return (
+      <PublicShell tenantName={tenantConfig.name}>
+        <SEOHead
+          title={cmsPage.title ?? t("savings.seoTitle", { tenantName: tenantConfig.name })}
+          description={t("savings.seoDescription", { topRate: "5.00%", rateLabel })}
+        />
+        <article
+          className="prose max-w-4xl mx-auto py-12 px-4"
+          dangerouslySetInnerHTML={{ __html: cmsPage.body ?? "" }}
+        />
+      </PublicShell>
+    );
+  }
+
   return (
-    <PublicShell tenantName="Demo Credit Union">
+    <PublicShell tenantName={tenantConfig.name}>
       <SEOHead
-        title={t("savings.seoTitle", { tenantName: "Demo Credit Union" })}
+        title={t("savings.seoTitle", { tenantName: tenantConfig.name })}
         description={t("savings.seoDescription", { topRate: "5.00%", rateLabel })}
       />
 

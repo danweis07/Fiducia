@@ -18,37 +18,7 @@ import {
   Linkedin,
   ArrowRight,
 } from "lucide-react";
-
-const contactMethods = [
-  {
-    icon: Phone,
-    title: "Phone",
-    primary: "(800) 555-0199",
-    details: ["Mon-Fri: 7am - 7pm EST", "Sat: 9am - 2pm EST"],
-  },
-  {
-    icon: Mail,
-    title: "Email",
-    primary: "support@example-cu.org",
-    details: [
-      "Secure messaging available in online banking",
-      "Typical response within 1 business day",
-    ],
-  },
-  {
-    icon: MapPin,
-    title: "Mail",
-    primary: "Demo Credit Union",
-    details: ["100 Credit Union Way", "Anytown, US 10001"],
-  },
-  {
-    icon: Building2,
-    title: "In Person",
-    primary: "Multiple branches nationwide",
-    details: ["Full-service banking at every location"],
-    link: { to: "/find-us", label: "Find a Branch" },
-  },
-];
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 const socialLinks = [
   { icon: Facebook, label: "Facebook", href: "#" },
@@ -58,11 +28,44 @@ const socialLinks = [
 ];
 
 export default function ContactPage() {
+  const { config } = useSiteConfig();
+
+  const contactMethods = [
+    {
+      icon: Phone,
+      title: "Phone",
+      primary: config.phoneFormatted,
+      details: [config.phoneHours],
+    },
+    {
+      icon: Mail,
+      title: "Email",
+      primary: config.email,
+      details: [
+        "Secure messaging available in online banking",
+        "Typical response within 1 business day",
+      ],
+    },
+    {
+      icon: MapPin,
+      title: "Mail",
+      primary: config.name,
+      details: [config.streetAddress, `${config.city}, ${config.stateAbbr} ${config.postalCode}`],
+    },
+    {
+      icon: Building2,
+      title: "In Person",
+      primary: `${config.branchCount} branches across ${config.serviceArea}`,
+      details: ["Full-service banking at every location"],
+      link: { to: "/find-us", label: "Find a Branch" },
+    },
+  ];
+
   return (
-    <PublicShell tenantName="Demo Credit Union">
+    <PublicShell tenantName={config.name}>
       <SEOHead
-        title="Contact Us | Demo Credit Union"
-        description="Get in touch with Demo Credit Union. Call (800) 555-0199, email support@example-cu.org, or visit one of our branch locations."
+        title={`Contact Us | ${config.name}`}
+        description={`Get in touch with ${config.name}. Call ${config.phoneFormatted}, email ${config.email}, or visit one of our branch locations.`}
       />
 
       {/* Hero */}
@@ -132,7 +135,7 @@ export default function ContactPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-red-700 mb-2">(800) 555-FRAU (3728)</p>
+                <p className="text-2xl font-bold text-red-700 mb-2">{config.fraudPhoneFormatted}</p>
                 <p className="text-red-600 font-medium">Available 24/7</p>
                 <p className="text-sm text-red-600 mt-2">
                   If you suspect unauthorized activity on your account, call immediately. Do not
@@ -194,7 +197,7 @@ export default function ContactPage() {
                 <CardTitle className="text-lg text-slate-900">Routing Number</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-mono font-bold text-blue-600">265473851</p>
+                <p className="text-3xl font-mono font-bold text-blue-600">{config.routingNumber}</p>
                 <p className="text-sm text-slate-500 mt-2">
                   Use for direct deposits, ACH transfers, and domestic wire transfers.
                 </p>

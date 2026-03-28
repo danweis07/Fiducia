@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -17,7 +18,7 @@ import {
 } from "lucide-react";
 
 const eligibility = [
-  "Must be a Demo CU member or dependent of a current member",
+  `Must be a ${tenantConfig.shortName} member or dependent of a current member`,
   "Enrolled or accepted at an accredited college, university, or trade school",
   "Maintain a cumulative GPA of 3.0 or higher",
   "Demonstrate active community involvement and volunteer service",
@@ -56,22 +57,19 @@ const pastRecipients = [
     name: "Amara Johnson",
     school: "Temple University",
     major: "Nursing",
-    quote:
-      "The Demo CU Scholars Program helped me pursue my dream of becoming a nurse without the burden of extra student debt. I'm grateful for their investment in my future.",
+    quote: `The ${tenantConfig.shortName} Scholars Program helped me pursue my dream of becoming a nurse without the burden of extra student debt. I'm grateful for their investment in my future.`,
   },
   {
     name: "Carlos Rivera",
     school: "Drexel University",
     major: "Computer Science",
-    quote:
-      "As a first-generation college student, this scholarship meant everything to me. Demo CU didn't just give me money — they gave me confidence that my community believes in me.",
+    quote: `As a first-generation college student, this scholarship meant everything to me. ${tenantConfig.shortName} didn't just give me money — they gave me confidence that my community believes in me.`,
   },
   {
     name: "Priya Patel",
     school: "University of Delaware",
     major: "Environmental Science",
-    quote:
-      "The scholarship allowed me to focus on my research into sustainable water systems. I'm proud to be a Demo CU Scholar and to give back to the community that invested in me.",
+    quote: `The scholarship allowed me to focus on my research into sustainable water systems. I'm proud to be a ${tenantConfig.shortName} Scholar and to give back to the community that invested in me.`,
   },
 ];
 
@@ -79,8 +77,7 @@ const howToApply = [
   {
     step: "1",
     title: "Verify Membership",
-    description:
-      "Confirm that you or your parent/guardian is a current Demo CU member in good standing. Not a member yet? Open an account with just $5.",
+    description: `Confirm that you or your parent/guardian is a current ${tenantConfig.shortName} member in good standing. Not a member yet? Open an account with just $5.`,
   },
   {
     step: "2",
@@ -104,17 +101,19 @@ const howToApply = [
 
 export default function ScholarshipsPage() {
   return (
-    <PublicShell tenantName="Demo CU">
+    <PublicShell tenantName={tenantConfig.shortName}>
       <SEOHead
-        title="Demo CU Scholars Program | Demo Credit Union"
-        description="Apply for the Demo CU Scholars Program. $250,000 awarded annually — 50 scholarships of $5,000 each for members and their dependents."
+        title={`${tenantConfig.shortName} Scholars Program | ${tenantConfig.name}`}
+        description={`Apply for the ${tenantConfig.shortName} Scholars Program. $250,000 awarded annually — 50 scholarships of $5,000 each for members and their dependents.`}
       />
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <GraduationCap className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Demo CU Scholars Program</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            {tenantConfig.shortName} Scholars Program
+          </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
             Investing in the next generation of leaders. We&apos;re proud to support our members and
             their families on their educational journey.
@@ -128,9 +127,9 @@ export default function ScholarshipsPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Program Overview</h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
-              The Demo CU Scholars Program awards scholarships to deserving students who demonstrate
-              academic excellence, community involvement, and a commitment to financial
-              responsibility.
+              The {tenantConfig.shortName} Scholars Program awards scholarships to deserving
+              students who demonstrate academic excellence, community involvement, and a commitment
+              to financial responsibility.
             </p>
           </div>
           <div className="grid sm:grid-cols-3 gap-8 mb-12">
@@ -152,7 +151,7 @@ export default function ScholarshipsPage() {
           </div>
           <div className="bg-slate-50 rounded-xl p-8 text-center">
             <p className="text-lg text-slate-700">
-              Since 2005, the Demo CU Scholars Program has awarded over{" "}
+              Since 2005, the {tenantConfig.shortName} Scholars Program has awarded over{" "}
               <strong className="text-blue-600">$4 million</strong> to more than{" "}
               <strong className="text-blue-600">800 students</strong>, helping them achieve their
               academic and career goals.
@@ -207,7 +206,8 @@ export default function ScholarshipsPage() {
             Past Recipients Spotlight
           </h2>
           <p className="text-slate-600 text-center mb-12 max-w-2xl mx-auto">
-            Meet some of the talented students who have been awarded Demo CU Scholarships.
+            Meet some of the talented students who have been awarded {tenantConfig.shortName}{" "}
+            Scholarships.
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {pastRecipients.map((recipient) => (
@@ -262,7 +262,7 @@ export default function ScholarshipsPage() {
           <h2 className="text-3xl font-bold mb-4">Ready to Apply?</h2>
           <p className="text-blue-100 mb-8 text-lg">
             The 2026 application period is open. Don&apos;t miss your chance to earn a $5,000
-            scholarship from Demo Credit Union.
+            scholarship from {tenantConfig.name}.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button

@@ -5,7 +5,7 @@ import { createElement } from "react";
 
 vi.mock("@/lib/gateway", () => ({
   gateway: {
-    sca: {
+    intlSca: {
       getConfig: vi.fn(),
       createChallenge: vi.fn(),
       verifyFactor: vi.fn(),
@@ -59,14 +59,21 @@ describe("useSCAConfig", () => {
   });
 
   it("fetches config successfully", async () => {
-    vi.mocked(gateway.intlSca.getConfig).mockResolvedValue({
-      config: { factors: ["sms", "totp"] },
-    } as never);
+    const mockConfig = {
+      scaEnabled: true,
+      defaultThresholdCents: 10000,
+      thresholdCurrency: "USD",
+      biometricPreferred: false,
+      challengeExpirySeconds: 300,
+      maxRetries: 3,
+      supportedMethods: ["totp" as const, "pin" as const],
+    } satisfies import("@/types").SCAConfig;
+    vi.mocked(gateway.intlSca.getConfig).mockResolvedValue({ config: mockConfig });
 
     const { result } = renderHook(() => useSCAConfig(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({ factors: ["sms", "totp"] });
+    expect(result.current.data?.config).toEqual(mockConfig);
   });
 
   it("handles error", async () => {

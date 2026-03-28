@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { SUPPORTED_LANGUAGES, getLanguageDir } from "@/lib/i18n";
 
-const DISMISSED_KEY = "vantage-lang-mismatch-dismissed";
+const DISMISSED_KEY = "app-lang-mismatch-dismissed";
 
 export function LanguageMismatchBanner() {
   const { t, i18n } = useTranslation("common");

@@ -12,6 +12,10 @@ vi.mock("@/components/public/SEOHead", () => ({
   SEOHead: () => null,
 }));
 
+vi.mock("@/hooks/useCMSContent", () => ({
+  useCMSPageContent: () => ({ data: null, isLoading: false }),
+}));
+
 function createWrapper() {
   return ({ children }: { children: React.ReactNode }) =>
     createElement(MemoryRouter, null, children);

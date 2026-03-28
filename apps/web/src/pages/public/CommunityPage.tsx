@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -50,8 +51,7 @@ const programs = [
 const partners = [
   {
     name: "Anytown Food Bank",
-    description:
-      "Serving over 50,000 families annually across the Delaware Valley. Demo CU is a founding sponsor and provides $250,000 in annual funding plus 2,000+ volunteer hours.",
+    description: `Serving over 50,000 families annually across the Delaware Valley. ${tenantConfig.shortName} is a founding sponsor and provides $250,000 in annual funding plus 2,000+ volunteer hours.`,
     impact: "50,000 families served annually",
   },
   {
@@ -79,10 +79,10 @@ const greenInitiatives = [
 
 export default function CommunityPage() {
   return (
-    <PublicShell tenantName="Demo CU">
+    <PublicShell tenantName={tenantConfig.shortName}>
       <SEOHead
-        title="Community Involvement | Demo Credit Union"
-        description="Demo CU is invested in our community with $2.5M+ in annual charitable giving, financial literacy programs, and volunteer initiatives since 1952."
+        title={`Community Involvement | ${tenantConfig.name}`}
+        description={`${tenantConfig.shortName} is invested in our community with $2.5M+ in annual charitable giving, financial literacy programs, and volunteer initiatives since 1952.`}
       />
 
       {/* Hero */}
@@ -91,8 +91,8 @@ export default function CommunityPage() {
           <Heart className="h-12 w-12 text-blue-400 mx-auto mb-4" />
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Invested in Our Community</h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            Since 1952, Demo Credit Union has been more than a financial institution — we&apos;re a
-            neighbor, partner, and champion for the communities we serve.
+            Since 1952, {tenantConfig.name} has been more than a financial institution — we&apos;re
+            a neighbor, partner, and champion for the communities we serve.
           </p>
         </div>
       </section>
@@ -101,7 +101,9 @@ export default function CommunityPage() {
       <section className="py-16 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">The Demo CU Foundation</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              The {tenantConfig.shortName} Foundation
+            </h2>
             <div className="inline-flex items-center gap-3 bg-blue-50 rounded-full px-6 py-3">
               <Heart className="h-6 w-6 text-blue-600" />
               <span className="text-lg font-semibold text-blue-700">
@@ -109,9 +111,9 @@ export default function CommunityPage() {
               </span>
             </div>
             <p className="text-slate-600 mt-6 max-w-2xl mx-auto">
-              The Demo CU Foundation directs our community investment strategy, funding programs
-              that build financial capability, strengthen neighborhoods, and create opportunity
-              across Pennsylvania, New Jersey, and Delaware.
+              The {tenantConfig.shortName} Foundation directs our community investment strategy,
+              funding programs that build financial capability, strengthen neighborhoods, and create
+              opportunity across Pennsylvania, New Jersey, and Delaware.
             </p>
           </div>
 

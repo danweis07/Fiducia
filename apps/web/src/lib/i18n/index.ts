@@ -126,7 +126,7 @@ export async function loadLanguageNamespaces(lang: string): Promise<void> {
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   .init({
     resources: {
       en: {
@@ -148,7 +148,7 @@ i18n
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],
       caches: ["localStorage"],
-      lookupLocalStorage: "vantage-language",
+      lookupLocalStorage: "app-language",
     },
   } as Parameters<typeof i18n.init>[0]);
 

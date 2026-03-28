@@ -33,6 +33,7 @@ export function createContentDomain(callGateway: CallGatewayFn) {
       },
       async listContent(
         params: {
+          slug?: string;
           status?: string;
           contentType?: string;
           channel?: string;

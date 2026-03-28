@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { useCMSPageContent } from "@/hooks/useCMSContent";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,14 +19,30 @@ import {
 
 export default function CheckingPage() {
   const { t } = useTranslation("public");
+  const { data: cmsPage } = useCMSPageContent("checking");
   const atmCount = t("terms.atmCount");
   const atmNetworks = t("terms.atmNetworks");
   const rateLabel = t("terms.rateLabel");
 
+  if (cmsPage) {
+    return (
+      <PublicShell tenantName={tenantConfig.name}>
+        <SEOHead
+          title={cmsPage.title ?? t("checking.seoTitle", { tenantName: tenantConfig.name })}
+          description={t("checking.seoDescription", { atmCount })}
+        />
+        <article
+          className="prose max-w-4xl mx-auto py-12 px-4"
+          dangerouslySetInnerHTML={{ __html: cmsPage.body ?? "" }}
+        />
+      </PublicShell>
+    );
+  }
+
   return (
-    <PublicShell tenantName="Demo Credit Union">
+    <PublicShell tenantName={tenantConfig.name}>
       <SEOHead
-        title={t("checking.seoTitle", { tenantName: "Demo Credit Union" })}
+        title={t("checking.seoTitle", { tenantName: tenantConfig.name })}
         description={t("checking.seoDescription", { atmCount })}
       />
 

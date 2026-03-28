@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { tenantConfig } from "@/lib/tenant.config";
 
 /**
  * AI/LLM-friendly meta tags for maximum discoverability by AI assistants,
@@ -35,7 +36,7 @@ export function AIMetaTags() {
 
     // AI/LLM content hints
     setMeta("ai:site-type", "credit-union-website");
-    setMeta("ai:organization", "Demo Credit Union");
+    setMeta("ai:organization", tenantConfig.name);
     setMeta("ai:content-language", "en-US");
     setMeta("ai:llms-txt", "/llms.txt");
 

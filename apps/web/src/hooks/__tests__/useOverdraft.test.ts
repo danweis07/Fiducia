@@ -44,7 +44,7 @@ describe("useOverdraftSettings", () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(mockSettings);
+    expect(result.current.data?.settings).toEqual(mockSettings);
     expect(gateway.overdraft.getSettings).toHaveBeenCalledWith("acct-1");
   });
 

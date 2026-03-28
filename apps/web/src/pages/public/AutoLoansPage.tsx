@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -103,9 +104,9 @@ const comparison = [
 
 export default function AutoLoansPage() {
   return (
-    <PublicShell tenantName="Demo CU">
+    <PublicShell tenantName={tenantConfig.shortName}>
       <SEOHead
-        title="Auto Loans | Demo Credit Union"
+        title={`Auto Loans | ${tenantConfig.name}`}
         description="Finance your next vehicle with rates as low as 5.24% APR. New, used, and refinance auto loans with flexible terms up to 84 months."
       />
 
@@ -191,7 +192,7 @@ export default function AutoLoansPage() {
       <section className="py-16 px-4 bg-slate-50">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-slate-900 text-center mb-12">
-            Benefits of a Demo CU Auto Loan
+            {`Benefits of a ${tenantConfig.shortName} Auto Loan`}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit) => (
@@ -213,7 +214,7 @@ export default function AutoLoansPage() {
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-slate-900 text-center mb-4">
-            Why Finance with Demo CU?
+            {`Why Finance with ${tenantConfig.shortName}?`}
           </h2>
           <p className="text-slate-600 text-center mb-12 max-w-2xl mx-auto">
             See how credit union financing stacks up against typical dealership offers.
@@ -223,7 +224,9 @@ export default function AutoLoansPage() {
               <thead>
                 <tr className="bg-slate-100">
                   <th className="text-left p-4 text-slate-700 font-semibold">Feature</th>
-                  <th className="text-left p-4 text-blue-700 font-semibold">Demo CU</th>
+                  <th className="text-left p-4 text-blue-700 font-semibold">
+                    {tenantConfig.shortName}
+                  </th>
                   <th className="text-left p-4 text-slate-500 font-semibold">
                     Dealership Financing
                   </th>

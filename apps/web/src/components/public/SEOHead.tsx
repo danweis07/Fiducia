@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { tenantConfig } from "@/lib/tenant.config";
 
 interface SEOHeadProps {
   title: string;
@@ -12,7 +13,7 @@ interface SEOHeadProps {
   noIndex?: boolean;
 }
 
-const BRAND = "Demo Credit Union";
+const BRAND = tenantConfig.name;
 
 export function SEOHead({
   title,

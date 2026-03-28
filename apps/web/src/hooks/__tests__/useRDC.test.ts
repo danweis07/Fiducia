@@ -169,7 +169,7 @@ describe("useDepositStatus", () => {
     const { result } = renderHook(() => useDepositStatus("dep-1"), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.deposit.status).toBe("approved");
+    expect(result.current.data?.deposit.status).toBe("accepted");
   });
 
   it("does not fetch when id is empty", () => {
@@ -178,7 +178,7 @@ describe("useDepositStatus", () => {
     expect(gateway.rdc.status).not.toHaveBeenCalled();
   });
 
-  it("returns processing status", async () => {
+  it("returns reviewing status", async () => {
     vi.mocked(gateway.rdc.status).mockResolvedValue({
       deposit: { id: "dep-2", status: "reviewing" } as never,
     });
@@ -186,7 +186,7 @@ describe("useDepositStatus", () => {
     const { result } = renderHook(() => useDepositStatus("dep-2"), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.deposit.status).toBe("processing");
+    expect(result.current.data?.deposit.status).toBe("reviewing");
   });
 
   it("returns rejected status", async () => {

@@ -51,7 +51,7 @@ describe("useProfile", () => {
     const { result } = renderHook(() => useProfile(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(mockProfile);
+    expect(result.current.data?.user).toEqual(mockProfile);
     expect(gateway.auth.profile).toHaveBeenCalledTimes(1);
   });
 

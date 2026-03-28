@@ -18,23 +18,30 @@
   },
   "workspaces": [
     "apps/*",
+    "packages/*",
     "core-simulator"
   ],
+  "config": {
+    "webWorkspace": "@fiducia/web"
+  },
   "scripts": {
-    "dev": "npm run dev -w @fiducia/web",
-    "build": "npm run build -w @fiducia/web",
-    "typecheck": "npm run typecheck -w @fiducia/web",
-    "lint": "npm run lint -w @fiducia/web",
-    "lint:fix": "npm run lint:fix -w @fiducia/web",
+    "dev": "npm run dev -w $npm_package_config_webWorkspace",
+    "build": "npm run build -w $npm_package_config_webWorkspace",
+    "typecheck": "npm run typecheck -w $npm_package_config_webWorkspace",
+    "lint": "npm run lint -w $npm_package_config_webWorkspace",
+    "lint:fix": "npm run lint:fix -w $npm_package_config_webWorkspace",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "validate": "npm run validate -w @fiducia/web",
-    "test": "npm run test -w @fiducia/web",
-    "test:run": "npm run test:run -w @fiducia/web",
-    "test:coverage": "npm run test:coverage -w @fiducia/web",
-    "test:e2e": "npm run test:e2e -w @fiducia/web",
-    "i18n:check": "npm run i18n:check -w @fiducia/web",
-    "i18n:types": "npm run i18n:types -w @fiducia/web",
+    "validate": "npm run validate -w $npm_package_config_webWorkspace",
+    "test": "npm run test -w $npm_package_config_webWorkspace",
+    "test:run": "npm run test:run -w $npm_package_config_webWorkspace",
+    "test:coverage": "npm run test:coverage -w $npm_package_config_webWorkspace",
+    "test:e2e": "npm run test:e2e -w $npm_package_config_webWorkspace",
+    "i18n:check": "npm run i18n:check -w $npm_package_config_webWorkspace",
+    "i18n:types": "npm run i18n:types -w $npm_package_config_webWorkspace",
+    "migrate": "npx tsx scripts/migrate.ts",
+    "migrate:status": "npx tsx scripts/migrate.ts --status",
+    "migrate:dry-run": "npx tsx scripts/migrate.ts --dry-run",
     "prepare": "husky"
   },
   "devDependencies": {

@@ -32,7 +32,7 @@ interface CookieConsentContextValue {
 // Constants
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY = "demo_cu_cookie_consent";
+const STORAGE_KEY = "app-cookie-consent";
 
 // ---------------------------------------------------------------------------
 // Helpers

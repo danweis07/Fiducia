@@ -31,4 +31,35 @@ export default tseslint.config(
       eqeqeq: ["error", "always", { null: "ignore" }],
     },
   },
+  // Enforce Supabase abstraction: prevent direct Supabase imports outside the provider layer.
+  // All Supabase access should go through the backend provider at src/lib/backend/.
+  {
+    files: ["**/*.{ts,tsx}"],
+    ignores: [
+      "src/lib/backend/supabase-provider.ts",
+      "src/integrations/supabase/client.ts",
+      "src/lib/supabase.ts",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@supabase/supabase-js",
+              message:
+                "Do not import Supabase directly. Use the backend provider from @/lib/backend/ instead.",
+            },
+          ],
+          patterns: [
+            {
+              group: ["@/integrations/supabase/client", "@/integrations/supabase/client.ts"],
+              message:
+                "Do not import the Supabase client directly. Use the backend provider from @/lib/backend/ instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 );

@@ -3,6 +3,7 @@
  */
 
 import { ActionHandler, TENANT_ID, DEMO_USER, withPagination, isoDate, futureDate } from "./types";
+import { tenantConfig } from "@/lib/tenant.config";
 
 // =============================================================================
 // HANDLERS
@@ -23,11 +24,11 @@ export const contentHandlers: Record<string, ActionHandler> = {
   }),
   "config.theme": () => ({
     theme: {
-      tenantName: "Demo Credit Union",
-      logoUrl: null,
-      primaryColor: "#1e40af",
-      accentColor: "#3b82f6",
-      faviconUrl: null,
+      tenantName: tenantConfig.name,
+      logoUrl: tenantConfig.logoUrl,
+      primaryColor: tenantConfig.primaryColor,
+      accentColor: tenantConfig.accentColor,
+      faviconUrl: tenantConfig.faviconUrl,
     },
   }),
 
@@ -114,7 +115,7 @@ export const contentHandlers: Record<string, ActionHandler> = {
         label: "Email",
         description: "Email campaigns and transactional emails",
         isActive: true,
-        config: { senderEmail: "noreply@example-cu.org" },
+        config: { senderEmail: `noreply@${tenantConfig.email.split("@")[1]}` },
         createdAt: isoDate(180),
       },
       {
@@ -166,7 +167,7 @@ export const contentHandlers: Record<string, ActionHandler> = {
         id: "cms-001",
         slug: "welcome-announcement",
         title: "Welcome to Digital Banking",
-        body: "## Welcome!\n\nWe are excited to launch our new digital banking platform. Enjoy seamless account management, transfers, bill pay, and more — right from your browser or mobile device.\n\n**Key Features:**\n- Real-time account balances\n- Instant internal transfers\n- Mobile check deposit\n- Card controls\n\nNeed help? Visit our [Help Center](/help) or call (217) 555-0100.",
+        body: `## Welcome!\n\nWe are excited to launch our new digital banking platform. Enjoy seamless account management, transfers, bill pay, and more — right from your browser or mobile device.\n\n**Key Features:**\n- Real-time account balances\n- Instant internal transfers\n- Mobile check deposit\n- Card controls\n\nNeed help? Visit our [Help Center](/help) or call ${tenantConfig.phoneFormatted}.`,
         contentType: "announcement" as const,
         status: "published" as const,
         channels: ["web_portal", "mobile_app"],
@@ -230,7 +231,7 @@ export const contentHandlers: Record<string, ActionHandler> = {
         id: "cms-004",
         slug: "privacy-policy",
         title: "Privacy Policy",
-        body: "This privacy policy describes how Demo Credit Union collects, uses, and protects your personal information...",
+        body: `This privacy policy describes how ${tenantConfig.name} collects, uses, and protects your personal information...`,
         contentType: "legal" as const,
         status: "published" as const,
         channels: ["web_portal", "mobile_app"],
@@ -282,9 +283,11 @@ export const contentHandlers: Record<string, ActionHandler> = {
       },
     ];
     let filtered = allContent;
+    if (p.slug) filtered = filtered.filter((c) => c.slug === p.slug);
     if (p.status) filtered = filtered.filter((c) => c.status === p.status);
     if (p.contentType) filtered = filtered.filter((c) => c.contentType === p.contentType);
     if (p.channel) filtered = filtered.filter((c) => c.channels.includes(p.channel as string));
+    if (p.limit) filtered = filtered.slice(0, p.limit as number);
     return withPagination({ content: filtered }, filtered.length);
   },
   "cms.content.get": (p) => ({

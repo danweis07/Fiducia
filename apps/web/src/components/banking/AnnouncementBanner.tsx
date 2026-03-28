@@ -24,7 +24,7 @@ interface Announcement {
   };
 }
 
-const DISMISSED_KEY = "fiducia_dismissed_announcements";
+const DISMISSED_KEY = "app-dismissed-announcements";
 
 function getDismissedIds(): string[] {
   try {

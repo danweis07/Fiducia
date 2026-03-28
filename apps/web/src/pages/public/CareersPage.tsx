@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
+import { tenantConfig } from "@/lib/tenant.config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -147,8 +148,8 @@ export default function CareersPage() {
   return (
     <PublicShell>
       <SEOHead
-        title="Careers - Demo Credit Union"
-        description="Join the Demo Credit Union team. Explore open positions, competitive benefits, and a culture built around making a difference."
+        title={`Careers - ${tenantConfig.name}`}
+        description={`Join the ${tenantConfig.name} team. Explore open positions, competitive benefits, and a culture built around making a difference.`}
       />
 
       {/* Hero */}

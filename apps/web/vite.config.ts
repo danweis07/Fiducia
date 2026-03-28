@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => ({
   build: {
     sourcemap: mode === "production",
   },
+  define: {
+    __ENABLED_ADAPTERS__: JSON.stringify((process.env.ADAPTERS || "all").split(",")),
+  },
   plugins: [react()].filter(Boolean),
   resolve: {
     alias: {
