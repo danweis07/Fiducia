@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import type { ComponentManifest } from "@/types/sdui";
 
 export default function FeatureSpotlight({ manifest }: { manifest: ComponentManifest }) {
-  const { title, description, ctaLabel, ctaLink } = manifest.props as Record<string, unknown>;
+  const { title, description, ctaLabel, ctaLink } = manifest.props as Record<
+    string,
+    string | number | boolean
+  >;
 
   return (
     <Card className="bg-gradient-to-br from-slate-50 to-blue-50 border-blue-100">

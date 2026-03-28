@@ -15,7 +15,7 @@ export default function PromotionalBanner({ manifest }: { manifest: ComponentMan
     bgColor = "#3b82f6",
     textColor = "#ffffff",
     dismissible = true,
-  } = manifest.props as Record<string, unknown>;
+  } = manifest.props as Record<string, string | number | boolean>;
 
   return (
     <div

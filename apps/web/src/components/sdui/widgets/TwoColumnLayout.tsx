@@ -3,7 +3,7 @@ import type { ComponentManifest } from "@/types/sdui";
 export default function TwoColumnLayout({ manifest }: { manifest: ComponentManifest }) {
   // Two-column is a layout hint; actual child rendering is handled by
   // the parent SDUIRenderer. This wrapper just sets the grid.
-  const { leftLabel, rightLabel } = manifest.props as Record<string, unknown>;
+  const { leftLabel, rightLabel } = manifest.props as Record<string, string | number | boolean>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

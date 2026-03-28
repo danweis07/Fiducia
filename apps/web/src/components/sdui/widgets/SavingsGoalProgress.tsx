@@ -8,7 +8,10 @@ import type { ComponentManifest } from "@/types/sdui";
 export default function SavingsGoalProgress({ manifest }: { manifest: ComponentManifest }) {
   const { data } = useQuery({
     queryKey: ["goals", "summary"],
-    queryFn: () => gateway.savingsGoals.summary(),
+    queryFn: () =>
+      gateway.request<{ activeGoals: number; totalSavedCents: number; totalTargetCents: number }>(
+        "savings_goals.summary",
+      ),
   });
 
   const summary = data;
