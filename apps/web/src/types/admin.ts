@@ -172,18 +172,155 @@ export interface AdminAuditLogEntry {
 }
 
 // =============================================================================
-// BRANDING
+// DESIGN SYSTEM
 // =============================================================================
 
-export interface BrandingConfig {
-  primaryColor: string;
-  secondaryColor: string;
-  accentColor: string;
-  logoUrl: string | null;
-  fontFamily: string;
-  layoutTheme: "modern" | "classic" | "minimal";
+/** A color + its foreground (text/icon) color, both as HSL strings "H S% L%" */
+export interface ColorPair {
+  base: string;
+  foreground: string;
+}
+
+/** Full color palette — every CSS custom property the app uses */
+export interface ColorPalette {
+  // Brand
+  primary: ColorPair;
+  secondary: ColorPair;
+  accent: ColorPair;
+
+  // Surfaces
+  background: ColorPair;
+  card: ColorPair;
+  popover: ColorPair;
+  muted: ColorPair;
+
+  // Feedback
+  destructive: ColorPair;
+
+  // Utility (single values, no foreground)
+  border: string;
+  input: string;
+  ring: string;
+
+  // Sidebar (independent palette)
+  sidebar: {
+    background: string;
+    foreground: string;
+    primary: string;
+    primaryForeground: string;
+    accent: string;
+    accentForeground: string;
+    border: string;
+    ring: string;
+  };
+
+  // Semantic: risk levels
+  riskCritical: string;
+  riskCriticalLight: string;
+  riskHigh: string;
+  riskHighLight: string;
+  riskMedium: string;
+  riskMediumLight: string;
+  riskLow: string;
+  riskLowLight: string;
+
+  // Semantic: status
+  statusCritical: string;
+  statusWarning: string;
+  statusSuccess: string;
+  statusInfo: string;
+
+  // Neutral scale
+  slate50: string;
+  slate100: string;
+  slate200: string;
+  slate500: string;
+  slate600: string;
+  slate700: string;
+  slate800: string;
+
+  // Accent highlights
+  gold: string;
+  goldLight: string;
+}
+
+/** Logo system — multiple variants for different contexts */
+export interface LogoSystem {
+  primary: string | null;
+  mark: string | null;
+  primaryDark: string | null;
+  footer: string | null;
+}
+
+/** Typography tokens */
+export interface TypographyTokens {
+  headingFont: string;
+  bodyFont: string;
+  fontScale: "compact" | "default" | "spacious";
+  headingWeight: FontWeight;
+  bodyWeight: FontWeight;
+}
+
+export type FontWeight = "300" | "400" | "500" | "600" | "700" | "800";
+
+/** Surface/layout tokens */
+export interface SurfaceTokens {
+  borderRadius: "none" | "sm" | "md" | "lg" | "full";
+  cardElevation: "flat" | "subtle" | "raised";
+  layoutTheme: "modern" | "classic" | "compact" | "sidebar" | "dashboard";
+  buttonShape: "square" | "rounded" | "pill";
+}
+
+/** Gradient definition for hero sections, backgrounds, etc. */
+export interface GradientDefinition {
+  from: string; // HSL string
+  to: string; // HSL string
+  direction: "to-r" | "to-br" | "to-b" | "to-bl";
+}
+
+/** Gradient tokens for various UI surfaces */
+export interface GradientTokens {
+  hero: GradientDefinition | null;
+  cardHighlight: GradientDefinition | null;
+  sidebar: GradientDefinition | null;
+}
+
+/** Channel identifier for per-channel branding overrides */
+export type BrandingChannel = "public_site" | "banking_web" | "mobile_app" | "email";
+
+/**
+ * Per-channel overrides — sparse partial config that layers on top of the
+ * base design system for a specific delivery channel.
+ */
+export interface ChannelOverride {
+  channel: BrandingChannel;
+  logos?: Partial<LogoSystem>;
+  colors?: {
+    light?: Partial<Pick<ColorPalette, "primary" | "secondary" | "accent" | "background">>;
+  };
+  typography?: Partial<Pick<TypographyTokens, "fontScale">>;
+  surfaces?: Partial<Pick<SurfaceTokens, "borderRadius" | "buttonShape">>;
+}
+
+/** Full design system configuration — single source of truth for all visual tokens */
+export interface DesignSystemConfig {
+  version: 1;
+  mode: "easy" | "advanced";
+  presetId: string | null;
+  logos: LogoSystem;
+  colors: {
+    light: ColorPalette;
+    dark: ColorPalette | null;
+  };
+  gradients: GradientTokens;
+  typography: TypographyTokens;
+  surfaces: SurfaceTokens;
+  channelOverrides: ChannelOverride[];
   customCss: string;
 }
+
+/** @deprecated Use DesignSystemConfig instead */
+export type BrandingConfig = DesignSystemConfig;
 
 // =============================================================================
 // TENANT SETTINGS

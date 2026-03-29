@@ -47,16 +47,108 @@ async function requireAdminRole(ctx: GatewayContext): Promise<GatewayResponse | 
 // =============================================================================
 
 /**
- * admin.branding.update — Upsert tenant branding/theme configuration
+ * admin.designSystem.get — Read current design system configuration
+ */
+export async function getDesignSystem(ctx: GatewayContext): Promise<GatewayResponse> {
+  const authErr = requireAuth(ctx);
+  if (authErr) return authErr;
+
+  const roleErr = await requireAdminRole(ctx);
+  if (roleErr) return roleErr;
+
+  const { data } = await ctx.db
+    .from('banking_tenant_theme')
+    .select('*')
+    .eq('firm_id', ctx.firmId!)
+    .single();
+
+  if (!data) {
+    return { data: { designSystem: null } };
+  }
+
+  return {
+    data: {
+      designSystem: data.design_system ?? null,
+      // Include flat fields for reference
+      tenantName: data.tenant_name,
+      logoUrl: data.logo_url,
+      primaryColor: data.primary_color,
+      accentColor: data.accent_color,
+    },
+  };
+}
+
+/**
+ * admin.designSystem.update — Save full design system configuration
  *
  * Params:
- *   - primaryColor: string (optional) — Primary brand color hex
- *   - secondaryColor: string (optional) — Secondary brand color hex
- *   - accentColor: string (optional) — Accent color hex
- *   - logoUrl: string (optional) — URL to tenant logo
- *   - fontFamily: string (optional) — Custom font family
- *   - layoutTheme: string (optional) — Layout theme identifier
- *   - customCss: string (optional) — Custom CSS overrides
+ *   - designSystem: DesignSystemConfig (full JSONB config)
+ *
+ * Also writes through to flat columns for backward compatibility.
+ */
+export async function updateDesignSystem(ctx: GatewayContext): Promise<GatewayResponse> {
+  const authErr = requireAuth(ctx);
+  if (authErr) return authErr;
+
+  const roleErr = await requireAdminRole(ctx);
+  if (roleErr) return roleErr;
+
+  const { designSystem } = ctx.params as { designSystem?: Record<string, unknown> };
+
+  if (!designSystem || typeof designSystem !== 'object') {
+    return { error: { code: 'INVALID_PARAMS', message: 'designSystem object is required' }, status: 400 };
+  }
+
+  // Validate version field
+  if (designSystem.version !== 1) {
+    return { error: { code: 'INVALID_PARAMS', message: 'Unsupported design system version' }, status: 400 };
+  }
+
+  // Cap custom CSS length
+  if (typeof designSystem.customCss === 'string' && designSystem.customCss.length > 50000) {
+    return { error: { code: 'INVALID_PARAMS', message: 'Custom CSS exceeds 50KB limit' }, status: 400 };
+  }
+
+  // Write-through: extract flat column values from the design system for legacy queries
+  const colors = designSystem.colors as Record<string, Record<string, unknown>> | undefined;
+  const lightPalette = colors?.light as Record<string, Record<string, string>> | undefined;
+  const logos = designSystem.logos as Record<string, string | null> | undefined;
+  const typography = designSystem.typography as Record<string, string> | undefined;
+  const surfaces = designSystem.surfaces as Record<string, string> | undefined;
+
+  const upsertData: Record<string, unknown> = {
+    firm_id: ctx.firmId!,
+    design_system: designSystem,
+    updated_at: new Date().toISOString(),
+    // Write-through to flat columns
+    primary_color: lightPalette?.primary?.base ?? null,
+    accent_color: lightPalette?.accent?.base ?? null,
+    secondary_color: lightPalette?.secondary?.base ?? null,
+    logo_url: logos?.primary ?? null,
+    font_family: typography?.bodyFont ?? 'Inter',
+    layout_theme: surfaces?.layoutTheme ?? 'modern',
+    custom_css: (designSystem.customCss as string) ?? '',
+  };
+
+  const { data, error } = await ctx.db
+    .from('banking_tenant_theme')
+    .upsert(upsertData, { onConflict: 'firm_id' })
+    .select('*')
+    .single();
+
+  if (error) {
+    return { error: { code: 'INTERNAL_ERROR', message: 'Failed to update design system' }, status: 500 };
+  }
+
+  return {
+    data: {
+      designSystem: data.design_system,
+    },
+  };
+}
+
+/**
+ * @deprecated Use updateDesignSystem instead
  */
 export async function updateBranding(ctx: GatewayContext): Promise<GatewayResponse> {
   const authErr = requireAuth(ctx);
@@ -75,7 +167,6 @@ export async function updateBranding(ctx: GatewayContext): Promise<GatewayRespon
     customCss,
   } = ctx.params as Record<string, string | undefined>;
 
-  // Build the upsert payload — only include fields that were provided
   const upsertData: Record<string, unknown> = {
     firm_id: ctx.firmId!,
     updated_at: new Date().toISOString(),

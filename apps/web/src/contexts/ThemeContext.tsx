@@ -20,7 +20,9 @@ import {
   saveTheme,
 } from "@/lib/theme";
 import { loadFont } from "@/lib/theme/font-loader";
+import { applyDesignSystem } from "@/lib/theme/apply-design-system";
 import { getLanguageDir } from "@/lib/i18n";
+import type { DesignSystemConfig } from "@/types/admin";
 
 // =============================================================================
 // CONTEXT VALUE
@@ -32,6 +34,9 @@ interface ThemeContextValue {
   updateTheme: (partial: Partial<ThemeConfig>) => void;
   resetTheme: () => void;
   resolvedMode: "light" | "dark";
+  /** Set the tenant's design system config (from DB) */
+  setTenantDesignSystem: (config: DesignSystemConfig | null) => void;
+  tenantDesignSystem: DesignSystemConfig | null;
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -51,7 +56,7 @@ function getSystemReducedMotion(): boolean {
 }
 
 /**
- * Derive a lighter variant of an HSL color for secondary/surface use in dark mode.
+ * Derive a lighter variant of an HSL color for dark mode.
  * Input format: "H S% L%" — we bump lightness for dark-mode primary.
  */
 function deriveDarkPrimary(hsl: string): string {
@@ -70,6 +75,7 @@ function deriveDarkPrimary(hsl: string): string {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeConfig>(loadTheme);
   const [systemMode, setSystemMode] = useState<"light" | "dark">(getSystemMode);
+  const [tenantDesignSystem, setTenantDesignSystem] = useState<DesignSystemConfig | null>(null);
 
   const resolvedMode: "light" | "dark" = theme.mode === "system" ? systemMode : theme.mode;
 
@@ -87,7 +93,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const handler = (e: MediaQueryListEvent) => {
       setThemeState((prev) => ({ ...prev, reducedMotion: e.matches }));
     };
-    // Initialize from system preference if user hasn't explicitly toggled
     if (getSystemReducedMotion() && !theme.reducedMotion) {
       setThemeState((prev) => ({ ...prev, reducedMotion: true }));
     }
@@ -112,34 +117,39 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Layout class
     root.dataset.layout = theme.layout;
 
-    // CSS custom properties for dynamic colors
-    const isDark = resolvedMode === "dark";
-    root.style.setProperty(
-      "--primary",
-      isDark ? deriveDarkPrimary(theme.primaryColor) : theme.primaryColor,
-    );
-    root.style.setProperty("--primary-foreground", isDark ? "220 20% 10%" : "0 0% 100%");
-    root.style.setProperty("--secondary", theme.secondaryColor);
-    root.style.setProperty("--accent", theme.accentColor);
-    root.style.setProperty(
-      "--ring",
-      isDark ? deriveDarkPrimary(theme.primaryColor) : theme.primaryColor,
-    );
+    // If we have a tenant design system, use it for all CSS variables
+    if (tenantDesignSystem) {
+      applyDesignSystem(tenantDesignSystem, resolvedMode);
+    } else {
+      // Fallback: apply the legacy per-user theme settings
+      const isDark = resolvedMode === "dark";
+      root.style.setProperty(
+        "--primary",
+        isDark ? deriveDarkPrimary(theme.primaryColor) : theme.primaryColor,
+      );
+      root.style.setProperty("--primary-foreground", isDark ? "220 20% 10%" : "0 0% 100%");
+      root.style.setProperty("--secondary", theme.secondaryColor);
+      root.style.setProperty("--accent", theme.accentColor);
+      root.style.setProperty(
+        "--ring",
+        isDark ? deriveDarkPrimary(theme.primaryColor) : theme.primaryColor,
+      );
 
-    // Border radius
-    root.style.setProperty("--radius", BORDER_RADIUS_VALUES[theme.borderRadius]);
+      // Border radius
+      root.style.setProperty("--radius", BORDER_RADIUS_VALUES[theme.borderRadius]);
 
-    // Font family
-    root.style.setProperty("--font-family", FONT_FAMILIES[theme.font]);
-    document.body.style.fontFamily = FONT_FAMILIES[theme.font];
-    loadFont(theme.font);
+      // Font family
+      root.style.setProperty("--font-family", FONT_FAMILIES[theme.font]);
+      document.body.style.fontFamily = FONT_FAMILIES[theme.font];
+      loadFont(theme.font);
+    }
 
-    // RTL support — set dir attribute based on document lang
+    // RTL support
     const lang = document.documentElement.lang || "en";
     root.dir = getLanguageDir(lang);
-  }, [theme, resolvedMode]);
+  }, [theme, resolvedMode, tenantDesignSystem]);
 
-  // Persist
+  // Persist user preferences
   useEffect(() => {
     saveTheme(theme);
   }, [theme]);
@@ -157,8 +167,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<ThemeContextValue>(
-    () => ({ theme, setTheme, updateTheme, resetTheme, resolvedMode }),
-    [theme, setTheme, updateTheme, resetTheme, resolvedMode],
+    () => ({
+      theme,
+      setTheme,
+      updateTheme,
+      resetTheme,
+      resolvedMode,
+      setTenantDesignSystem,
+      tenantDesignSystem,
+    }),
+    [theme, setTheme, updateTheme, resetTheme, resolvedMode, tenantDesignSystem],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

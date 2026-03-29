@@ -21,7 +21,7 @@ import { listProviders, listConnected, connectWithApiKey, disconnectIntegration,
 import { healthCheck } from './handlers/health.ts';
 import { listChannels, updateChannel, listContent, getContent, createContent, updateContent, deleteContent, publishContent, archiveContent, getContentVersions, listTokens, createToken, revokeToken, getPublicContent, listPublicContent } from './handlers/cms.ts';
 import { suspendUser, activateUser, resetUserPassword, inviteUser } from './handlers/admin-users.ts';
-import { updateBranding } from './handlers/admin-branding.ts';
+import { updateBranding, getDesignSystem, updateDesignSystem } from './handlers/admin-branding.ts';
 import { listKycReviews, approveKyc, rejectKyc, listAmlAlerts, updateAmlStatus, listGdprRequests, updateGdprStatus } from './handlers/admin-compliance.ts';
 import { getAccountGrowth, getTransactionVolume, getDepositTrends, getKeyMetrics } from './handlers/admin-analytics.ts';
 import { listExperiments, getExperiment, createExperiment, updateExperiment, startExperiment, pauseExperiment, resumeExperiment, completeExperiment, getAssignment, trackEvent, getResults } from './handlers/experiments.ts';
@@ -324,8 +324,10 @@ export const routes: Record<string, Handler> = {
   'admin.users.resetPassword':    resetUserPassword,
   'admin.users.invite':           inviteUser,
 
-  // Admin — Branding
+  // Admin — Branding / Design System
   'admin.branding.update':        updateBranding,
+  'admin.designSystem.get':       getDesignSystem,
+  'admin.designSystem.update':    updateDesignSystem,
 
   // Admin — Compliance
   'admin.compliance.kycReviews':      listKycReviews,

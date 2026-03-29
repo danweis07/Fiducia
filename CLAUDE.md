@@ -90,7 +90,7 @@ mobile/                     # Flutter iOS/Android app
 
 - **TypeScript strict mode** — no `any` unless unavoidable
 - **Functional React** — hooks only, no class components
-- **Styling** — Tailwind CSS utility classes, design tokens in `apps/web/tailwind.config.ts`
+- **Styling** — Tailwind CSS utility classes, design tokens in `apps/web/tailwind.config.ts`, design system config in `apps/web/src/lib/theme/`
 - **UI primitives** — use `apps/web/src/components/ui/` (Radix + shadcn/ui pattern)
 - **Imports** — use `@/` path alias: `import { Button } from "@/components/ui/button"`
 - **Forms** — react-hook-form + Zod schemas for validation
@@ -131,6 +131,80 @@ mobile/                     # Flutter iOS/Android app
 1. Create `supabase/migrations/YYYYMMDD_description.sql`
 2. Write idempotent SQL (`IF NOT EXISTS`, `CREATE OR REPLACE`)
 3. Test with `docker compose up` (migrations auto-apply)
+
+## Design System
+
+The BrandingEditor (`apps/web/src/pages/admin/BrandingEditor.tsx`) is a full token-based design system configurator controlling ~70 CSS design tokens across website, banking web app, and mobile app.
+
+### Architecture
+
+```
+Admin saves DesignSystemConfig
+  → gateway "admin.designSystem.update"
+  → banking_tenant_theme.design_system (JSONB)
+
+User loads app
+  → useSiteConfig() fetches "config.theme"
+  → ThemeContext applies all CSS variables to :root
+  → Tailwind classes consume CSS variables automatically
+  → SDUI components inherit via CSS — no changes needed
+```
+
+### Key Files
+
+```
+apps/web/src/types/admin.ts           # DesignSystemConfig, ColorPalette, etc.
+apps/web/src/lib/theme/
+├── color-utils.ts                    # hex ↔ HSL conversion
+├── color-derivation.ts               # Auto-derive full palettes from 1-2 colors
+├── apply-design-system.ts            # Apply all CSS vars to :root
+├── presets.ts                        # 5 preset configs (Classic/Modern/Compact/Warmth/Professional)
+├── font-loader.ts                    # Google Fonts dynamic loading
+└── index.ts                          # Re-exports + theme types
+apps/web/src/pages/admin/
+├── BrandingEditor.tsx                # Main editor (Easy/Advanced mode tabs)
+└── branding/                         # Sub-components
+    ├── EasyModePanel.tsx             # Preset picker + brand color + logo
+    ├── AdvancedModePanel.tsx         # Full token-level controls
+    ├── ColorPickerField.tsx          # Hex ↔ HSL color picker
+    ├── ColorPaletteSection.tsx       # Grid of color pickers
+    ├── LogoSection.tsx               # 4 logo upload zones
+    ├── TypographySection.tsx         # Fonts, weights, scale
+    ├── SurfacesSection.tsx           # Radius, elevation, button shape, layout
+    ├── GradientSection.tsx           # Hero/card/sidebar gradients
+    ├── ChannelOverridesSection.tsx   # Per-channel branding overrides
+    └── LivePreview.tsx               # Real-time preview panel
+```
+
+### Token Categories
+
+| Category          | Tokens  | What It Controls                         |
+| ----------------- | ------- | ---------------------------------------- |
+| Brand Colors      | 6 pairs | Primary, secondary, accent + foregrounds |
+| Surface Colors    | 4 pairs | Background, card, popover, muted         |
+| Feedback/Utility  | 5       | Destructive, border, input, ring         |
+| Sidebar           | 8       | Full sidebar palette                     |
+| Semantic          | 12      | Risk levels (4), status colors (4)       |
+| Neutrals          | 9       | Slate scale + gold highlights            |
+| Typography        | 5       | Heading/body font, weights, scale        |
+| Surfaces          | 4       | Radius, elevation, button shape, layout  |
+| Gradients         | 3       | Hero, card highlight, sidebar            |
+| Logos             | 4       | Primary, mark, dark variant, footer      |
+| Channel Overrides | N       | Per-channel color/surface/logo overrides |
+| Custom CSS        | 1       | Raw CSS escape hatch                     |
+
+### Easy Mode vs Advanced Mode
+
+- **Easy Mode**: Pick a preset → override primary/accent color → upload logo → done. `deriveFullPalette()` auto-generates the complete palette for both light and dark modes.
+- **Advanced Mode**: Full control over every token. Collapsible sections for each category.
+
+### Modify design tokens
+
+1. Add the token to `DesignSystemConfig` in `apps/web/src/types/admin.ts`
+2. Add CSS variable application in `apps/web/src/lib/theme/apply-design-system.ts`
+3. Add to presets in `apps/web/src/lib/theme/presets.ts`
+4. Add UI control in the appropriate section component
+5. Add tests in the corresponding `__tests__/` directory
 
 ## Do Not Edit
 

@@ -108,6 +108,23 @@ export function createAdminDomain(callGateway: CallGatewayFn) {
       },
     },
 
+    designSystem: {
+      async get() {
+        return callGateway<{
+          designSystem: import("@/types/admin").DesignSystemConfig | null;
+          tenantName?: string;
+          logoUrl?: string | null;
+          primaryColor?: string;
+          accentColor?: string;
+        }>("admin.designSystem.get", {});
+      },
+      async update(designSystem: import("@/types/admin").DesignSystemConfig) {
+        return callGateway<{
+          designSystem: import("@/types/admin").DesignSystemConfig;
+        }>("admin.designSystem.update", { designSystem });
+      },
+    },
+
     adminCDP: {
       async getConfig() {
         return callGateway<{
