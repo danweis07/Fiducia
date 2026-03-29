@@ -6,6 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-03-29
+
+### Added
+
+- **Full Token-Based Design System Configurator** — replaces the 7-field BrandingEditor with a comprehensive CMS for visual identity controlling ~70 CSS design tokens across website, banking web app, and mobile app
+  - **Easy Mode**: pick a preset (Classic/Modern/Compact/Warmth/Professional), override primary + accent color, upload logo — everything else auto-derives via `deriveFullPalette()`
+  - **Advanced Mode**: full token-level control with collapsible sections for every token category
+  - **Color Palette**: 6 brand color pairs, 4 surface color pairs, destructive, border/input/ring, 8 sidebar tokens, 8 risk level tokens, 4 status tokens, 7-step neutral scale, gold highlights — all with light + dark mode (auto-derived or manual override)
+  - **Logo System**: 4 logo variants — primary, mark/icon, dark mode, footer
+  - **Typography**: heading + body font selection, font weights (300–800), font scale (compact/default/spacious)
+  - **Surfaces**: border radius (none/sm/md/lg/full), card elevation (flat/subtle/raised), button shape (square/rounded/pill), layout theme (5 options)
+  - **Gradients**: hero, card highlight, and sidebar gradients with configurable direction and colors
+  - **Per-Channel Overrides**: sparse partial configs for public_site, banking_web, mobile_app, and email channels
+  - **Custom CSS**: raw CSS escape hatch actually injected into the DOM
+  - **Live Preview**: real-time preview panel with light/dark toggle and color swatch bar
+- `DesignSystemConfig` JSONB storage in `banking_tenant_theme` table via new migration
+- Gateway actions: `admin.designSystem.get` and `admin.designSystem.update`
+- ThemeContext integration: tenant design system from DB applied to all 55+ CSS variables on `:root`
+- Color utilities: hex↔HSL bidirectional conversion with round-trip fidelity
+- Palette derivation: auto-generate complete light + dark palettes from 1–2 brand colors
+- 202 unit tests across 10 test files covering color math, palette derivation, DOM application, presets, and all editor components
+- CLAUDE.md design system documentation section with architecture, token categories, and modification workflow
+
+### Changed
+
+- `BrandingConfig` type deprecated in favor of `DesignSystemConfig`
+- `TenantTheme` extended with optional `designSystem` field
+- `ThemeContext` now accepts tenant design system and applies all CSS variables (was only 5)
+- `useSiteConfig` hook feeds design system to ThemeContext on load
+- Gateway `config.theme` response includes `designSystem` when present
+
 ## [1.2.0] - 2026-03-24
 
 ### Fixed
