@@ -248,6 +248,99 @@ describe("applyDesignSystem", () => {
     });
   });
 
+  describe("font weights", () => {
+    it("sets --font-weight-heading", () => {
+      applyDesignSystem(DEFAULT_DESIGN_SYSTEM, "light");
+      expect(document.documentElement.style.getPropertyValue("--font-weight-heading")).toBe(
+        DEFAULT_DESIGN_SYSTEM.typography.headingWeight,
+      );
+    });
+
+    it("sets --font-weight-body", () => {
+      applyDesignSystem(DEFAULT_DESIGN_SYSTEM, "light");
+      expect(document.documentElement.style.getPropertyValue("--font-weight-body")).toBe(
+        DEFAULT_DESIGN_SYSTEM.typography.bodyWeight,
+      );
+    });
+
+    it("updates when weight changes", () => {
+      const config = {
+        ...DEFAULT_DESIGN_SYSTEM,
+        typography: { ...DEFAULT_DESIGN_SYSTEM.typography, headingWeight: "800" as const },
+      };
+      applyDesignSystem(config, "light");
+      expect(document.documentElement.style.getPropertyValue("--font-weight-heading")).toBe("800");
+    });
+  });
+
+  describe("button shape", () => {
+    it("sets --button-radius for square", () => {
+      const config = {
+        ...DEFAULT_DESIGN_SYSTEM,
+        surfaces: { ...DEFAULT_DESIGN_SYSTEM.surfaces, buttonShape: "square" as const },
+      };
+      applyDesignSystem(config, "light");
+      expect(document.documentElement.style.getPropertyValue("--button-radius")).toBe("0.25rem");
+    });
+
+    it("sets --button-radius for rounded", () => {
+      const config = {
+        ...DEFAULT_DESIGN_SYSTEM,
+        surfaces: { ...DEFAULT_DESIGN_SYSTEM.surfaces, buttonShape: "rounded" as const },
+      };
+      applyDesignSystem(config, "light");
+      expect(document.documentElement.style.getPropertyValue("--button-radius")).toBe("0.5rem");
+    });
+
+    it("sets --button-radius for pill", () => {
+      const config = {
+        ...DEFAULT_DESIGN_SYSTEM,
+        surfaces: { ...DEFAULT_DESIGN_SYSTEM.surfaces, buttonShape: "pill" as const },
+      };
+      applyDesignSystem(config, "light");
+      expect(document.documentElement.style.getPropertyValue("--button-radius")).toBe("9999px");
+    });
+  });
+
+  describe("gradients", () => {
+    it("sets --gradient-hero when hero gradient is defined", () => {
+      applyDesignSystem(DEFAULT_DESIGN_SYSTEM, "light");
+      const hero = document.documentElement.style.getPropertyValue("--gradient-hero");
+      expect(hero).toContain("linear-gradient");
+      expect(hero).toContain("hsl");
+    });
+
+    it("sets --gradient-hero to none when hero is null", () => {
+      const config = {
+        ...DEFAULT_DESIGN_SYSTEM,
+        gradients: { hero: null, cardHighlight: null, sidebar: null },
+      };
+      applyDesignSystem(config, "light");
+      expect(document.documentElement.style.getPropertyValue("--gradient-hero")).toBe("none");
+    });
+
+    it("sets --gradient-card-highlight to none when not defined", () => {
+      applyDesignSystem(DEFAULT_DESIGN_SYSTEM, "light");
+      expect(document.documentElement.style.getPropertyValue("--gradient-card-highlight")).toBe(
+        "none",
+      );
+    });
+
+    it("sets correct gradient direction", () => {
+      const config = {
+        ...DEFAULT_DESIGN_SYSTEM,
+        gradients: {
+          hero: { from: "215 50% 25%", to: "38 75% 50%", direction: "to-b" as const },
+          cardHighlight: null,
+          sidebar: null,
+        },
+      };
+      applyDesignSystem(config, "light");
+      const hero = document.documentElement.style.getPropertyValue("--gradient-hero");
+      expect(hero).toContain("to bottom");
+    });
+  });
+
   describe("custom CSS injection", () => {
     it("injects custom CSS into a style element", () => {
       const config = { ...DEFAULT_DESIGN_SYSTEM, customCss: "body { color: red; }" };

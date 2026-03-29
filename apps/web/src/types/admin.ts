@@ -257,13 +257,49 @@ export interface TypographyTokens {
   headingFont: string;
   bodyFont: string;
   fontScale: "compact" | "default" | "spacious";
+  headingWeight: FontWeight;
+  bodyWeight: FontWeight;
 }
+
+export type FontWeight = "300" | "400" | "500" | "600" | "700" | "800";
 
 /** Surface/layout tokens */
 export interface SurfaceTokens {
   borderRadius: "none" | "sm" | "md" | "lg" | "full";
   cardElevation: "flat" | "subtle" | "raised";
   layoutTheme: "modern" | "classic" | "compact" | "sidebar" | "dashboard";
+  buttonShape: "square" | "rounded" | "pill";
+}
+
+/** Gradient definition for hero sections, backgrounds, etc. */
+export interface GradientDefinition {
+  from: string; // HSL string
+  to: string; // HSL string
+  direction: "to-r" | "to-br" | "to-b" | "to-bl";
+}
+
+/** Gradient tokens for various UI surfaces */
+export interface GradientTokens {
+  hero: GradientDefinition | null;
+  cardHighlight: GradientDefinition | null;
+  sidebar: GradientDefinition | null;
+}
+
+/** Channel identifier for per-channel branding overrides */
+export type BrandingChannel = "public_site" | "banking_web" | "mobile_app" | "email";
+
+/**
+ * Per-channel overrides — sparse partial config that layers on top of the
+ * base design system for a specific delivery channel.
+ */
+export interface ChannelOverride {
+  channel: BrandingChannel;
+  logos?: Partial<LogoSystem>;
+  colors?: {
+    light?: Partial<Pick<ColorPalette, "primary" | "secondary" | "accent" | "background">>;
+  };
+  typography?: Partial<Pick<TypographyTokens, "fontScale">>;
+  surfaces?: Partial<Pick<SurfaceTokens, "borderRadius" | "buttonShape">>;
 }
 
 /** Full design system configuration — single source of truth for all visual tokens */
@@ -276,8 +312,10 @@ export interface DesignSystemConfig {
     light: ColorPalette;
     dark: ColorPalette | null;
   };
+  gradients: GradientTokens;
   typography: TypographyTokens;
   surfaces: SurfaceTokens;
+  channelOverrides: ChannelOverride[];
   customCss: string;
 }
 

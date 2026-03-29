@@ -33,21 +33,31 @@ export function EasyModePanel({ config, onChange }: EasyModePanelProps) {
 
   function updatePrimaryColor(hsl: string) {
     const primaryHex = hslToHex(hsl);
-    const accentHex = hslToHex(config.colors.light.accent.base);
+    const accentHsl = config.colors.light.accent.base;
+    const accentHex = hslToHex(accentHsl);
     const { light, dark } = deriveFullPalette(primaryHex, accentHex);
     onChange({
       ...config,
       colors: { light, dark },
+      gradients: {
+        ...config.gradients,
+        hero: config.gradients.hero ? { ...config.gradients.hero, from: hsl } : null,
+      },
     });
   }
 
   function updateAccentColor(hsl: string) {
-    const primaryHex = hslToHex(config.colors.light.primary.base);
+    const primaryHsl = config.colors.light.primary.base;
+    const primaryHex = hslToHex(primaryHsl);
     const accentHex = hslToHex(hsl);
     const { light, dark } = deriveFullPalette(primaryHex, accentHex);
     onChange({
       ...config,
       colors: { light, dark },
+      gradients: {
+        ...config.gradients,
+        hero: config.gradients.hero ? { ...config.gradients.hero, to: hsl } : null,
+      },
     });
   }
 

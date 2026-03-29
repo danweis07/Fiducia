@@ -29,6 +29,16 @@ const ELEVATION_OPTIONS: {
   { value: "raised", label: "Raised", shadow: "shadow-md" },
 ];
 
+const BUTTON_SHAPE_OPTIONS: {
+  value: SurfaceTokens["buttonShape"];
+  label: string;
+  preview: string;
+}[] = [
+  { value: "square", label: "Square", preview: "rounded-sm" },
+  { value: "rounded", label: "Rounded", preview: "rounded-md" },
+  { value: "pill", label: "Pill", preview: "rounded-full" },
+];
+
 const LAYOUT_OPTIONS: {
   value: SurfaceTokens["layoutTheme"];
   label: string;
@@ -88,6 +98,27 @@ export function SurfacesSection({ surfaces, onChange }: SurfacesSectionProps) {
                 }`}
               >
                 <div className={`h-8 w-16 bg-card border rounded-md ${opt.shadow}`} />
+                <span className="text-xs">{opt.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Button Shape */}
+        <div className="space-y-1.5">
+          <Label>Button Shape</Label>
+          <div className="flex gap-3">
+            {BUTTON_SHAPE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => update({ buttonShape: opt.value })}
+                className={`flex flex-col items-center gap-1.5 p-3 border transition-colors rounded-lg ${
+                  surfaces.buttonShape === opt.value
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-muted-foreground/30"
+                }`}
+              >
+                <div className={`h-8 w-20 bg-primary/20 border border-primary/30 ${opt.preview}`} />
                 <span className="text-xs">{opt.label}</span>
               </button>
             ))}

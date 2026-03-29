@@ -26,6 +26,8 @@ describe("AdvancedModePanel", () => {
     expect(screen.getByText("Dark Mode")).toBeTruthy();
     expect(screen.getByText("Typography")).toBeTruthy();
     expect(screen.getByText("Layout & Surfaces")).toBeTruthy();
+    expect(screen.getByText("Gradients")).toBeTruthy();
+    expect(screen.getByText("Channel Overrides")).toBeTruthy();
     expect(screen.getByText("Custom CSS")).toBeTruthy();
   });
 
@@ -61,8 +63,10 @@ describe("AdvancedModePanel", () => {
     };
     render(createElement(AdvancedModePanel, { config, onChange }));
 
-    // Click the switch
-    const switchEl = screen.getByRole("switch");
+    // Find the dark mode switch — it's near the "Manual Dark Mode Override" label
+    const darkModeLabel = screen.getByText("Manual Dark Mode Override");
+    const darkModeSection = darkModeLabel.closest("div")!.parentElement!;
+    const switchEl = darkModeSection.querySelector("[role='switch']") as HTMLElement;
     fireEvent.click(switchEl);
 
     expect(onChange).toHaveBeenCalled();
@@ -81,7 +85,9 @@ describe("AdvancedModePanel", () => {
     };
     render(createElement(AdvancedModePanel, { config: configWithDark, onChange }));
 
-    const switchEl = screen.getByRole("switch");
+    const darkModeLabel = screen.getByText("Manual Dark Mode Override");
+    const darkModeSection = darkModeLabel.closest("div")!.parentElement!;
+    const switchEl = darkModeSection.querySelector("[role='switch']") as HTMLElement;
     fireEvent.click(switchEl);
 
     const newConfig = onChange.mock.calls[0][0] as DesignSystemConfig;
@@ -161,5 +167,42 @@ describe("AdvancedModePanel", () => {
     expect(onChange).toHaveBeenCalled();
     const newConfig = onChange.mock.calls[0][0] as DesignSystemConfig;
     expect(newConfig.surfaces.borderRadius).toBe("full");
+  });
+
+  it("renders button shape controls", () => {
+    render(createElement(AdvancedModePanel, defaultProps));
+    expect(screen.getByText("Button Shape")).toBeTruthy();
+    expect(screen.getByText("Square")).toBeTruthy();
+    expect(screen.getByText("Pill")).toBeTruthy();
+  });
+
+  it("updates button shape when clicked", () => {
+    const onChange = vi.fn();
+    render(createElement(AdvancedModePanel, { ...defaultProps, onChange }));
+
+    const pillButton = screen.getByText("Pill").closest("button");
+    fireEvent.click(pillButton!);
+
+    expect(onChange).toHaveBeenCalled();
+    const newConfig = onChange.mock.calls[0][0] as DesignSystemConfig;
+    expect(newConfig.surfaces.buttonShape).toBe("pill");
+  });
+
+  it("renders font weight controls", () => {
+    render(createElement(AdvancedModePanel, defaultProps));
+    expect(screen.getByText("Heading Weight")).toBeTruthy();
+    expect(screen.getByText("Body Weight")).toBeTruthy();
+  });
+
+  it("renders gradient section", () => {
+    render(createElement(AdvancedModePanel, defaultProps));
+    expect(screen.getByText("Gradients")).toBeTruthy();
+    expect(screen.getByText("Hero Gradient")).toBeTruthy();
+  });
+
+  it("renders channel overrides section", () => {
+    render(createElement(AdvancedModePanel, defaultProps));
+    expect(screen.getByText("Channel Overrides")).toBeTruthy();
+    expect(screen.getByText(/No channel overrides configured/)).toBeTruthy();
   });
 });

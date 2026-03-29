@@ -9,7 +9,8 @@ import { ColorPaletteSection } from "./ColorPaletteSection";
 import { LogoSection } from "./LogoSection";
 import { TypographySection } from "./TypographySection";
 import { SurfacesSection } from "./SurfacesSection";
-import { ColorPickerField } from "./ColorPickerField";
+import { GradientSection } from "./GradientSection";
+import { ChannelOverridesSection } from "./ChannelOverridesSection";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -255,6 +256,19 @@ export function AdvancedModePanel({ config, onChange }: AdvancedModePanelProps) 
       <SurfacesSection
         surfaces={config.surfaces}
         onChange={(surfaces) => onChange({ ...config, surfaces })}
+      />
+
+      {/* Gradients */}
+      <GradientSection
+        gradients={config.gradients}
+        onChange={(gradients) => onChange({ ...config, gradients })}
+      />
+
+      {/* Channel Overrides */}
+      <ChannelOverridesSection
+        overrides={config.channelOverrides}
+        baseConfig={config}
+        onChange={(channelOverrides) => onChange({ ...config, channelOverrides })}
       />
 
       {/* Custom CSS */}

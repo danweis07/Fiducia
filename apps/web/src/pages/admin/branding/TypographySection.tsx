@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { TypographyTokens } from "@/types/admin";
+import type { TypographyTokens, FontWeight } from "@/types/admin";
 import { AVAILABLE_FONTS } from "@/lib/theme";
 
 interface TypographySectionProps {
@@ -27,6 +27,15 @@ const SCALE_OPTIONS: {
   { value: "compact", label: "Compact", description: "Smaller text, denser layout" },
   { value: "default", label: "Default", description: "Standard sizing" },
   { value: "spacious", label: "Spacious", description: "Larger text, more breathing room" },
+];
+
+const WEIGHT_OPTIONS: { value: FontWeight; label: string }[] = [
+  { value: "300", label: "Light (300)" },
+  { value: "400", label: "Regular (400)" },
+  { value: "500", label: "Medium (500)" },
+  { value: "600", label: "Semi-Bold (600)" },
+  { value: "700", label: "Bold (700)" },
+  { value: "800", label: "Extra-Bold (800)" },
 ];
 
 export function TypographySection({ typography, onChange }: TypographySectionProps) {
@@ -77,6 +86,47 @@ export function TypographySection({ typography, onChange }: TypographySectionPro
           </div>
         </div>
 
+        {/* Font Weights */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label>Heading Weight</Label>
+            <Select
+              value={typography.headingWeight}
+              onValueChange={(v) => update({ headingWeight: v as FontWeight })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {WEIGHT_OPTIONS.map((w) => (
+                  <SelectItem key={w.value} value={w.value}>
+                    <span style={{ fontWeight: Number(w.value) }}>{w.label}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Body Weight</Label>
+            <Select
+              value={typography.bodyWeight}
+              onValueChange={(v) => update({ bodyWeight: v as FontWeight })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {WEIGHT_OPTIONS.map((w) => (
+                  <SelectItem key={w.value} value={w.value}>
+                    <span style={{ fontWeight: Number(w.value) }}>{w.label}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         <div className="space-y-1.5">
           <Label>Font Scale</Label>
           <div className="grid grid-cols-3 gap-2">
@@ -100,13 +150,23 @@ export function TypographySection({ typography, onChange }: TypographySectionPro
         {/* Live preview */}
         <div className="border rounded-lg p-4 space-y-2">
           <p
-            className="text-lg font-bold"
-            style={{ fontFamily: `'${typography.headingFont}', sans-serif` }}
+            className="text-lg"
+            style={{
+              fontFamily: `'${typography.headingFont}', sans-serif`,
+              fontWeight: Number(typography.headingWeight),
+            }}
           >
-            Heading Preview — {typography.headingFont}
+            Heading Preview — {typography.headingFont} ({typography.headingWeight})
           </p>
-          <p className="text-sm" style={{ fontFamily: `'${typography.bodyFont}', sans-serif` }}>
-            Body text preview — {typography.bodyFont}. The quick brown fox jumps over the lazy dog.
+          <p
+            className="text-sm"
+            style={{
+              fontFamily: `'${typography.bodyFont}', sans-serif`,
+              fontWeight: Number(typography.bodyWeight),
+            }}
+          >
+            Body text preview — {typography.bodyFont} ({typography.bodyWeight}). The quick brown fox
+            jumps over the lazy dog.
           </p>
         </div>
       </CardContent>

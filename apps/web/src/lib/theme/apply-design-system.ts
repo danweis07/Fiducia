@@ -132,6 +132,10 @@ export function applyDesignSystem(config: DesignSystemConfig, mode: "light" | "d
     if (headingKey) loadFont(headingKey);
   }
 
+  // Font weights
+  root.style.setProperty("--font-weight-heading", config.typography.headingWeight);
+  root.style.setProperty("--font-weight-body", config.typography.bodyWeight);
+
   // Font scale
   const scaleMap = { compact: "0.875", default: "1", spacious: "1.125" } as const;
   root.style.setProperty("--font-scale", scaleMap[config.typography.fontScale]);
@@ -144,8 +148,59 @@ export function applyDesignSystem(config: DesignSystemConfig, mode: "light" | "d
   } as const;
   root.style.setProperty("--card-shadow", elevationMap[config.surfaces.cardElevation]);
 
+  // Button shape
+  const buttonRadiusMap = { square: "0.25rem", rounded: "0.5rem", pill: "9999px" } as const;
+  root.style.setProperty("--button-radius", buttonRadiusMap[config.surfaces.buttonShape]);
+
   // Layout theme
   root.dataset.layout = config.surfaces.layoutTheme;
+
+  // Gradients
+  if (config.gradients.hero) {
+    const g = config.gradients.hero;
+    const dirMap = {
+      "to-r": "to right",
+      "to-br": "to bottom right",
+      "to-b": "to bottom",
+      "to-bl": "to bottom left",
+    } as const;
+    root.style.setProperty(
+      "--gradient-hero",
+      `linear-gradient(${dirMap[g.direction]}, hsl(${g.from}), hsl(${g.to}))`,
+    );
+  } else {
+    root.style.setProperty("--gradient-hero", "none");
+  }
+  if (config.gradients.cardHighlight) {
+    const g = config.gradients.cardHighlight;
+    const dirMap = {
+      "to-r": "to right",
+      "to-br": "to bottom right",
+      "to-b": "to bottom",
+      "to-bl": "to bottom left",
+    } as const;
+    root.style.setProperty(
+      "--gradient-card-highlight",
+      `linear-gradient(${dirMap[g.direction]}, hsl(${g.from}), hsl(${g.to}))`,
+    );
+  } else {
+    root.style.setProperty("--gradient-card-highlight", "none");
+  }
+  if (config.gradients.sidebar) {
+    const g = config.gradients.sidebar;
+    const dirMap = {
+      "to-r": "to right",
+      "to-br": "to bottom right",
+      "to-b": "to bottom",
+      "to-bl": "to bottom left",
+    } as const;
+    root.style.setProperty(
+      "--gradient-sidebar",
+      `linear-gradient(${dirMap[g.direction]}, hsl(${g.from}), hsl(${g.to}))`,
+    );
+  } else {
+    root.style.setProperty("--gradient-sidebar", "none");
+  }
 
   // Custom CSS injection
   let styleEl = document.getElementById(CUSTOM_CSS_ID) as HTMLStyleElement | null;

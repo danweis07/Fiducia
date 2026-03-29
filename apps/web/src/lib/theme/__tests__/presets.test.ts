@@ -71,6 +71,31 @@ describe("presets", () => {
           expect(["modern", "classic", "compact", "sidebar", "dashboard"]).toContain(
             preset.surfaces.layoutTheme,
           );
+          expect(["square", "rounded", "pill"]).toContain(preset.surfaces.buttonShape);
+        });
+
+        it("has valid font weights", () => {
+          expect(["300", "400", "500", "600", "700", "800"]).toContain(
+            preset.typography.headingWeight,
+          );
+          expect(["300", "400", "500", "600", "700", "800"]).toContain(
+            preset.typography.bodyWeight,
+          );
+        });
+
+        it("has gradient tokens", () => {
+          expect(preset.gradients).toBeDefined();
+          // Hero gradient should be defined for all presets
+          expect(preset.gradients.hero).not.toBeNull();
+          if (preset.gradients.hero) {
+            expect(preset.gradients.hero.from).toMatch(/\d+ \d+% \d+%/);
+            expect(preset.gradients.hero.to).toMatch(/\d+ \d+% \d+%/);
+            expect(["to-r", "to-br", "to-b", "to-bl"]).toContain(preset.gradients.hero.direction);
+          }
+        });
+
+        it("has empty channel overrides by default", () => {
+          expect(preset.channelOverrides).toEqual([]);
         });
 
         it("has empty customCss", () => {
