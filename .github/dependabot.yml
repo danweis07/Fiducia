@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # npm dependencies — single monthly PR with all updates grouped
+  # npm dependencies — single monthly PR with minor/patch updates only
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -10,8 +10,11 @@ updates:
       - "danweis07"
     labels:
       - "dependencies"
+    # Ignore major version bumps — these need manual review
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
-      # Group ALL updates into one PR per month
       all-dependencies:
         patterns:
           - "*"
@@ -19,7 +22,7 @@ updates:
           - "minor"
           - "patch"
 
-  # GitHub Actions — single monthly PR
+  # GitHub Actions — single monthly PR, minor/patch only
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -30,7 +33,14 @@ updates:
     labels:
       - "dependencies"
       - "ci"
+    # Ignore major version bumps — these need manual review
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       all-actions:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
