@@ -186,7 +186,7 @@ class SupabaseAuthProvider implements AuthProvider {
       if (tuError) {
         return {
           tenantId: "default",
-          tenantName: "Demo Bank",
+          tenantName: "Demo Credit Union",
           userId,
           userRole: "member",
           displayName: "Customer",

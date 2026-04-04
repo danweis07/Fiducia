@@ -247,7 +247,7 @@ class RestAuthProvider implements AuthProvider {
     } catch {
       return {
         tenantId: "default",
-        tenantName: "Demo Bank",
+        tenantName: "Demo Credit Union",
         userId,
         userRole: "member",
         displayName: "Customer",

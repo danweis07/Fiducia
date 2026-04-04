@@ -236,7 +236,7 @@ describe("REST Backend Provider", () => {
         globalThis.fetch = vi.fn().mockRejectedValue(new Error("fail"));
         const ctx = await provider.auth.getTenantContext("u-1");
         expect(ctx.tenantId).toBe("default");
-        expect(ctx.tenantName).toBe("Demo Bank");
+        expect(ctx.tenantName).toBe("Demo Credit Union");
       });
     });
 
