@@ -1,0 +1,52 @@
+name: Create v1.4.1 Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Create v1.4.1 Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create v1.4.1 \
+            --target main \
+            --title "v1.4.1 — Build, CI & Test Reliability" \
+            --notes "## Fixed
+
+          - **npm peer dependency conflicts** — \`npm ci\` was failing with ERESOLVE errors due to vite/vitest and react/next-themes peer dep mismatches
+          - **TypeScript errors** — resolved all 4 type errors in \`supabase-provider.ts\` (untyped table helper producing \`never\` column types)
+          - **17 failing test files (20 tests)** — fixed root causes across theme, AI, component, gateway, and workflow tests
+          - **Inconsistent fallback tenant name** — aligned \"Demo Bank\" → \"Demo Credit Union\" across all providers to match \`tenant.config.ts\`
+
+          ## Changed
+
+          - **Upgrade vite 5 → 6** — satisfies vitest 4.x peer dependency; vite.config.ts required no changes
+          - **Enable CI on pull requests** — added \`pull_request\` and \`push\` triggers to all 6 CI/security workflows; previously manual-dispatch only
+          - **Add npm overrides** — root-level overrides for react, react-dom, vite, esbuild, and next-themes
+          - **Create \`.npmrc\`** — enforce \`engine-strict=true\` for Node.js version requirements
+          - **Mock \`useSiteConfig\` in test setup** — prevents \`QueryClientProvider\` requirement in component tests
+          - **Add demo-mode env vars to vitest config** — so Supabase client initializes in tests
+          - **Exclude Deno-native gateway tests from vitest** — these require \`deno test\`
+          - **Remove redundant test config from \`vite.config.ts\`** — \`vitest.config.ts\` is now the single source of truth
+
+          ## Validation
+
+          | Check | Before | After |
+          |---|---|---|
+          | \`npm ci\` | ERESOLVE error | Clean (0 vulnerabilities) |
+          | \`npm run typecheck\` | 4 errors | 0 errors |
+          | \`npm run test:run\` | 17 files failing | 279 files / 3391 tests passing |
+          | \`npm run build\` | Passes | Passes |
+          | CI workflows | Manual dispatch only | Auto on PR + push |
+
+          **Full Changelog**: https://github.com/danweis07/Fiducia/compare/v1.4.0...v1.4.1"
