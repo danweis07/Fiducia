@@ -33,7 +33,8 @@ function maskAccountNumber(accountNumber: string): string {
 function generateReferenceNumber(): string {
   const prefix = 'WR';
   const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const bytes = crypto.getRandomValues(new Uint8Array(4));
+  const random = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
   return `${prefix}${timestamp}${random}`;
 }
 

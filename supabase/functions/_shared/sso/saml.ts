@@ -295,6 +295,7 @@ function getWebCryptoAlgorithm(xmlAlgorithm: string): RsaHashedImportParams {
     return { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-512' };
   }
   if (xmlAlgorithm.includes('rsa-sha1') || xmlAlgorithm.includes('#sha1')) {
+    console.warn('[SAML] WARNING: IdP is using deprecated SHA-1 signature algorithm. Upgrade to SHA-256 or stronger.');
     return { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-1' };
   }
   // Default to SHA-256 (most common modern setting)

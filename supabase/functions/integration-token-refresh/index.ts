@@ -113,7 +113,7 @@ Deno.serve(async (req) => {
 
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
-      console.error('Token refresh failed:', errorText);
+      console.error('Token refresh failed:', tokenResponse.status);
 
       // Mark integration as expired
       await supabase

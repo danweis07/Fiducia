@@ -23,8 +23,14 @@ function getAllowedOrigins(env?: EnvProvider): string[] {
 function resolveOrigin(req: Request, env?: EnvProvider): string {
   const allowedOrigins = getAllowedOrigins(env);
 
-  // Development fallback: if no origins configured, allow all
+  // Reject requests when no origins are configured in production
   if (allowedOrigins.length === 0) {
+    const env = getEnvVar('DENO_ENV') ?? getEnvVar('NODE_ENV') ?? 'development';
+    if (env === 'production') {
+      console.error('[CORS] ALLOWED_ORIGINS must be configured in production');
+      return 'null';
+    }
+    console.warn('[CORS] No ALLOWED_ORIGINS configured — allowing all origins (development only)');
     return '*';
   }
 
@@ -53,9 +59,15 @@ export function getCorsHeaders(req: Request, env?: EnvProvider): Record<string, 
 }
 
 // Backwards-compatible static export for code that does not have access
-// to the request object. Uses wildcard (development-safe default).
+// to the request object. Prefer getCorsHeaders(req) when possible.
 export const corsHeaders: Record<string, string> = {
-  'Access-Control-Allow-Origin': getAllowedOrigins().length === 0 ? '*' : getAllowedOrigins()[0],
+  'Access-Control-Allow-Origin': (() => {
+    const origins = getAllowedOrigins();
+    if (origins.length > 0) return origins[0];
+    const env = getEnvVar('DENO_ENV') ?? getEnvVar('NODE_ENV') ?? 'development';
+    if (env === 'production') return 'null';
+    return '*';
+  })(),
   ...baseHeaders,
 };
 

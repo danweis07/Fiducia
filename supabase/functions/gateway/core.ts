@@ -293,10 +293,9 @@ export function createGatewayHandler(deps: PlatformDeps): (req: Request) => Prom
 
       return jsonResponse(responseBody, status, requestId);
     } catch (err: unknown) {
-      console.error('Gateway error:', err);
-      const message = err instanceof Error ? err.message : 'Internal server error';
+      console.error('Gateway error:', err, 'requestId:', requestId);
       return jsonResponse(
-        { error: { code: 'INTERNAL_ERROR', message } },
+        { error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } },
         500,
         requestId,
       );

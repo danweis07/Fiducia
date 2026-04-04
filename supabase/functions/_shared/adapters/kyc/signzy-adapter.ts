@@ -74,6 +74,9 @@ export class SignzyKYCAdapter implements KYCAdapter {
     this.username = Deno.env.get('SIGNZY_USERNAME') ?? '';
     this.password = Deno.env.get('SIGNZY_PASSWORD') ?? '';
     this.baseUrl = Deno.env.get('SIGNZY_BASE_URL') ?? 'https://preproduction.signzy.tech/api/v2';
+    if (!this.username || !this.password) {
+      console.warn('[Signzy] SIGNZY_USERNAME and SIGNZY_PASSWORD not set — KYC calls will fail');
+    }
   }
 
   async createEvaluation(applicant: KYCApplicant): Promise<KYCResult> {

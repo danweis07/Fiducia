@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { gateway } from "@/lib/gateway";
@@ -23,7 +24,7 @@ export default function CMSContentBlock({ manifest }: { manifest: ComponentManif
         <h3 className="font-semibold text-lg mb-2">{content.title}</h3>
         <div
           className="prose prose-sm prose-slate max-w-none"
-          dangerouslySetInnerHTML={{ __html: content.body }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.body) }}
         />
       </CardContent>
     </Card>

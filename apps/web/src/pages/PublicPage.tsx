@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { gateway } from "@/lib/gateway";
@@ -115,5 +116,5 @@ function renderContent(body: string) {
     .replace(/\n\n/g, "</p><p>")
     .replace(/\n/g, "<br/>");
 
-  return <div dangerouslySetInnerHTML={{ __html: `<p>${html}</p>` }} />;
+  return <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(`<p>${html}</p>`) }} />;
 }

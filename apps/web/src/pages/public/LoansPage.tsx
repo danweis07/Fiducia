@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { Link } from "react-router-dom";
 import { PublicShell } from "@/components/public/PublicShell";
 import { SEOHead } from "@/components/public/SEOHead";
@@ -28,7 +29,7 @@ export default function LoansPage() {
         />
         <article
           className="prose max-w-4xl mx-auto py-12 px-4"
-          dangerouslySetInnerHTML={{ __html: cmsPage.body ?? "" }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(cmsPage.body ?? "") }}
         />
       </PublicShell>
     );

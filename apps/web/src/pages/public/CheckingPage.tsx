@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PublicShell } from "@/components/public/PublicShell";
@@ -33,7 +34,7 @@ export default function CheckingPage() {
         />
         <article
           className="prose max-w-4xl mx-auto py-12 px-4"
-          dangerouslySetInnerHTML={{ __html: cmsPage.body ?? "" }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(cmsPage.body ?? "") }}
         />
       </PublicShell>
     );
