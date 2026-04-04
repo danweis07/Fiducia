@@ -71,9 +71,7 @@ Deno.serve(async (req) => {
       executedAt: new Date().toISOString(),
     };
 
-    console.warn(
-      `Integration cleanup completed: ${result.webhookLogsDeleted} webhook logs, ${result.syncLogsDeleted} sync logs, ${result.oauthStatesDeleted} oauth states deleted`,
-    );
+    console.warn("Integration cleanup completed successfully");
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

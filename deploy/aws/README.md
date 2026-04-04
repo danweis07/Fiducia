@@ -226,7 +226,7 @@ All environment variables that must be configured for production:
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role key for admin operations | `eyJ...`                                                                 |
 | `JWT_SECRET`                | Secret for signing/verifying JWTs     | 64+ character random string                                              |
 | `REDIS_URL`                 | ElastiCache Redis endpoint            | `rediss://fiducia-cache.xxx.cache.amazonaws.com:6379`                    |
-| `CORS_ORIGINS`              | Allowed CORS origins                  | `https://banking.example.com`                                            |
+| `ALLOWED_ORIGINS`           | Allowed CORS origins **(required in production)** | `https://banking.example.com`                                  |
 
 ### Frontend (Build-time Variables)
 

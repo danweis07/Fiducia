@@ -68,6 +68,17 @@ export async function createAggregatorConnection(ctx: GatewayContext): Promise<G
     return { error: { code: 'VALIDATION_ERROR', message: 'institutionId is required' }, status: 400 };
   }
 
+  if (redirectUrl) {
+    try {
+      const parsed = new URL(redirectUrl);
+      if (parsed.protocol !== 'https:' && parsed.hostname !== 'localhost') {
+        return { error: { code: 'VALIDATION_ERROR', message: 'redirectUrl must use HTTPS' }, status: 400 };
+      }
+    } catch {
+      return { error: { code: 'VALIDATION_ERROR', message: 'redirectUrl must be a valid URL' }, status: 400 };
+    }
+  }
+
   const adapter = await getAdapter(ctx.firmId);
   const result = await adapter.createConnection({
     userId: ctx.userId!,

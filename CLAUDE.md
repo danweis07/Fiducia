@@ -95,6 +95,8 @@ mobile/                     # Flutter iOS/Android app
 - **Imports** — use `@/` path alias: `import { Button } from "@/components/ui/button"`
 - **Forms** — react-hook-form + Zod schemas for validation
 - **State** — TanStack React Query for server state, React Context for auth/theme
+- **HTML sanitization** — `DOMPurify.sanitize()` is required for any `dangerouslySetInnerHTML` usage. Import via `import DOMPurify from "dompurify"`. Never render unsanitized HTML.
+- **Cryptographic randomness** — use `crypto.getRandomValues()` for IDs, tokens, and references. Never use `Math.random()` for anything security-adjacent.
 
 ## Testing Conventions
 

@@ -43,7 +43,8 @@ export type Middleware = (mctx: MiddlewareContext) => Promise<GatewayResponse | 
  */
 export function generateRequestId(): string {
   const ts = Date.now().toString(36);
-  const rand = Math.random().toString(36).slice(2, 10);
+  const bytes = crypto.getRandomValues(new Uint8Array(4));
+  const rand = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
   return `req_${ts}_${rand}`;
 }
 

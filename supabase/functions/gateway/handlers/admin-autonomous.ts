@@ -53,7 +53,7 @@ export async function listServiceAccounts(ctx: GatewayContext): Promise<GatewayR
   const { data, count, error } = await query;
 
   if (error) {
-    console.error('[admin-autonomous] listServiceAccounts error:', error);
+    console.error('[admin-autonomous] listServiceAccounts error:', error instanceof Error ? error.message : 'Unknown error');
     return { error: { code: 'INTERNAL_ERROR', message: 'Failed to list service accounts' }, status: 500 };
   }
 

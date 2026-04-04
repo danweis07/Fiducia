@@ -54,7 +54,7 @@ jobs:
       contents: write
     steps:
       - name: Delete all non-protected branches
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -119,7 +119,7 @@ jobs:
       actions: write
     steps:
       - name: Delete workflow runs
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { useState } from "react";
 import {
   Card,
@@ -86,7 +87,7 @@ export function StepTerms({
               role="document"
               aria-label={`${doc.title} content`}
               tabIndex={0}
-              dangerouslySetInnerHTML={{ __html: doc.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(doc.content) }}
             />
             <div className="flex items-center gap-2">
               <Checkbox

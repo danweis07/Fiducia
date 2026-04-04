@@ -50,7 +50,7 @@ This will:
 | `--name`           | Institution name (required)       |                      |
 | `--admin-email`    | Admin email (required)            |                      |
 | `--template`       | Institution template              | `us-credit-union`    |
-| `--admin-password` | Admin password                    | `Admin123!change-me` |
+| `--admin-password` | Admin password **(required)**     | *(none — must be provided)* |
 | `--no-dev-server`  | Skip starting dev server          | starts by default    |
 | `--features`       | Comma-separated feature overrides | from template        |
 

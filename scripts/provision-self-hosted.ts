@@ -223,7 +223,10 @@ async function seedFirm(): Promise<string> {
 async function createAdminUser(tenantId: string): Promise<string> {
   log("2/3", `Creating admin user: ${args["admin-email"]}`);
 
-  const adminPassword = args["admin-password"] || "Admin123!change-me";
+  if (!args["admin-password"]) {
+    throw new Error("--admin-password is required. Provide a strong password (12+ characters, mixed case, numbers, and symbols).");
+  }
+  const adminPassword = args["admin-password"];
 
   if (args["dry-run"]) {
     log("2/3", "[DRY RUN] Would create admin user");
@@ -345,7 +348,7 @@ async function main() {
   console.warn();
   console.warn(`  Tenant ID:      ${tenantId}`);
   console.warn(`  Admin Email:    ${args["admin-email"]}`);
-  console.warn(`  Admin Password: ${adminPassword}`);
+  console.warn(`  Admin Password: ${"*".repeat(adminPassword.length)} (set via CLI arg or default)`);
   console.warn(`  App URL:        http://localhost:8080`);
   console.warn();
   console.warn("  Next steps:");

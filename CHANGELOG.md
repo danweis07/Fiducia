@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-04-04
+
+### Fixed
+
+- **CodeQL alert #26** — masked admin password in provisioning script output (was logged in clear text)
+- **CodeQL alert #23** — removed database query results from integration-cleanup logs
+- **CORS wildcard in production** — `ALLOWED_ORIGINS` is now enforced; returns `null` origin instead of `*` when not set in production
+- **Hardcoded default admin password** — `--admin-password` is now required in `provision-self-hosted.ts` (removed `Admin123!change-me` default)
+- **XSS via unsanitized HTML** — added `DOMPurify.sanitize()` to 6 components using `dangerouslySetInnerHTML` (SavingsPage, CheckingPage, LoansPage, PublicPage, TermsStep, CMSContentBlock)
+- **Weak random number generation** — replaced `Math.random()` with `crypto.getRandomValues()` for wire transfer references and request IDs
+- **Open redirect in aggregator** — `redirectUrl` now validated (HTTPS required for non-localhost)
+- **SHA-1 in SAML** — added deprecation warning when IdP uses SHA-1 signature algorithm
+- **Error message exposure** — gateway now returns generic error message instead of raw `err.message`
+- **Neo4j adapter** — warns when using unencrypted connection to non-localhost host
+- **PII encryption key** — validated at module load time (format: 64 hex characters)
+- **Missing credential warnings** — Signzy and Flexcube adapters now warn when required credentials are not set
+- **Sensitive error logging** — sanitized error objects in admin-autonomous and token-refresh handlers
+- **Broken CI workflows** — downgraded non-existent GitHub Action versions (`checkout@v6`, `setup-node@v6`, `upload-artifact@v7`, `github-script@v8`) to latest valid versions
+
+### Changed
+
+- **Documentation updated** — SINGLE-TENANT-DEPLOYMENT.md, PRODUCTION-CHECKLIST.md, SECURITY-POSTURE.md, deploy/aws/README.md, and CLAUDE.md updated to reflect new security requirements
+
 ## [1.4.1] - 2026-04-04
 
 ### Fixed

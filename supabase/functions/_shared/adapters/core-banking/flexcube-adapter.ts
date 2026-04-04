@@ -131,6 +131,9 @@ export class FlexcubeAdapter implements CoreBankingAdapter {
     this.branchCode = Deno.env.get('FLEXCUBE_BRANCH_CODE') ?? '000';
     this.username = Deno.env.get('FLEXCUBE_USERNAME') ?? '';
     this.password = Deno.env.get('FLEXCUBE_PASSWORD') ?? '';
+    if (!this.baseUrl || !this.username || !this.password) {
+      console.warn('[Flexcube] Missing FLEXCUBE_BASE_URL, FLEXCUBE_USERNAME, or FLEXCUBE_PASSWORD — core banking calls will fail');
+    }
   }
 
   private async request<T>(path: string, options: RequestInit = {}): Promise<T> {

@@ -22,16 +22,23 @@ const ALGORITHM = 'AES-GCM';
 const IV_LENGTH = 12;
 const TAG_LENGTH = 128; // bits
 
+// Validate PII encryption key at module load time
+const _masterKeyHex: string | undefined =
+  (typeof Deno !== 'undefined' ? Deno.env.get('PII_ENCRYPTION_KEY') : undefined)
+  ?? (typeof process !== 'undefined' ? (process as Record<string, Record<string, string>>).env?.PII_ENCRYPTION_KEY : undefined);
+
+if (_masterKeyHex && !/^[0-9a-fA-F]{64}$/.test(_masterKeyHex)) {
+  console.error('PII_ENCRYPTION_KEY must be exactly 64 hex characters (256-bit key)');
+}
+
 /**
  * Derive a per-tenant encryption key from the master key using HKDF.
  */
 async function deriveKey(tenantId: string): Promise<CryptoKey> {
-  const masterKeyHex = (typeof Deno !== 'undefined' ? Deno.env.get('PII_ENCRYPTION_KEY') : undefined)
-    ?? (typeof process !== 'undefined' ? (process as Record<string, Record<string, string>>).env?.PII_ENCRYPTION_KEY : undefined);
-
-  if (!masterKeyHex) {
+  if (!_masterKeyHex) {
     throw new Error('PII_ENCRYPTION_KEY environment variable is not set');
   }
+  const masterKeyHex = _masterKeyHex;
 
   // Import master key as raw key material for HKDF
   const masterKeyBytes = hexToBytes(masterKeyHex);

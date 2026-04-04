@@ -78,7 +78,11 @@ export class Neo4jFraudGraphAdapter implements FraudGraphAdapter {
   };
 
   private get uri(): string {
-    return Deno.env.get('NEO4J_URI') ?? 'http://localhost:7474';
+    const uri = Deno.env.get('NEO4J_URI') ?? 'http://localhost:7474';
+    if (!uri.startsWith('http://localhost') && !uri.startsWith('https://') && !uri.startsWith('bolt+s://') && !uri.startsWith('neo4j+s://')) {
+      console.warn('[Neo4j] WARNING: Using unencrypted connection to non-localhost host. Use HTTPS or bolt+s:// in production.');
+    }
+    return uri;
   }
 
   private get user(): string {
