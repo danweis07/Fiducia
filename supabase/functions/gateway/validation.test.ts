@@ -6,9 +6,8 @@
 
 import { describe, it, expect, vi } from 'vitest';
 
-// Mock Deno for Node test runner
+// Mock Deno globals and Deno-style HTTPS imports for Node test runner
 vi.stubGlobal('Deno', { env: { get: () => undefined } });
-
 import { validateParams, ValidationError } from './validation.ts';
 
 describe('validateParams', () => {

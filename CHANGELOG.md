@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-04-04
+
+### Fixed
+
+- **npm peer dependency conflicts** — `npm ci` was failing with ERESOLVE errors due to vite/vitest and react/next-themes peer dep mismatches
+- **TypeScript errors** — resolved all 4 type errors in `supabase-provider.ts` (untyped table helper producing `never` column types)
+- **17 failing test files (20 tests)** — fixed root causes across theme, AI, component, gateway, and workflow tests
+- **Inconsistent fallback tenant name** — aligned "Demo Bank" → "Demo Credit Union" across supabase-provider, rest-provider, and TenantContext to match `tenant.config.ts`
+
+### Changed
+
+- **Upgrade vite 5 → 6** — satisfies vitest 4.x peer dependency; vite.config.ts required no changes
+- **Enable CI on pull requests** — added `pull_request` and `push` triggers to all 6 CI/security workflows (ci, codeql, container-scan, dependency-audit, secret-scanning, sbom); previously manual-dispatch only
+- **Add npm overrides** — root-level overrides for react, react-dom, vite, esbuild, and next-themes to prevent dependency resolution conflicts
+- **Create `.npmrc`** — enforce `engine-strict=true` for Node.js version requirements
+- **Mock `useSiteConfig` in test setup** — prevents `QueryClientProvider` requirement in component tests; uses real `tenantConfig` defaults via `vi.importActual`
+- **Add demo-mode env vars to vitest config** — `VITE_DEMO_MODE`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` so Supabase client initializes in tests
+- **Exclude Deno-native gateway tests from vitest** — these require `deno test` due to HTTPS imports in source files
+- **Remove redundant test config from `vite.config.ts`** — `vitest.config.ts` is now the single source of truth
+- **Update `actions/checkout` v4 → v6** in release workflow for consistency
+
 ## [1.2.0] - 2026-03-24
 
 ### Fixed

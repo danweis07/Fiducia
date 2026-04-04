@@ -45,7 +45,7 @@ describe("ContactPage", () => {
   it("shows banking details section", () => {
     render(createElement(ContactPage), { wrapper: createWrapper() });
     expect(screen.getByText("Banking Details")).toBeTruthy();
-    expect(screen.getByText("265473851")).toBeTruthy();
+    expect(screen.getByText("021000021")).toBeTruthy();
     expect(screen.getByText("WFCUUS33")).toBeTruthy();
   });
 

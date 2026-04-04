@@ -6,8 +6,23 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
-    include: ["src/**/*.{test,spec}.{ts,tsx}", "../../supabase/**/*.{test,spec}.ts"],
-    exclude: ["node_modules", "e2e"],
+    env: {
+      VITE_DEMO_MODE: "true",
+      VITE_SUPABASE_URL: "https://placeholder.supabase.co",
+      VITE_SUPABASE_ANON_KEY: "placeholder-anon-key",
+    },
+    include: [
+      "src/**/*.{test,spec}.{ts,tsx}",
+      // Include supabase _shared AI/utility tests (pure TS, no Deno URLs).
+      "../../supabase/functions/_shared/**/*.{test,spec}.ts",
+    ],
+    exclude: [
+      "node_modules",
+      "e2e",
+      // Gateway tests use Deno-native HTTPS imports that Node cannot resolve.
+      // Run these with `deno test` instead.
+      "../../supabase/functions/gateway/**",
+    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
@@ -24,15 +39,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      // Map Deno-style URL imports to npm packages so supabase edge function
-      // code can be tested in the Node/vitest environment.
-      "https://esm.sh/@supabase/supabase-js@2.47.10": "@supabase/supabase-js",
-      "https://esm.sh/@supabase/supabase-js@2": "@supabase/supabase-js",
-      "https://deno.land/x/zod@v3.22.4/mod.ts": "zod",
-      "https://deno.land/std@0.220.0/encoding/base64.ts": path.resolve(
-        __dirname,
-        "./src/test/deno-shims/base64.ts",
-      ),
+      // Allow web workspace tests to import supabase edge function code via
+      // the same relative path prefix used in existing test files.
+      "../../../supabase/functions": path.resolve(__dirname, "../../supabase/functions"),
     },
   },
 });

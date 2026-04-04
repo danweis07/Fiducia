@@ -74,13 +74,17 @@ describe("GitHub Actions workflow YAMLs", () => {
       }
     });
 
-    it("uses actions/checkout in at least one job", () => {
+    it("uses actions/checkout in at least one job (unless API-only workflow)", () => {
       workflow = loadWorkflow(filename);
       const jobs = workflow.jobs as Record<string, { steps: Array<{ uses?: string }> }>;
       const hasCheckout = Object.values(jobs).some((job) =>
         job.steps?.some((step) => step.uses?.startsWith("actions/checkout")),
       );
-      expect(hasCheckout).toBe(true);
+      // Some workflows only use the GitHub API (e.g., cleanup) and don't need checkout
+      const hasGithubScript = Object.values(jobs).some((job) =>
+        job.steps?.some((step) => step.uses?.startsWith("actions/github-script")),
+      );
+      expect(hasCheckout || hasGithubScript).toBe(true);
     });
 
     it("pins action versions (no @master or @main for third-party actions)", () => {

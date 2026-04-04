@@ -106,7 +106,7 @@ describe("loadTheme", () => {
   });
 
   it("returns stored theme merged with defaults", () => {
-    localStorage.setItem("vantage-theme", JSON.stringify({ layout: "modern", font: "roboto" }));
+    localStorage.setItem("app-theme", JSON.stringify({ layout: "modern", font: "roboto" }));
     const theme = loadTheme();
     expect(theme.layout).toBe("modern");
     expect(theme.font).toBe("roboto");
@@ -114,7 +114,7 @@ describe("loadTheme", () => {
   });
 
   it("returns default on corrupt storage", () => {
-    localStorage.setItem("vantage-theme", "invalid json{{{");
+    localStorage.setItem("app-theme", "invalid json{{{");
     const theme = loadTheme();
     expect(theme).toEqual(DEFAULT_THEME);
   });
@@ -128,7 +128,7 @@ describe("saveTheme", () => {
   it("persists theme to localStorage", () => {
     const theme = { ...DEFAULT_THEME, layout: "compact" as const };
     saveTheme(theme);
-    const stored = JSON.parse(localStorage.getItem("vantage-theme") || "{}");
+    const stored = JSON.parse(localStorage.getItem("app-theme") || "{}");
     expect(stored.layout).toBe("compact");
   });
 });

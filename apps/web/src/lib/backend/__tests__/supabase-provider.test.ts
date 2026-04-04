@@ -227,7 +227,7 @@ describe("Supabase Backend Provider", () => {
 
         const ctx = await provider.auth.getTenantContext("u-1");
         expect(ctx.tenantId).toBe("default");
-        expect(ctx.tenantName).toBe("Demo Bank");
+        expect(ctx.tenantName).toBe("Demo Credit Union");
         expect(ctx.userRole).toBe("member");
       });
     });
