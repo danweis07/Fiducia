@@ -191,7 +191,7 @@ describe("useInternationalPaymentHistory", () => {
   });
 
   it("fetches payment history successfully", async () => {
-    vi.mocked(gateway.internationalPayments.listPayments).mockResolvedValue([]);
+    vi.mocked(gateway.intlPaymentAliases.listPayments).mockResolvedValue({ payments: [] });
 
     const { result } = renderHook(() => useInternationalPaymentHistory(), {
       wrapper: createWrapper(),
@@ -201,7 +201,7 @@ describe("useInternationalPaymentHistory", () => {
   });
 
   it("handles error", async () => {
-    vi.mocked(gateway.internationalPayments.listPayments).mockRejectedValue(new Error("fail"));
+    vi.mocked(gateway.intlPaymentAliases.listPayments).mockRejectedValue(new Error("fail"));
 
     const { result } = renderHook(() => useInternationalPaymentHistory(), {
       wrapper: createWrapper(),

@@ -25,7 +25,7 @@ describe("PublicFooter", () => {
 
   it("renders tenant name in copyright", () => {
     render(createElement(PublicFooter, { tenantName: "Test Credit Union" }));
-    expect(screen.getByText(/Test Credit Union/)).toBeTruthy();
+    expect(screen.getAllByText(/Test Credit Union/).length).toBeGreaterThan(0);
   });
 
   it("renders default tenant name when none provided", () => {

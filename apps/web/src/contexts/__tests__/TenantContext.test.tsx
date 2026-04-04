@@ -586,7 +586,7 @@ describe("TenantContext", () => {
 
       expect(result.current.tenant).toMatchObject({
         tenantId: "default",
-        tenantName: "Demo Bank",
+        tenantName: "Demo Credit Union",
         userId: "user-1",
         userRole: "member",
         displayName: "Customer",

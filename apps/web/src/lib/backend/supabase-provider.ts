@@ -35,14 +35,11 @@ import { getRolePermissions } from "@/types";
 
 /**
  * Helper to access Supabase tables not present in the generated types.
- * Uses `unknown` as an intermediate cast to avoid `any`.
+ * The `any` cast is unavoidable here — these tables have no generated type defs.
  */
 function fromTable(table: string) {
-  return (
-    supabase as unknown as {
-      from: (table: string) => ReturnType<typeof supabase.from>;
-    }
-  ).from(table);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return supabase.from(table as any);
 }
 
 // =============================================================================
@@ -206,13 +203,13 @@ class SupabaseAuthProvider implements AuthProvider {
 
       const { data: tData, error: tError } = await fromTable("firms")
         .select("*")
-        .eq("id", (tuData as Record<string, unknown>).firm_id as string)
+        .eq("id", (tuData as unknown as Record<string, unknown>).firm_id as string)
         .single();
 
       if (tError) throw new Error(`Failed to fetch tenant: ${tError.message}`);
 
-      const tu = tuData as Record<string, unknown>;
-      const t = tData as Record<string, unknown>;
+      const tu = tuData as unknown as Record<string, unknown>;
+      const t = tData as unknown as Record<string, unknown>;
 
       // Update last active
       await fromTable("firm_users")
@@ -268,7 +265,7 @@ class SupabaseAuthProvider implements AuthProvider {
     if (te) return { error: new Error(`Tenant setup failed: ${te.message}`) };
 
     const { error: me } = await fromTable("firm_users").insert({
-      firm_id: (td as Record<string, unknown>).id as string,
+      firm_id: (td as unknown as Record<string, unknown>).id as string,
       user_id: userId,
       role: "owner",
       status: "active",

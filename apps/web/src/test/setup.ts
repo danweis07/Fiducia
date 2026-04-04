@@ -9,6 +9,17 @@ import { vi } from "vitest";
 // Initialize i18n so components render translated text instead of raw keys
 import "@/lib/i18n";
 
+// Mock useSiteConfig to avoid QueryClientProvider requirement in component tests.
+// Returns the real tenantConfig defaults so page tests see accurate content.
+vi.mock("@/hooks/useSiteConfig", async () => {
+  const { tenantConfig } =
+    await vi.importActual<typeof import("@/lib/tenant.config")>("@/lib/tenant.config");
+  return {
+    useSiteConfig: () => ({ config: tenantConfig, isLoading: false }),
+    getSiteConfig: () => tenantConfig,
+  };
+});
+
 // Mock Supabase client
 vi.mock("@/lib/supabase", () => ({
   supabase: {
