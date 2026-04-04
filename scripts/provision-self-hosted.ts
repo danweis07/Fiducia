@@ -345,7 +345,7 @@ async function main() {
   console.warn();
   console.warn(`  Tenant ID:      ${tenantId}`);
   console.warn(`  Admin Email:    ${args["admin-email"]}`);
-  console.warn(`  Admin Password: ${adminPassword}`);
+  console.warn(`  Admin Password: ${"*".repeat(adminPassword.length)} (set via CLI arg or default)`);
   console.warn(`  App URL:        http://localhost:8080`);
   console.warn();
   console.warn("  Next steps:");
