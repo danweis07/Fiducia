@@ -40,7 +40,7 @@ Use this checklist before deploying to a production environment. Not all items a
   - Referrer-Policy: strict-origin-when-cross-origin
   - Permissions-Policy
 - [ ] HTTPS is enforced (no HTTP fallback)
-- [ ] CORS is restricted to your specific domains
+- [ ] `ALLOWED_ORIGINS` env var is set to your production domain(s) (required — CORS blocks all requests if unset in production)
 - [ ] API rate limiting is configured per tenant
 - [ ] Audit logging is active and writes to `audit_logs` table
 - [ ] All default passwords/credentials have been rotated

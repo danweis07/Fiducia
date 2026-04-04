@@ -31,7 +31,7 @@
 | ----------------- | ---------------------------------------------------------------------------------- |
 | SQL injection     | Supabase client uses parameterized queries; no raw SQL in frontend                 |
 | Input validation  | Zod schemas on all form inputs via `react-hook-form` integration                   |
-| XSS prevention    | React's automatic JSX escaping; no `dangerouslySetInnerHTML` in banking components |
+| XSS prevention    | React's automatic JSX escaping; `DOMPurify.sanitize()` required for any `dangerouslySetInnerHTML` usage |
 | Command injection | Edge functions run in Deno isolates with restricted permissions                    |
 
 ### A04: Insecure Design
