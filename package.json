@@ -1,7 +1,7 @@
 {
   "name": "fiducia",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.4.3",
   "description": "Multi-tenant digital banking platform — monorepo",
   "license": "MIT",
   "repository": {
