@@ -83,7 +83,7 @@
     "react-i18next": "^16.5.8",
     "react-map-gl": "^8.1.0",
     "react-resizable-panels": "^2.1.9",
-    "react-router-dom": "^6.30.3",
+    "react-router-dom": "^7.0.0",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
     "supercluster": "^8.0.1",
